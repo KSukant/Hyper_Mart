@@ -10,7 +10,6 @@ import {
   Truck,
   RotateCcw,
   BadgeCheck,
-  MapPin,
   Lock,
   ArrowRight,
   Sparkles,
@@ -99,14 +98,6 @@ const FOOTER_NAV = [
   },
 ];
 
-const PAYMENT_METHODS = [
-  "UPI (GPay / PhonePe / Paytm)",
-  "RuPay Cards",
-  "Visa & Mastercard",
-  "NetBanking",
-  "Cash on Delivery",
-  "HyperMart Pay Later",
-];
 
 export function Footer({ compact = false }: { compact?: boolean }) {
   const [email, setEmail] = useState("");
@@ -311,11 +302,6 @@ export function Footer({ compact = false }: { compact?: boolean }) {
               </div>
             </div>
 
-            {/* City Fulfillment Footprint */}
-            <div className="flex items-center gap-2 pt-2 text-[11px] text-emerald-200/70">
-              <MapPin className="h-3.5 w-3.5 text-accent shrink-0" />
-              <span>Dedicated fulfillment hubs in 40+ major Indian cities</span>
-            </div>
           </div>
 
           {/* Columns 2-5: Nav Columns - Accordions on mobile (<1024px), standard columns on desktop (>=1024px) */}
@@ -369,24 +355,6 @@ export function Footer({ compact = false }: { compact?: boolean }) {
           </div>
         </div>
 
-        {/* Payment Badges Strip */}
-        <div className="mt-8 border-t border-[#0C3B24] pt-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <span className="text-xs font-semibold text-emerald-200/70">
-              100% Secure & Encrypted Payments:
-            </span>
-            <div className="flex flex-wrap items-center gap-2">
-              {PAYMENT_METHODS.map((method) => (
-                <span
-                  key={method}
-                  className="rounded-lg bg-[#041A10] px-2.5 py-1 text-[11px] font-medium text-emerald-100/80 ring-1 ring-emerald-900/50"
-                >
-                  {method}
-                </span>
-              ))}
-            </div>
-          </div>
-        </div>
 
         {/* ── BOTTOM SUB-FOOTER: Copyright, Compliance & Legal Links ── */}
         <div className="mt-6 flex flex-col items-center justify-between gap-3 border-t border-[#0C3B24] pt-6 text-center text-xs text-emerald-200/60 md:flex-row md:text-left">

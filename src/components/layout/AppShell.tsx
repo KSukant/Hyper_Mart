@@ -1,14 +1,30 @@
 "use client";
 import { useEffect, useState, type ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { rehydrateAll } from "@/store";
 import { Header } from "./Header";
 import { MobileNav } from "./MobileNav";
 import { Toaster } from "@/components/ui/primitives";
 
-/** Restores saved cart/location/member state, then renders the page. Shows a light splash for the first frame. */
+/** Restores saved cart/location/member state, then renders the page. Isolates /admin from customer storefront chrome. */
 export function AppShell({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
   const [ready, setReady] = useState(false);
-  useEffect(() => { rehydrateAll().finally(() => setReady(true)); }, []);
+
+  useEffect(() => {
+    rehydrateAll().finally(() => setReady(true));
+  }, []);
+
+  if (isAdmin) {
+    return (
+      <>
+        {ready ? children : <Splash />}
+        <Toaster />
+      </>
+    );
+  }
+
   return (
     <>
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">Skip to content</a>

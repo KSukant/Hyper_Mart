@@ -1,0 +1,231 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Brand palette — deep forest green + fresh lime (matches the HyperMart logo). All text pairs ≥ 4.5:1. */
+  --primary: 11 81 50;        /* #0B5132 Deep forest green */
+  --primary-dark: 8 61 37;    /* #083D25 Dark forest green */
+  --primary-tint: 228 243 220;/* #E4F3DC Pale mint tint */
+  --primary-soft: 241 248 236;/* #F1F8EC Soft green */
+  --secondary: 16 185 129;    /* #10B981 Emerald */
+  --secondary-tint: 209 250 229;/* #D1FAE5 */
+  --accent: 197 232 79;       /* #C5E84F Lime — always dark text */
+  --accent-tint: 233 245 201; /* #E9F5C9 Pale lime */
+  --accent-text: 11 61 38;    /* #0B3D26 Dark green text */
+  --danger: 198 40 40;        /* #C62828 */
+  --danger-tint: 253 236 234; /* #FDECEA */
+  --success: 46 125 50;       /* #2E7D32 */
+  --bg: 244 247 239;          /* #F4F7EF Soft warm neutral */
+  --surface: 255 255 255;     /* #FFFFFF Card background */
+  --text: 23 32 27;           /* #17201B Main text */
+  --muted: 93 104 98;         /* #5D6862 Secondary text */
+  --border: 226 230 227;      /* #E2E6E3 Borders */
+
+  /* Department badges & accents on shared pages */
+  --food: 14 94 58;
+  --food-tint: 231 242 236;
+  --fashion: 107 46 95;
+  --fashion-tint: 246 234 243;
+  --beauty: 156 47 85;
+  --beauty-tint: 252 235 241;
+  --electronics: 29 78 137;
+  --electronics-tint: 232 240 250;
+
+  --header-h: 72px;
+  --section-h: calc(100svh - var(--header-h));
+
+  /* Brand theme tokens */
+  --brand-900: #083D25;
+  --brand-700: #0B5132;
+  --brand-500: #147A4E;
+  --brand-100: #E4F3DC;
+  --brand-50: #F4F7EF;
+}
+
+/* ──────────────── PDP Responsive Layout (1180px and up) ──────────────── */
+@media (min-width: 1180px) {
+  .pdp-grid {
+    display: grid !important;
+    grid-template-columns: 76px minmax(0, 1.15fr) minmax(0, 1fr) 340px !important;
+    gap: 24px !important;
+    align-items: start !important;
+  }
+  .pdp-gallery-col {
+    grid-column: span 2 !important;
+    position: sticky !important;
+    top: calc(var(--header-h) + 16px) !important;
+    align-self: start !important;
+  }
+  .pdp-panel-col {
+    display: block !important;
+    position: sticky !important;
+    top: calc(var(--header-h) + 16px) !important;
+    align-self: start !important;
+    max-height: calc(100vh - var(--header-h) - 32px) !important;
+    overflow-y: auto !important;
+  }
+  .pdp-accordion-col {
+    display: none !important;
+  }
+}
+
+@media (max-width: 1179px) {
+  .pdp-panel-col {
+    display: none !important;
+  }
+  .pdp-accordion-col {
+    display: block !important;
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: var(--header-h);
+}
+body { @apply bg-bg text-ink font-sans antialiased; }
+h1, h2, h3, .font-display { font-family: "Plus Jakarta Sans", "Inter Variable", sans-serif; letter-spacing: -0.02em; }
+.tabular { font-variant-numeric: tabular-nums; }
+
+/* Snap sections: min-height: var(--section-h) ONLY on desktop (>= 1024px) */
+.snap-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1023px) {
+  .snap-section {
+    min-height: auto;
+    padding-block: 16px;
+    scroll-snap-align: none;
+    scroll-margin-top: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .snap-section {
+    scroll-margin-top: var(--header-h);
+    min-height: var(--section-h);
+    padding-block: clamp(16px, 3vh, 40px);
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}
+
+.snap-section-end {
+  scroll-margin-top: var(--header-h);
+  scroll-snap-align: start;
+}
+
+/* Snapping enabled ONLY when (min-width:1024px) and (min-height:680px) and (prefers-reduced-motion: no-preference) */
+@media (min-width: 1024px) and (min-height: 680px) and (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+  }
+  .snap-section {
+    scroll-margin-top: 0;
+  }
+}
+
+/* Form inputs: 16px font-size on mobile so iOS Safari does not auto-zoom */
+@media (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Safe area insets helpers */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 16px));
+}
+.pt-safe {
+  padding-top: max(0.5rem, env(safe-area-inset-top, 0px));
+}
+
+/* Section entrance: opacity 0 to 1 and translateY 16px to 0 over 400ms, once. Visible without JavaScript */
+@keyframes section-entrance {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-entrance {
+  animation: section-entrance 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-entrance {
+    animation: none !important;
+  }
+}
+
+:focus-visible { outline: 2px solid rgb(var(--primary)); outline-offset: 2px; border-radius: 6px; }
+
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Hero scene animations */
+@keyframes road-move { from { transform: translateX(0); } to { transform: translateX(-120px); } }
+@keyframes skyline-move { from { transform: translateX(0); } to { transform: translateX(-1200px); } }
+@keyframes wheel-spin { to { transform: rotate(360deg); } }
+@keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes float-tag { 0%,100% { transform: translateY(0) rotate(-6deg); } 50% { transform: translateY(-8px) rotate(-3deg); } }
+@keyframes pulse-ring { 0% { transform: scale(.8); opacity: .8; } 100% { transform: scale(1.8); opacity: 0; } }
+@keyframes speed-line { 0% { transform: translateX(0); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateX(-60px); opacity: 0; } }
+.anim-road { animation: road-move 0.9s linear infinite; }
+.anim-skyline { animation: skyline-move 40s linear infinite; }
+.anim-skyline-far { animation: skyline-move 70s linear infinite; }
+.anim-wheel { animation: wheel-spin .5s linear infinite; transform-box: fill-box; transform-origin: center; }
+.anim-bob { animation: bob .6s ease-in-out infinite; }
+.anim-tag { animation: float-tag 4s ease-in-out infinite; }
+.anim-ring { animation: pulse-ring 1.8s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+.anim-speed { animation: speed-line .8s linear infinite; }
+.scooter-paused, .scooter-paused * { animation-play-state: paused !important; }
+@media (prefers-reduced-motion: reduce) {
+  .anim-road, .anim-skyline, .anim-skyline-far, .anim-wheel, .anim-bob, .anim-tag, .anim-ring, .anim-speed { animation: none !important; }
+}
+
+/* Deals ending soon styles */
+@media (prefers-reduced-motion: reduce) {
+  #deals .scroll-smooth {
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Department spotlight progress bar animation */
+@keyframes spotlight-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.spotlight-progress-fill {
+  animation-name: spotlight-progress;
+  animation-duration: 3000ms;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.spotlight-progress-fill.paused {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spotlight-progress-fill {
+    animation: none !important;
+    width: 100% !important;
+  }
+}
+
+

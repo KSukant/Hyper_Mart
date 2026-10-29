@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <rect width="600" height="600" fill="#E7F2EC"/>
+  <!-- Subtle circular backdrop -->
+  <circle cx="300" cy="300" r="160" fill="none" stroke="#0E5E3A" stroke-width="0.75" stroke-dasharray="4 4" opacity="0.3"/>
+  <g fill="none" stroke="#0E5E3A" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Milk carton (left/center) -->
+    <path d="M190 250 L270 250 L270 410 L190 410 Z"/>
+    <path d="M190 250 L210 200 L250 200 L270 250"/>
+    <path d="M210 200 L210 185 L250 185 L250 200"/>
+    <line x1="190" y1="310" x2="270" y2="310"/>
+    <path d="M215 345 C225 335, 235 335, 245 345 C255 355, 265 355, 270 350"/>
+    
+    <!-- Apple (right/center overlapping) -->
+    <path d="M360 250 C375 220, 420 220, 435 250 C455 290, 445 370, 400 405 C380 420, 360 415, 350 405 C340 415, 320 420, 300 405 C255 370, 245 290, 265 250 C280 220, 325 220, 340 250 C345 255, 355 255, 360 250 Z"/>
+    <!-- Stem and Leaf -->
+    <path d="M350 250 C352 230, 360 205, 375 195"/>
+    <path d="M355 220 C375 210, 395 215, 405 230 C390 235, 370 232, 355 220 Z"/>
+  </g>
+</svg>

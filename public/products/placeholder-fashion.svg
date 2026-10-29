@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <rect width="600" height="600" fill="#F6EAF3"/>
+  <!-- Subtle circular backdrop -->
+  <circle cx="300" cy="300" r="160" fill="none" stroke="#6B2E5F" stroke-width="0.75" stroke-dasharray="4 4" opacity="0.3"/>
+  <g fill="none" stroke="#6B2E5F" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Hanger hook -->
+    <path d="M300 170 C290 170, 280 180, 285 195 C290 205, 300 215, 300 225"/>
+    
+    <!-- T-shirt -->
+    <!-- Collar -->
+    <path d="M260 225 C280 245, 320 245, 340 225"/>
+    <!-- Shoulders and sleeves -->
+    <path d="M260 225 L180 270 L210 320 L240 305 L240 430 L360 430 L360 305 L390 320 L420 270 L340 225"/>
+    <!-- Sleeve seams -->
+    <path d="M240 305 L210 255"/>
+    <path d="M360 305 L390 255"/>
+    <!-- Pocket detail -->
+    <path d="M320 290 L345 290 L345 320 C345 325, 332 330, 332 330 C332 330, 320 325, 320 320 Z"/>
+    <!-- Hem line -->
+    <line x1="240" y1="415" x2="360" y2="415" stroke-dasharray="3 3"/>
+  </g>
+</svg>

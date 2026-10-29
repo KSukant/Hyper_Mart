@@ -1,0 +1,13 @@
+{
+  "slug": "fresh-tomatoes",
+  "images": [
+    {
+      "file": "1.jpg",
+      "source": "Unsplash",
+      "sourceUrl": "https://unsplash.com/photos/1592924357228-91a4daadcfea",
+      "author": "Jason Leung",
+      "licence": "Unsplash License",
+      "date": "2024"
+    }
+  ]
+}

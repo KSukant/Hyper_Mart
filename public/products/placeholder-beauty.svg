@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600">
+  <rect width="600" height="600" fill="#FCEBF1"/>
+  <!-- Subtle circular backdrop -->
+  <circle cx="300" cy="300" r="160" fill="none" stroke="#9C2F55" stroke-width="0.75" stroke-dasharray="4 4" opacity="0.3"/>
+  <g fill="none" stroke="#9C2F55" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Bottle with pump dispenser (left) -->
+    <!-- Pump head -->
+    <path d="M225 180 L255 180"/>
+    <path d="M245 180 L245 205"/>
+    <path d="M225 180 C215 180, 210 185, 210 195"/>
+    <rect x="235" y="205" width="20" height="15" rx="2"/>
+    <!-- Bottle neck and body -->
+    <path d="M238 220 L238 235 C220 245, 210 260, 210 280 L210 410 C210 420, 218 425, 228 425 L262 425 C272 425, 280 420, 280 410 L280 280 C280 260, 270 245, 252 235 L252 220"/>
+    <!-- Bottle label -->
+    <rect x="222" y="295" width="46" height="75" rx="3"/>
+    <line x1="230" y1="315" x2="260" y2="315"/>
+    <line x1="230" y1="330" x2="252" y2="330"/>
+
+    <!-- Cosmetic Jar (right) -->
+    <!-- Lid -->
+    <rect x="305" y="300" width="105" height="25" rx="4"/>
+    <!-- Jar base -->
+    <path d="M312 325 L312 405 C312 418, 322 425, 335 425 L380 425 C393 425, 403 418, 403 405 L403 325"/>
+    <!-- Jar inner rim / content line -->
+    <ellipse cx="357" cy="340" rx="35" ry="8"/>
+    <!-- Subtle sparkle -->
+    <path d="M385 240 L390 255 L405 260 L390 265 L385 280 L380 265 L365 260 L380 255 Z"/>
+  </g>
+</svg>

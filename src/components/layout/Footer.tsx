@@ -7,47 +7,18 @@ import {
   MessageCircle,
   Mail,
   Clock,
-  Truck,
-  RotateCcw,
-  BadgeCheck,
   Lock,
   ArrowRight,
   Sparkles,
-  Store,
   Check,
   ChevronDown,
   ArrowUp,
-  CreditCard,
-  ShieldCheck,
 } from "lucide-react";
 import { site } from "@/mocks";
 import { Logo } from "./Logo";
 import { toast } from "@/components/ui/primitives";
 import { cn } from "@/lib/cn";
 
-/* ── 4 Pillars of HyperMart Customer Trust ── */
-const TRUST_PILLARS = [
-  {
-    icon: BadgeCheck,
-    title: "100% Quality Checked",
-    desc: "Fresh groceries graded & certified daily before packaging",
-  },
-  {
-    icon: Store,
-    title: "Sold by HyperMart",
-    desc: "Directly sourced from brands & authorised distributors",
-  },
-  {
-    icon: Truck,
-    title: "Verified Delivery Fleet",
-    desc: "Delivered by trusted partners with slot-level tracking",
-  },
-  {
-    icon: RotateCcw,
-    title: "Clear Returns & Refunds",
-    desc: "Transparent doorstep pickup & instant refund policy",
-  },
-];
 
 /* ── Structured Categorized Navigation Links ── */
 const FOOTER_NAV = [
@@ -213,27 +184,6 @@ export function Footer({ compact = false }: { compact?: boolean }) {
         </div>
       )}
 
-      {/* ── MIDDLE SECTION 1: 4 Pillars Customer Trust Bar ── */}
-      <div className="border-b border-[#0C3B24] bg-[#041A10]/70">
-        <div className="mx-auto max-w-[1280px] px-4 py-6 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
-            {TRUST_PILLARS.map((item) => {
-              const Icon = item.icon;
-              return (
-                <div key={item.title} className="flex items-start gap-2.5 sm:gap-3.5">
-                  <span className="grid h-9 w-9 sm:h-10 sm:w-10 shrink-0 place-items-center rounded-xl bg-[#093520] text-accent ring-1 ring-accent/20 shadow-xs">
-                    <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                  </span>
-                  <div>
-                    <h4 className="text-xs font-bold text-white leading-tight">{item.title}</h4>
-                    <p className="mt-0.5 text-[11px] sm:text-xs text-emerald-200/70 leading-snug">{item.desc}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
 
       {/* ── MIDDLE SECTION 2: Main Categorized Navigation & Support Grid ── */}
       <div className={`mx-auto max-w-[1280px] px-4 sm:px-6 lg:px-8 ${compact ? "py-6" : "py-8 lg:py-12"}`}>

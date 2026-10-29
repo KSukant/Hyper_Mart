@@ -12,7 +12,6 @@ import {
   Sparkles,
   Check,
   ChevronDown,
-  ArrowUp,
 } from "lucide-react";
 import { site } from "@/mocks";
 import { Logo } from "./Logo";
@@ -95,32 +94,8 @@ export function Footer({ compact = false }: { compact?: boolean }) {
     setEmail("");
   };
 
-  const scrollToTop = () => {
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-  };
-
   return (
     <footer className="relative w-full bg-[#062416] text-emerald-100/80">
-      {/* Back to top row for mobile */}
-      <div className="border-b border-[#0C3B24] bg-[#031A10]">
-        <div className="mx-auto flex max-w-[1280px] items-center justify-between px-4 py-2.5 sm:px-6 lg:px-8">
-          <span className="text-xs font-semibold text-emerald-200/70">
-            Shopping in India · Fast local fulfillment
-          </span>
-          <button
-            type="button"
-            onClick={scrollToTop}
-            aria-label="Back to top"
-            className="flex min-h-[44px] items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-accent transition hover:text-white focus-visible:outline-2 focus-visible:outline-accent cursor-pointer"
-          >
-            <span>Back to top</span>
-            <ArrowUp className="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-
       {/* ── TOP SECTION: Newsletter & Exclusive City Offers (Full Mode only) ── */}
       {!compact && (
         <div className="border-b border-[#0C3B24] bg-gradient-to-r from-[#041C11] via-[#08321F] to-[#041C11]">

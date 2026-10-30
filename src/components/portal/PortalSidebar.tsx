@@ -4,6 +4,15 @@ import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  LayoutDashboard,
+  Truck,
+  Warehouse,
+  Boxes,
+  ClipboardList,
+  BellRing,
+  ShoppingCart,
+  Headphones,
+  UserCheck,
   LifeBuoy,
   FileWarning,
   RotateCcw,
@@ -19,6 +28,8 @@ import {
   Shield,
   Layers,
   Sparkles,
+  Package,
+  ExternalLink,
 } from 'lucide-react';
 
 interface NavItem {
@@ -36,30 +47,62 @@ interface NavGroup {
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    title: 'SUPPORT',
+    title: 'OPERATIONS OVERVIEW',
     items: [
-      { label: 'Support case dashboard', href: '/portal/support', icon: LifeBuoy, badge: '28' },
-      { label: 'Complaint cases', href: '/portal/complaints', icon: FileWarning, badge: '5 at risk', badgeColor: 'bg-rose-500 text-white' },
-      { label: 'Returns and refunds', href: '/portal/returns-refunds', icon: RotateCcw, badge: '14' },
-      { label: 'Warranty and repair', href: '/portal/warranty-repair', icon: Wrench, badge: '8' },
-      { label: 'Escalations', href: '/portal/escalations', icon: AlertTriangle, badge: '4 critical', badgeColor: 'bg-amber-400 text-gray-950 font-bold' },
+      { label: 'Operations Dashboard', href: '/portal', icon: LayoutDashboard },
+      { label: 'Exception Queue', href: '/portal/exceptions', icon: AlertTriangle, badge: '5 critical', badgeColor: 'bg-rose-500 text-white' },
     ],
   },
   {
-    title: 'FINANCE',
+    title: 'ORDERS & FULFILMENT',
     items: [
-      { label: 'Payment ledger', href: '/portal/payment-ledger', icon: ReceiptText },
-      { label: 'COD settlement', href: '/portal/cod-settlement', icon: DollarSign, badge: '2 holds', badgeColor: 'bg-rose-500 text-white' },
-      { label: 'Refund processing', href: '/portal/refund-processing', icon: ArrowDownLeft, badge: '12' },
-      { label: 'Payment exceptions', href: '/portal/payment-exceptions', icon: AlertOctagon, badge: '9' },
-      { label: 'Reconciliation reports', href: '/portal/reconciliation-reports', icon: FileSpreadsheet },
+      { label: 'Orders Stream', href: '/portal/orders', icon: Package },
+      { label: 'Fulfilment Control Tower', href: '/portal/fulfilment', icon: Truck },
+      { label: 'Returns & Reverse Logistics', href: '/portal/returns', icon: RotateCcw, badge: '14' },
     ],
   },
   {
-    title: 'GOVERNANCE',
+    title: 'INVENTORY & WAREHOUSE',
     items: [
-      { label: 'Audit history', href: '/portal/audit-history', icon: ShieldCheck },
-      { label: 'Team performance', href: '/portal/team-performance', icon: Users, badge: '14 active' },
+      { label: 'Multi-Facility Inventory', href: '/portal/inventory', icon: Boxes },
+      { label: 'Stock Ledger & Adjustments', href: '/portal/inventory/ledger', icon: ClipboardList },
+      { label: 'Low Stock & Expiry Alerts', href: '/portal/inventory/alerts', icon: BellRing, badge: '7', badgeColor: 'bg-rose-500 text-white' },
+      { label: 'Purchase Orders', href: '/portal/purchase-orders', icon: ShoppingCart },
+      { label: 'Warehouse Readiness (Live)', href: '/portal/warehouse-readiness', icon: Warehouse },
+    ],
+  },
+  {
+    title: 'CUSTOMER OPERATIONS',
+    items: [
+      { label: 'Customer Care Live Desk', href: '/portal/customer-care', icon: Headphones, badge: '24' },
+      { label: 'Customer 360 Lookup', href: '/portal/customers/c-101', icon: UserCheck },
+    ],
+  },
+  {
+    title: 'SUPPORT MANAGEMENT',
+    items: [
+      { label: 'Support Case Dashboard', href: '/portal/support', icon: LifeBuoy, badge: '28' },
+      { label: 'Complaint Cases', href: '/portal/complaints', icon: FileWarning, badge: '5 at risk', badgeColor: 'bg-rose-500 text-white' },
+      { label: 'Returns & Refunds Support', href: '/portal/returns-refunds', icon: RotateCcw, badge: '14' },
+      { label: 'Warranty & Repair Support', href: '/portal/warranty-repair', icon: Wrench, badge: '8' },
+      { label: 'Escalations Management', href: '/portal/escalations', icon: AlertTriangle, badge: '4 critical', badgeColor: 'bg-amber-400 text-gray-950 font-bold' },
+    ],
+  },
+  {
+    title: 'FINANCE MONITORING',
+    items: [
+      { label: 'Payment Ledger', href: '/portal/payment-ledger', icon: ReceiptText },
+      { label: 'COD Settlement', href: '/portal/cod-settlement', icon: DollarSign, badge: '2 holds', badgeColor: 'bg-rose-500 text-white' },
+      { label: 'Refund Processing', href: '/portal/refund-processing', icon: ArrowDownLeft, badge: '12' },
+      { label: 'Payment Exceptions', href: '/portal/payment-exceptions', icon: AlertOctagon, badge: '9' },
+      { label: 'Reconciliation Reports', href: '/portal/reconciliation-reports', icon: FileSpreadsheet },
+    ],
+  },
+  {
+    title: 'OPERATIONAL REPORTING & GOVERNANCE',
+    items: [
+      { label: 'Audit History', href: '/portal/audit-history', icon: ShieldCheck },
+      { label: 'Team Performance', href: '/portal/team-performance', icon: Users, badge: '14 active' },
     ],
   },
 ];
@@ -156,8 +199,19 @@ export const PortalSidebar: React.FC = () => {
         ))}
       </nav>
 
-      {/* Footer Info & Security Context */}
-      <div className="p-4 border-t border-[#0C412B] bg-[#04281A]/70 text-[11px] text-[#7CA891] space-y-2">
+      {/* Footer Info, Portal Switcher & Security Context */}
+      <div className="p-4 border-t border-[#0C412B] bg-[#04281A]/70 text-[11px] text-[#7CA891] space-y-2.5">
+        <Link
+          href="/admin"
+          className="flex items-center justify-between px-3 py-2 rounded-xl bg-[#083D28] text-white hover:bg-[#0B4A31] border border-[#115538] transition font-semibold text-xs"
+        >
+          <div className="flex items-center gap-2">
+            <Layers className="w-3.5 h-3.5 text-[#C6F04A]" />
+            <span>Switch to Admin Portal</span>
+          </div>
+          <ExternalLink className="w-3 h-3 text-[#A8CEB8]" />
+        </Link>
+
         <div className="flex items-center justify-between text-xs font-semibold text-white">
           <div className="flex items-center gap-2">
             <Shield className="w-3.5 h-3.5 text-[#C6F04A]" />
@@ -166,7 +220,7 @@ export const PortalSidebar: React.FC = () => {
           <span className="text-[10px] text-emerald-400 font-mono">v3.4.1</span>
         </div>
         <p className="text-[10px] leading-relaxed text-[#81AB95]">
-          Role: <strong className="text-white">Lead Operator</strong> • Coimbatore DC & Chennai FC
+          Role: <strong className="text-white">Operations Manager</strong> • Coimbatore DC & Chennai FC
         </p>
         <div className="flex items-center justify-between pt-1 text-[9px] text-[#5C856F] uppercase tracking-wider font-mono">
           <span>TLS 1.3 256-BIT</span>

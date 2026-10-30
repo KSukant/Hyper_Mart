@@ -2,110 +2,126 @@
 
 import Link from "next/link";
 import {
-  ShoppingCart,
+  FolderKanban,
   Package,
-  Truck,
-  RotateCcw,
-  AlertTriangle,
-  Headphones,
-  CheckCircle2,
-  Clock,
+  CheckSquare,
+  Building2,
+  Percent,
+  Users,
+  ShieldCheck,
+  Settings,
+  BarChart3,
   ArrowUpRight,
-  ArrowDownRight,
   ChevronRight,
-  Building,
-  TrendingUp,
-  CloudRain,
   ShieldAlert,
   Calendar,
+  Sparkles,
+  ExternalLink,
+  Plus,
+  BookOpen,
 } from "lucide-react";
 import { useAdminStore } from "@/store/adminStore";
 import { cn } from "@/lib/cn";
 
-export default function OperationsDashboardPage() {
-  const { currentUser, activeFacility } = useAdminStore();
+export default function AdminBusinessDashboardPage() {
+  const { currentUser } = useAdminStore();
 
-  const kpis = [
+  const businessKpis = [
     {
-      title: "Orders today",
-      value: "1,284",
-      delta: "+12%",
-      positive: true,
-      icon: ShoppingCart,
-      color: "text-emerald-700 bg-emerald-50",
-      href: "/admin/orders",
-    },
-    {
-      title: "Packing queue",
-      value: "186",
-      delta: "-18%",
+      title: "Active Catalog SKUs",
+      value: "2,840",
+      delta: "+140 this month",
       positive: true,
       icon: Package,
+      color: "text-emerald-700 bg-emerald-50",
+      href: "/admin/products",
+    },
+    {
+      title: "Pending QA Approvals",
+      value: "12",
+      delta: "4 require FSSAI check",
+      positive: false,
+      icon: CheckSquare,
       color: "text-amber-700 bg-amber-50",
-      href: "/admin/warehouse-readiness",
+      href: "/admin/approvals",
     },
     {
-      title: "Out for delivery",
-      value: "428",
-      delta: "+6%",
+      title: "Brand Agreements",
+      value: "48",
+      delta: "3 renewals due",
       positive: true,
-      icon: Truck,
+      icon: Building2,
       color: "text-blue-700 bg-blue-50",
-      href: "/admin/fulfilment",
+      href: "/admin/brands",
     },
     {
-      title: "Refunds awaiting",
-      value: "₹48,620",
-      delta: "-32%",
+      title: "Active Promotions",
+      value: "09",
+      delta: "2 flash sales live",
       positive: true,
-      icon: RotateCcw,
+      icon: Percent,
       color: "text-purple-700 bg-purple-50",
-      href: "/admin/refunds",
+      href: "/admin/promotions",
     },
     {
-      title: "Low stock",
-      value: "17",
-      delta: "-41%",
+      title: "Authorized Operators",
+      value: "34",
+      delta: "100% 2FA compliant",
       positive: true,
-      icon: AlertTriangle,
-      color: "text-rose-700 bg-rose-50",
-      href: "/admin/inventory/alerts",
-    },
-    {
-      title: "Customer escalations",
-      value: "08",
-      delta: "-27%",
-      positive: true,
-      icon: Headphones,
+      icon: Users,
       color: "text-indigo-700 bg-indigo-50",
-      href: "/admin/customer-care",
+      href: "/admin/users",
+    },
+    {
+      title: "System Audit Events",
+      value: "142",
+      delta: "Recorded today",
+      positive: true,
+      icon: ShieldCheck,
+      color: "text-teal-700 bg-teal-50",
+      href: "/admin/audit",
     },
   ];
 
   return (
     <div className="space-y-6">
-      {/* ── 1. Page Header: Greeting & Context ── */}
+      {/* ── 1. Page Header: Title & Quick Actions ── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-neutral-900">
-            Good morning, {currentUser.name.split(" ")[0]}
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#07563B]">
+            <span>Business Governance</span>
+            <span>•</span>
+            <span>Platform Configuration</span>
+          </div>
+          <h1 className="font-display text-2xl sm:text-3xl font-extrabold tracking-tight text-neutral-900 mt-1">
+            Admin Business Hub
           </h1>
           <p className="mt-0.5 text-xs sm:text-sm text-neutral-500 font-medium">
-            Here&apos;s what needs your attention today across {activeFacility}.
+            Master configuration, catalog merchandising, policy rules, and organizational control.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3.5 py-2 text-xs font-semibold text-neutral-700 shadow-2xs">
-            <Calendar className="h-3.5 w-3.5 text-emerald-700" />
-            <span>Tue, 27 May 2025</span>
-          </div>
+          <Link
+            href="/admin/products/new"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#07563B] text-xs font-bold text-white hover:bg-[#06452F] shadow-xs transition"
+          >
+            <Plus className="w-3.5 h-3.5 text-[#C6F04A]" />
+            <span>Create Product</span>
+          </Link>
+          <Link
+            href="/portal"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-[#E1E8E1] text-xs font-bold text-emerald-800 hover:bg-emerald-50 shadow-xs transition"
+          >
+            <span>Operations Portal</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
         </div>
       </div>
 
-      {/* ── 2. Top KPI Cards Grid (6 Metric Cards) ── */}
+      {/* ── 2. Top Metric Cards Grid ── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 lg:gap-4">
-        {kpis.map((kpi) => {
+        {businessKpis.map((kpi) => {
           const Icon = kpi.icon;
           return (
             <Link
@@ -124,251 +140,238 @@ export default function OperationsDashboardPage() {
               <p className="mt-2 font-display text-2xl font-black tracking-tight text-neutral-900">
                 {kpi.value}
               </p>
-              <div className="mt-1 flex items-center gap-1 text-[11px] font-semibold text-emerald-600">
-                {kpi.positive ? (
-                  <ArrowUpRight className="h-3 w-3" />
-                ) : (
-                  <ArrowDownRight className="h-3 w-3 text-rose-500" />
-                )}
-                <span>{kpi.delta} vs. yesterday</span>
+              <div className="mt-1 text-[11px] font-semibold text-neutral-500">
+                <span>{kpi.delta}</span>
               </div>
             </Link>
           );
         })}
       </div>
 
-      {/* ── 3. Central Two-Column Layout: Fulfilment Control Tower & Needs Attention ── */}
+      {/* ── 3. Central Two-Column Grid: Catalogue Portfolio & Business Policies ── */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1.6fr_1fr]">
-        {/* Left: Fulfilment Control Tower */}
+        {/* Left: Catalogue Health & Department Portfolio */}
         <div className="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-2xs space-y-6">
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="font-display text-lg font-bold text-neutral-900">
-                  Fulfilment Control Tower
+                  Catalogue & Merchandising Health
                 </h2>
                 <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-bold text-emerald-700">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
-                  On track
+                  Live in Storefront
                 </span>
               </div>
-              <p className="text-xs text-neutral-500">Live view of your regional fulfillment flow</p>
+              <p className="text-xs text-neutral-500">Master product assortment and commercial margins by department</p>
             </div>
             <Link
-              href="/admin/fulfilment"
+              href="/admin/catalogue"
               className="text-xs font-bold text-emerald-700 hover:underline flex items-center gap-1"
             >
-              <span>Full Tower</span>
+              <span>Portfolio View</span>
               <ChevronRight className="h-3.5 w-3.5" />
             </Link>
           </div>
 
-          {/* Regional Transit Corridor */}
-          <div className="rounded-xl border border-neutral-100 bg-neutral-50/70 p-4">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-white text-emerald-800 shadow-2xs border border-neutral-200">
-                  <Building className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-neutral-900">Coimbatore DC</p>
-                  <p className="text-[11px] text-neutral-500">Dispatching primary waves</p>
-                </div>
-              </div>
-
-              {/* Transit Corridor Connecting Line */}
-              <div className="flex-1 px-4 text-center">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded-full">
-                  IN TRANSIT · ~8 hrs · 498 km
-                </span>
-                <div className="relative mt-2 h-1.5 w-full rounded-full bg-neutral-200 overflow-hidden">
-                  <div className="absolute left-0 top-0 h-full w-2/3 rounded-full bg-emerald-600 animate-pulse" />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded-xl bg-white text-emerald-800 shadow-2xs border border-neutral-200">
-                  <Building className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-neutral-900">Chennai FC</p>
-                  <p className="text-[11px] text-neutral-500">Receiving hub stock today</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Horizontal Order State Progression */}
-          <div className="grid grid-cols-4 gap-2 pt-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {[
-              { stage: "Paid", count: "1,284", icon: CheckCircle2, active: true },
-              { stage: "Packing", count: "186", icon: Package, active: true },
-              { stage: "Out for delivery", count: "428", icon: Truck, active: true },
-              { stage: "Delivered", count: "670", icon: CheckCircle2, active: false },
-            ].map((step, idx) => (
-              <div
-                key={step.stage}
-                className={cn(
-                  "flex flex-col items-center rounded-xl p-3 text-center border transition",
-                  step.active
-                    ? "border-emerald-200 bg-emerald-50/40 text-emerald-950"
-                    : "border-neutral-100 bg-neutral-50 text-neutral-400"
-                )}
-              >
-                <step.icon className={cn("h-4 w-4 mb-1", step.active ? "text-emerald-700" : "text-neutral-400")} />
-                <span className="text-[11px] font-semibold">{step.stage}</span>
-                <span className="font-display font-extrabold text-lg text-neutral-900">{step.count}</span>
+              {
+                dept: "Grocery & Gourmet Food",
+                skus: 1240,
+                margin: "24.5%",
+                compliance: "100% FSSAI",
+                color: "border-emerald-200 bg-emerald-50/40",
+              },
+              {
+                dept: "Beauty & Personal Care",
+                skus: 580,
+                margin: "42.0%",
+                compliance: "100% Safety Cleared",
+                color: "border-pink-200 bg-pink-50/30",
+              },
+              {
+                dept: "Electronics & Appliances",
+                skus: 420,
+                margin: "18.2%",
+                compliance: "BIS & CE Certified",
+                color: "border-blue-200 bg-blue-50/30",
+              },
+              {
+                dept: "Fashion & Lifestyle",
+                skus: 600,
+                margin: "48.5%",
+                compliance: "Seasonal Active",
+                color: "border-amber-200 bg-amber-50/30",
+              },
+            ].map((d) => (
+              <div key={d.dept} className={cn("p-4 rounded-xl border space-y-2", d.color)}>
+                <div className="flex justify-between items-start">
+                  <span className="font-bold text-xs text-neutral-900">{d.dept}</span>
+                  <span className="text-[11px] font-mono font-bold text-emerald-800">{d.margin} avg margin</span>
+                </div>
+                <div className="flex items-center justify-between text-xs text-neutral-600 pt-1 border-t border-black/5">
+                  <span>{d.skus.toLocaleString()} Active SKUs</span>
+                  <span className="text-[10px] font-semibold text-emerald-700">{d.compliance}</span>
+                </div>
               </div>
             ))}
+          </div>
+
+          <div className="p-4 rounded-xl bg-neutral-50 border border-neutral-200/60 flex items-center justify-between">
+            <div className="space-y-0.5">
+              <span className="text-xs font-bold text-neutral-900">Merchandising Quality Assurance</span>
+              <p className="text-[11px] text-neutral-500">12 new SKU submissions awaiting photo and price verification before publish.</p>
+            </div>
+            <Link
+              href="/admin/approvals"
+              className="px-3 py-1.5 rounded-lg bg-[#07563B] text-white text-xs font-bold hover:bg-[#06452F] transition flex-shrink-0"
+            >
+              Review Queue
+            </Link>
           </div>
         </div>
 
-        {/* Right: Needs Attention Panel */}
+        {/* Right: Business Rules & Operational Safeguards */}
         <div className="rounded-2xl border border-neutral-200/80 bg-white p-6 shadow-2xs space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-display text-base font-bold text-neutral-900 flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-rose-500" />
-              <span>Needs attention</span>
+              <BookOpen className="h-4 w-4 text-emerald-700" />
+              <span>Active Business Rules</span>
             </h2>
-            <Link href="/admin/exceptions" className="text-xs font-bold text-emerald-700 hover:underline">
-              View all
+            <Link href="/admin/settings" className="text-xs font-bold text-emerald-700 hover:underline">
+              Configure
             </Link>
           </div>
 
-          <div className="divide-y divide-neutral-100 space-y-1">
-            {[
-              {
-                title: "17 SKUs low in stock",
-                desc: "Across Home, Beauty and Grocery departments",
-                severity: "High",
-                href: "/admin/inventory/alerts",
-                color: "text-amber-500",
-              },
-              {
-                title: "₹48,620 in refunds awaiting",
-                desc: "12 requests pending manager approval",
-                severity: "High",
-                href: "/admin/refunds",
-                color: "text-amber-500",
-              },
-              {
-                title: "8 customer escalations",
-                desc: "Response overdue for 3 active tickets",
-                severity: "Medium",
-                href: "/admin/customer-care",
-                color: "text-blue-500",
-              },
-              {
-                title: "Delay risk on 24 orders",
-                desc: "Chennai FC — regional weather advisory",
-                severity: "Critical",
-                href: "/admin/exceptions",
-                color: "text-rose-500",
-              },
-              {
-                title: "High RTO risk flagged",
-                desc: "12 high-value orders from Tier 3 pincodes",
-                severity: "Medium",
-                href: "/admin/orders?status=exception",
-                color: "text-purple-500",
-              },
-            ].map((item) => (
-              <Link
-                key={item.title}
-                href={item.href}
-                className="group flex items-center justify-between py-2.5 hover:bg-neutral-50 px-2 rounded-xl transition cursor-pointer"
-              >
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className={cn("h-4 w-4 shrink-0 mt-0.5", item.color)} />
-                  <div>
-                    <p className="text-xs font-bold text-neutral-900 group-hover:text-emerald-800 transition">
-                      {item.title}
-                    </p>
-                    <p className="text-[11px] text-neutral-500">{item.desc}</p>
-                  </div>
-                </div>
-                <ChevronRight className="h-4 w-4 text-neutral-300 group-hover:text-neutral-700 group-hover:translate-x-0.5 transition" />
-              </Link>
-            ))}
+          <div className="space-y-3 text-xs">
+            <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-between">
+              <div>
+                <span className="font-bold text-neutral-900 block">Free Delivery Basket Threshold</span>
+                <span className="text-[11px] text-neutral-500">Orders above ₹499 qualify for zero delivery fee.</span>
+              </div>
+              <span className="font-mono font-bold text-sm text-emerald-800">₹499</span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-between">
+              <div>
+                <span className="font-bold text-neutral-900 block">Auto-Refund Policy Window</span>
+                <span className="text-[11px] text-neutral-500">Instant doorstep claim authorization limit.</span>
+              </div>
+              <span className="font-mono font-bold text-sm text-neutral-800">5 Days</span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-between">
+              <div>
+                <span className="font-bold text-neutral-900 block">Tiered Refund Matrix</span>
+                <span className="text-[11px] text-neutral-500">Tier 1 (&lt;₹500), Tier 2 (₹500-₹2k), Tier 3 (&gt;₹2k).</span>
+              </div>
+              <span className="font-bold text-[11px] text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded-full">Enforced</span>
+            </div>
+
+            <div className="p-3 rounded-xl bg-neutral-50 border border-neutral-100 flex items-center justify-between">
+              <div>
+                <span className="font-bold text-neutral-900 block">Staff 2FA Security</span>
+                <span className="text-[11px] text-neutral-500">Mandatory biometric / TOTP token at login.</span>
+              </div>
+              <span className="font-bold text-[11px] text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded-full">Required</span>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-neutral-100">
+            <Link
+              href="/admin/users"
+              className="flex items-center justify-between text-xs font-bold text-neutral-700 hover:text-emerald-800 transition py-1"
+            >
+              <span>Manage Role Permissions (RBAC)</span>
+              <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </div>
 
-      {/* ── 4. Lower Section: Orders by Brand & Orders by Category ── */}
+      {/* ── 4. Bottom Grid: Administrative Audit & Quick Navigation ── */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {/* Orders by Brand */}
+        {/* Recent Admin Audit Activity */}
         <div className="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-2xs space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-neutral-900">Orders by brand</h3>
-            <span className="text-[10px] text-neutral-400 font-semibold uppercase">Top brands today</span>
+            <h3 className="text-xs font-bold text-neutral-900">Recent Admin Actions</h3>
+            <Link href="/admin/audit" className="text-[10px] text-emerald-700 font-bold uppercase hover:underline">
+              Full Log
+            </Link>
           </div>
-          <div className="space-y-2">
+          <div className="divide-y divide-neutral-100 text-xs space-y-2">
             {[
-              { brand: "HyperMart Essentials", pct: 32 },
-              { brand: "FreshLeaf", pct: 18 },
-              { brand: "UrbanNest", pct: 12 },
-              { brand: "FitFuel", pct: 11 },
-              { brand: "GlowPlus", pct: 9 },
-            ].map((b) => (
-              <div key={b.brand} className="space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="font-semibold text-neutral-700">{b.brand}</span>
-                  <span className="font-bold text-neutral-900">{b.pct}%</span>
+              {
+                user: "Dev K. (Super Admin)",
+                action: "Approved High-Value Refund (RF-88321)",
+                time: "10 mins ago",
+              },
+              {
+                user: "Priya N. (Catalogue)",
+                action: "Published 4 new SKUs in Organic Grocery",
+                time: "32 mins ago",
+              },
+              {
+                user: "Dev K. (Super Admin)",
+                action: "Updated Free Delivery threshold to ₹499",
+                time: "2 hours ago",
+              },
+            ].map((a, i) => (
+              <div key={i} className="pt-2 flex justify-between items-start">
+                <div>
+                  <p className="font-bold text-neutral-900 leading-snug">{a.action}</p>
+                  <p className="text-[10px] text-neutral-400">{a.user}</p>
                 </div>
-                <div className="h-2 w-full rounded-full bg-neutral-100 overflow-hidden">
-                  <div className="h-full rounded-full bg-emerald-700" style={{ width: `${b.pct}%` }} />
-                </div>
+                <span className="text-[10px] text-neutral-400 font-mono whitespace-nowrap">{a.time}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Orders by Category */}
+        {/* Business Reporting Snapshot */}
         <div className="rounded-2xl border border-neutral-200/80 bg-white p-5 shadow-2xs space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-neutral-900">Orders by category</h3>
-            <span className="text-[10px] text-neutral-400 font-semibold uppercase">Share of orders</span>
+            <h3 className="text-xs font-bold text-neutral-900">Commercial Performance</h3>
+            <Link href="/admin/reports" className="text-[10px] text-emerald-700 font-bold uppercase hover:underline">
+              BI Analytics
+            </Link>
           </div>
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {[
-              { cat: "Grocery & Fresh", pct: 28 },
-              { cat: "Home & Living", pct: 20 },
-              { cat: "Beauty & Personal Care", pct: 16 },
-              { cat: "Electronics", pct: 14 },
-              { cat: "Fashion", pct: 12 },
-            ].map((c) => (
-              <div key={c.cat} className="space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="font-semibold text-neutral-700">{c.cat}</span>
-                  <span className="font-bold text-neutral-900">{c.pct}%</span>
+              { label: "Net Revenue Today", value: "₹4,12,800", delta: "+14.2% YoY" },
+              { label: "Gross Margin Rate", value: "31.8%", delta: "+1.2% vs target" },
+              { label: "Customer Return Rate", value: "2.4%", delta: "-0.6% vs avg" },
+            ].map((m) => (
+              <div key={m.label} className="p-2.5 rounded-xl bg-neutral-50 border border-neutral-100 flex justify-between items-center text-xs">
+                <div>
+                  <span className="text-neutral-500 block text-[11px]">{m.label}</span>
+                  <span className="font-bold text-neutral-900 text-sm font-mono">{m.value}</span>
                 </div>
-                <div className="h-2 w-full rounded-full bg-neutral-100 overflow-hidden">
-                  <div className="h-full rounded-full bg-[#1D4E89]" style={{ width: `${c.pct}%` }} />
-                </div>
+                <span className="text-[11px] font-semibold text-emerald-700">{m.delta}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Operational Purpose Card */}
-        <div className="rounded-2xl bg-gradient-to-br from-[#063922] to-[#0A4F30] p-6 text-white shadow-md flex flex-col justify-between">
+        {/* Enterprise Governance Card */}
+        <div className="rounded-2xl bg-gradient-to-br from-[#073922] to-[#0A4F30] p-6 text-white shadow-md flex flex-col justify-between">
           <div className="space-y-2">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold text-accent">
-              <TrendingUp className="h-3 w-3" />
-              <span>Operational Excellence</span>
+              <Sparkles className="h-3 w-3" />
+              <span>Platform Control</span>
             </span>
             <h3 className="font-display text-xl font-bold leading-tight">
-              Keep orders moving. <br />
-              Keep customers happy.
+              HyperMart Governance & Configuration
             </h3>
             <p className="text-xs text-emerald-100/80 leading-relaxed pt-1">
-              Real-time dispatch telemetry enables Coimbatore DC and Chennai FC to resolve bottlenecks before they impact SLA.
+              Business rules, brand terms, and permissions defined here govern both consumer storefront and operations execution.
             </p>
           </div>
 
           <div className="pt-6 border-t border-white/10 flex items-center justify-between text-xs">
-            <span className="text-emerald-200/70">Next Dispatch Wave</span>
-            <span className="font-bold text-accent">W-7241 at 14:00</span>
+            <span className="text-emerald-200/70">Audit Security</span>
+            <span className="font-bold text-accent">SOC-2 & ISO 27001</span>
           </div>
         </div>
       </div>

@@ -328,6 +328,15 @@ export const PortalTopbar: React.FC = () => {
               </div>
 
               <div className="px-4 py-2 space-y-1 text-xs text-gray-700">
+                <Link
+                  href="/admin"
+                  onClick={() => setIsProfileOpen(false)}
+                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-emerald-50 text-emerald-900 font-bold hover:bg-emerald-100 transition-colors mb-2"
+                >
+                  <span>Switch to Admin Portal</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </Link>
+
                 <div className="flex justify-between py-1 text-[11px]">
                   <span className="text-gray-400">Regional DC</span>
                   <span className="font-semibold text-gray-800">Zone 04 South</span>

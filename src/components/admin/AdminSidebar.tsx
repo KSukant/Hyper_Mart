@@ -4,22 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Truck,
-  Warehouse,
-  AlertTriangle,
   FolderKanban,
   Package,
   CheckSquare,
   Building2,
   Percent,
-  Boxes,
-  ClipboardList,
-  BellRing,
-  ShoppingCart,
-  RotateCcw,
-  Headphones,
-  Receipt,
-  CircleDollarSign,
+  BookOpen,
   BarChart3,
   Users,
   ShieldCheck,
@@ -29,6 +19,7 @@ import {
   LogOut,
   HelpCircle,
   ExternalLink,
+  Layers,
 } from "lucide-react";
 import { useAdminStore } from "@/store/adminStore";
 import { cn } from "@/lib/cn";
@@ -48,55 +39,44 @@ interface NavGroup {
 
 const NAV_GROUPS: NavGroup[] = [
   {
-    groupTitle: "Operations",
+    groupTitle: "Business Overview",
     items: [
-      { label: "Home", href: "/admin", icon: LayoutDashboard },
-      { label: "Fulfilment Tower", href: "/admin/fulfilment", icon: Truck },
-      { label: "Warehouse Readiness", href: "/admin/warehouse-readiness", icon: Warehouse },
-      { label: "Exception Queue", href: "/admin/exceptions", icon: AlertTriangle, badge: 5, badgeColor: "bg-danger text-white" },
+      { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+    ],
+  },
+  {
+    groupTitle: "Catalogue Management",
+    items: [
+      { label: "Catalogue Overview", href: "/admin/catalogue", icon: FolderKanban },
+      { label: "Products & Master SKUs", href: "/admin/products", icon: Package },
+      { label: "Product Approvals", href: "/admin/approvals", icon: CheckSquare, badge: 12, badgeColor: "bg-amber-500 text-white" },
+      { label: "Brands & Procurement", href: "/admin/brands", icon: Building2 },
     ],
   },
   {
     groupTitle: "Merchandising",
     items: [
-      { label: "Catalogue Overview", href: "/admin/catalogue", icon: FolderKanban },
-      { label: "Products", href: "/admin/products", icon: Package },
-      { label: "Product Approvals", href: "/admin/approvals", icon: CheckSquare, badge: 12, badgeColor: "bg-amber-500 text-white" },
-      { label: "Brands & Procurement", href: "/admin/brands", icon: Building2 },
       { label: "Offers & Promotions", href: "/admin/promotions", icon: Percent },
     ],
   },
   {
-    groupTitle: "Inventory & Supply",
+    groupTitle: "Business Rules",
     items: [
-      { label: "Inventory Overview", href: "/admin/inventory", icon: Boxes },
-      { label: "Stock Ledger", href: "/admin/inventory/ledger", icon: ClipboardList },
-      { label: "Inventory Alerts", href: "/admin/inventory/alerts", icon: BellRing, badge: 7, badgeColor: "bg-danger text-white" },
-      { label: "Purchase Orders", href: "/admin/purchase-orders", icon: ShoppingCart },
-    ],
-  },
-  {
-    groupTitle: "Orders & Support",
-    items: [
-      { label: "Orders", href: "/admin/orders", icon: Package },
-      { label: "Returns & Exceptions", href: "/admin/returns", icon: RotateCcw },
-      { label: "Customer Care", href: "/admin/customer-care", icon: Headphones, badge: 24, badgeColor: "bg-primary text-white" },
-      { label: "Refund Approvals", href: "/admin/refunds", icon: Receipt, badge: 12, badgeColor: "bg-amber-600 text-white" },
-    ],
-  },
-  {
-    groupTitle: "Finance & Insights",
-    items: [
-      { label: "Payments & Reconciliation", href: "/admin/payments", icon: CircleDollarSign },
-      { label: "Reports & Analytics", href: "/admin/reports", icon: BarChart3 },
+      { label: "Return & Delivery Rules", href: "/admin/settings", icon: BookOpen },
     ],
   },
   {
     groupTitle: "Governance",
     items: [
-      { label: "Users & Access", href: "/admin/users", icon: Users },
-      { label: "Audit Log", href: "/admin/audit", icon: ShieldCheck },
-      { label: "Settings", href: "/admin/settings", icon: Settings },
+      { label: "Users & Permissions", href: "/admin/users", icon: Users },
+      { label: "System Audit Log", href: "/admin/audit", icon: ShieldCheck },
+      { label: "System Settings", href: "/admin/settings", icon: Settings },
+    ],
+  },
+  {
+    groupTitle: "Reports",
+    items: [
+      { label: "Business Reports", href: "/admin/reports", icon: BarChart3 },
     ],
   },
 ];
@@ -213,8 +193,20 @@ export function AdminSidebar() {
           </div>
         ))}
 
-        {/* Storefront Link Indicator */}
-        <div className="pt-2 border-t border-[#0C4A2C]/60">
+        {/* Portal Switcher & Storefront Links */}
+        <div className="pt-2 space-y-1 border-t border-[#0C4A2C]/60">
+          <Link
+            href="/portal"
+            className={cn(
+              "flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-xs font-semibold text-[#C6F04A] bg-[#C6F04A]/10 hover:bg-[#C6F04A]/20 transition cursor-pointer border border-[#C6F04A]/30",
+              sidebarCollapsed && "justify-center px-0"
+            )}
+            title={sidebarCollapsed ? "Switch to Operations Portal" : undefined}
+          >
+            <Layers className="h-4 w-4 shrink-0 text-[#C6F04A]" />
+            {!sidebarCollapsed && <span>Operations Portal</span>}
+          </Link>
+
           <Link
             href="/"
             target="_blank"

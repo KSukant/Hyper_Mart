@@ -6,17 +6,17 @@ import { Header } from "./Header";
 import { MobileNav } from "./MobileNav";
 import { Toaster } from "@/components/ui/primitives";
 
-/** Restores saved cart/location/member state, then renders the page. Isolates /admin from customer storefront chrome. */
+/** Restores saved cart/location/member state, then renders the page. Isolates /admin and /portal from customer storefront chrome. */
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith("/admin");
+  const isEnterprisePortal = pathname?.startsWith("/admin") || pathname?.startsWith("/portal");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     rehydrateAll().finally(() => setReady(true));
   }, []);
 
-  if (isAdmin) {
+  if (isEnterprisePortal) {
     return (
       <>
         {ready ? children : <Splash />}

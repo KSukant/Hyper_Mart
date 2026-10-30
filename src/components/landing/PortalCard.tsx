@@ -46,7 +46,7 @@ export function PortalCard({ portal, className = "" }: PortalCardProps) {
 
   const cardContent = (
     <div
-      className={`group relative h-full flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-white p-3.5 sm:p-4 border transition-all duration-300 shadow-xs ${
+      className={`group relative h-full flex flex-col justify-between rounded-2xl sm:rounded-3xl bg-white p-3.5 sm:p-4 border transition-all duration-300 shadow-sm ${
         isActive
           ? "hover:shadow-xl hover:-translate-y-1.5 cursor-pointer"
           : "opacity-95 cursor-not-allowed"
@@ -72,7 +72,7 @@ export function PortalCard({ portal, className = "" }: PortalCardProps) {
 
           {/* Icon Badge container placed on top-left of image area */}
           <div
-            className="absolute top-2.5 left-2.5 w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-xs backdrop-blur-xs border transition-transform duration-300 group-hover:scale-110"
+            className="absolute top-2.5 left-2.5 w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-sm backdrop-blur-sm border transition-transform duration-300 group-hover:scale-110"
             style={{
               backgroundColor: portal.accentBg,
               borderColor: portal.accentBorder,
@@ -98,7 +98,7 @@ export function PortalCard({ portal, className = "" }: PortalCardProps) {
         {isActive ? (
           <div className="w-full flex justify-end">
             <span
-              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white shadow-xs transition-transform duration-300 group-hover:scale-110"
+              className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-white shadow-sm transition-transform duration-300 group-hover:scale-110"
               style={{ backgroundColor: portal.accentColor }}
             >
               <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5" />

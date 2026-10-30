@@ -172,6 +172,13 @@ h1, h2, h3, .font-display { font-family: "Plus Jakarta Sans", "Inter Variable", 
 .no-scrollbar { scrollbar-width: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
+/* Portal enterprise sidebar / main scrollbar */
+.custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(99,132,115,0.4) transparent; }
+.custom-scrollbar::-webkit-scrollbar { width: 5px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(99,132,115,0.4); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(99,132,115,0.7); }
+
 /* Hero scene animations */
 @keyframes road-move { from { transform: translateX(0); } to { transform: translateX(-120px); } }
 @keyframes skyline-move { from { transform: translateX(0); } to { transform: translateX(-1200px); } }

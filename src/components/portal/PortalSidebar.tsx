@@ -29,15 +29,18 @@ import {
   Layers,
   Sparkles,
   Package,
-  ExternalLink,
 } from 'lucide-react';
+import { usePortalContextStore } from '@/store/portalContextStore';
+import type { EnterprisePortal } from '@/types/security';
 
 interface NavItem {
+  id: string;
   label: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   badge?: string;
   badgeColor?: string;
+  permission: string;
 }
 
 interface NavGroup {
@@ -45,70 +48,121 @@ interface NavGroup {
   items: NavItem[];
 }
 
-const NAV_GROUPS: NavGroup[] = [
+const SUPPORT_NAV_GROUPS: NavGroup[] = [
   {
-    title: 'OPERATIONS OVERVIEW',
+    title: 'CUSTOMER CARE & DESK',
     items: [
-      { label: 'Operations Dashboard', href: '/portal', icon: LayoutDashboard },
-      { label: 'Exception Queue', href: '/portal/exceptions', icon: AlertTriangle, badge: '5 critical', badgeColor: 'bg-rose-500 text-white' },
+      { id: 'support-dashboard', label: 'Support Dashboard', href: '/portal/support', icon: LayoutDashboard, permission: 'support.dashboard.read' },
+      { id: 'support-cases', label: 'Support Cases', href: '/portal/support', icon: LifeBuoy, badge: '28', permission: 'support.case.read' },
+      { id: 'customer-care', label: 'Customer Care Live Desk', href: '/portal/customer-care', icon: Headphones, badge: '24', permission: 'support.customer_care.read' },
+      { id: 'customer-360', label: 'Customer 360', href: '/portal/customers/c-101', icon: UserCheck, permission: 'support.customer360.read_limited' },
     ],
   },
   {
-    title: 'ORDERS & FULFILMENT',
+    title: 'CASE RESOLUTIONS',
     items: [
-      { label: 'Orders Stream', href: '/portal/orders', icon: Package },
-      { label: 'Fulfilment Control Tower', href: '/portal/fulfilment', icon: Truck },
-      { label: 'Returns & Reverse Logistics', href: '/portal/returns', icon: RotateCcw, badge: '14' },
+      { id: 'complaints', label: 'Complaints', href: '/portal/complaints', icon: FileWarning, badge: '5 at risk', badgeColor: 'bg-rose-500 text-white', permission: 'support.complaint.read' },
+      { id: 'returns-refunds', label: 'Returns & Refund Support', href: '/portal/returns-refunds', icon: RotateCcw, badge: '14', permission: 'support.return_refund.read' },
+      { id: 'warranty-repairs', label: 'Warranty & Repairs', href: '/portal/warranty-repair', icon: Wrench, badge: '8', permission: 'support.warranty.read' },
+      { id: 'escalations', label: 'Support Escalations', href: '/portal/escalations', icon: AlertTriangle, badge: '4 critical', badgeColor: 'bg-amber-400 text-gray-950 font-bold', permission: 'support.escalation.read' },
     ],
   },
   {
-    title: 'INVENTORY & WAREHOUSE',
+    title: 'SLA & AUDIT',
     items: [
-      { label: 'Multi-Facility Inventory', href: '/portal/inventory', icon: Boxes },
-      { label: 'Stock Ledger & Adjustments', href: '/portal/inventory/ledger', icon: ClipboardList },
-      { label: 'Low Stock & Expiry Alerts', href: '/portal/inventory/alerts', icon: BellRing, badge: '7', badgeColor: 'bg-rose-500 text-white' },
-      { label: 'Purchase Orders', href: '/portal/purchase-orders', icon: ShoppingCart },
-      { label: 'Warehouse Readiness (Live)', href: '/portal/warehouse-readiness', icon: Warehouse },
+      { id: 'support-reports', label: 'Support SLA Reports', href: '/portal/team-performance', icon: Users, permission: 'support.report.read' },
+      { id: 'support-audit', label: 'Support Audit History', href: '/portal/audit-history', icon: ShieldCheck, permission: 'support.audit.read' },
+    ],
+  },
+];
+
+const FINANCE_NAV_GROUPS: NavGroup[] = [
+  {
+    title: 'TRANSACTIONS & LEDGER',
+    items: [
+      { id: 'finance-dashboard', label: 'Finance Dashboard', href: '/portal/payment-ledger', icon: LayoutDashboard, permission: 'finance.dashboard.read' },
+      { id: 'payment-ledger', label: 'Payment Ledger', href: '/portal/payment-ledger', icon: ReceiptText, permission: 'finance.payment.read' },
+      { id: 'refund-processing', label: 'Refund Processing', href: '/portal/refund-processing', icon: ArrowDownLeft, badge: '12', permission: 'finance.refund.read' },
     ],
   },
   {
-    title: 'CUSTOMER OPERATIONS',
+    title: 'SETTLEMENT & AUDIT',
     items: [
-      { label: 'Customer Care Live Desk', href: '/portal/customer-care', icon: Headphones, badge: '24' },
-      { label: 'Customer 360 Lookup', href: '/portal/customers/c-101', icon: UserCheck },
+      { id: 'cod-settlement', label: 'COD Settlement', href: '/portal/cod-settlement', icon: DollarSign, badge: '2 holds', badgeColor: 'bg-rose-500 text-white', permission: 'finance.cod.read' },
+      { id: 'payment-exceptions', label: 'Payment Exceptions', href: '/portal/payment-exceptions', icon: AlertOctagon, badge: '9', permission: 'finance.payment_exception.read' },
+      { id: 'reconciliation', label: 'Gateway Reconciliation', href: '/portal/reconciliation-reports', icon: FileSpreadsheet, permission: 'finance.reconciliation.read' },
+      { id: 'settlement-reports', label: 'Settlement Reports', href: '/portal/reconciliation-reports', icon: ClipboardList, permission: 'finance.report.read' },
     ],
   },
   {
-    title: 'SUPPORT MANAGEMENT',
+    title: 'FINANCE GOVERNANCE',
     items: [
-      { label: 'Support Case Dashboard', href: '/portal/support', icon: LifeBuoy, badge: '28' },
-      { label: 'Complaint Cases', href: '/portal/complaints', icon: FileWarning, badge: '5 at risk', badgeColor: 'bg-rose-500 text-white' },
-      { label: 'Returns & Refunds Support', href: '/portal/returns-refunds', icon: RotateCcw, badge: '14' },
-      { label: 'Warranty & Repair Support', href: '/portal/warranty-repair', icon: Wrench, badge: '8' },
-      { label: 'Escalations Management', href: '/portal/escalations', icon: AlertTriangle, badge: '4 critical', badgeColor: 'bg-amber-400 text-gray-950 font-bold' },
+      { id: 'finance-audit', label: 'Finance Audit History', href: '/portal/audit-history', icon: ShieldCheck, permission: 'finance.audit.read' },
+      { id: 'finance-reports', label: 'Finance Reports', href: '/portal/team-performance', icon: Users, permission: 'finance.report.read' },
+    ],
+  },
+];
+
+const OPERATIONS_NAV_GROUPS: NavGroup[] = [
+  {
+    title: 'OPERATIONS COMMAND',
+    items: [
+      { id: 'operations-dashboard', label: 'Operations Dashboard', href: '/portal', icon: LayoutDashboard, permission: 'operations.dashboard.read' },
+      { id: 'orders-stream', label: 'Orders Stream', href: '/portal/orders', icon: Package, permission: 'operations.orders.read' },
+      { id: 'fulfilment-control', label: 'Fulfilment Control Tower', href: '/portal/fulfilment', icon: Truck, permission: 'operations.fulfilment.read' },
     ],
   },
   {
-    title: 'FINANCE MONITORING',
+    title: 'WAREHOUSE & INVENTORY',
     items: [
-      { label: 'Payment Ledger', href: '/portal/payment-ledger', icon: ReceiptText },
-      { label: 'COD Settlement', href: '/portal/cod-settlement', icon: DollarSign, badge: '2 holds', badgeColor: 'bg-rose-500 text-white' },
-      { label: 'Refund Processing', href: '/portal/refund-processing', icon: ArrowDownLeft, badge: '12' },
-      { label: 'Payment Exceptions', href: '/portal/payment-exceptions', icon: AlertOctagon, badge: '9' },
-      { label: 'Reconciliation Reports', href: '/portal/reconciliation-reports', icon: FileSpreadsheet },
+      { id: 'picking-packing', label: 'Picking & Packing Status', href: '/portal/warehouse-readiness', icon: Warehouse, permission: 'operations.warehouse_status.read' },
+      { id: 'inventory', label: 'Inventory Management', href: '/portal/inventory', icon: Boxes, permission: 'operations.inventory.read' },
+      { id: 'stock-alerts', label: 'Low Stock & Expiry Alerts', href: '/portal/inventory/alerts', icon: BellRing, badge: '7', badgeColor: 'bg-rose-500 text-white', permission: 'operations.low_stock.read' },
+      { id: 'warehouse-exceptions', label: 'Warehouse Exceptions', href: '/portal/exceptions', icon: AlertTriangle, badge: '5 critical', badgeColor: 'bg-rose-500 text-white', permission: 'operations.exception.read' },
     ],
   },
   {
-    title: 'OPERATIONAL REPORTING & GOVERNANCE',
+    title: 'DISPATCH & LOGISTICS',
     items: [
-      { label: 'Audit History', href: '/portal/audit-history', icon: ShieldCheck },
-      { label: 'Team Performance', href: '/portal/team-performance', icon: Users, badge: '14 active' },
+      { id: 'dispatch-verification', label: 'Dispatch Verification', href: '/portal/fulfilment', icon: ClipboardList, permission: 'operations.dispatch.read' },
+      { id: 'delivery-operations', label: 'Delivery Operations', href: '/portal/orders', icon: Truck, permission: 'operations.delivery.read' },
+      { id: 'returns-movement', label: 'Returns Movement', href: '/portal/returns', icon: RotateCcw, badge: '14', permission: 'operations.return_movement.read' },
+      { id: 'staff-shifts', label: 'Staff and Shifts', href: '/portal/team-performance', icon: Users, badge: '14 active', permission: 'operations.staff.read' },
+      { id: 'operations-reports', label: 'Operations Reports', href: '/portal/audit-history', icon: ShieldCheck, permission: 'operations.report.read' },
     ],
   },
 ];
 
 export const PortalSidebar: React.FC = () => {
   const pathname = usePathname();
+  const { activePortal, session } = usePortalContextStore();
+
+  const getNavGroups = (): NavGroup[] => {
+    switch (activePortal) {
+      case 'support':
+        return SUPPORT_NAV_GROUPS;
+      case 'finance':
+        return FINANCE_NAV_GROUPS;
+      case 'operations':
+      default:
+        return OPERATIONS_NAV_GROUPS;
+    }
+  };
+
+  const getPortalTitle = () => {
+    switch (activePortal) {
+      case 'support':
+        return { name: 'Support Portal', badge: 'SUPPORT', role: 'Support Lead' };
+      case 'finance':
+        return { name: 'Finance Portal', badge: 'FINANCE', role: 'Finance Manager' };
+      case 'operations':
+      default:
+        return { name: 'Operations Manager Portal', badge: 'OPERATIONS', role: 'Operations Manager' };
+    }
+  };
+
+  const portalInfo = getPortalTitle();
+  const navGroups = getNavGroups();
 
   return (
     <aside
@@ -126,12 +180,12 @@ export const PortalSidebar: React.FC = () => {
               <span className="font-bold text-lg tracking-tight text-white leading-none">
                 HyperMart
               </span>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-[#C6F04A]/20 text-[#C6F04A] border border-[#C6F04A]/30">
-                PRO
+              <span className="text-[9.5px] uppercase font-black tracking-wider px-1.5 py-0.5 rounded bg-[#C6F04A]/20 text-[#C6F04A] border border-[#C6F04A]/30">
+                {portalInfo.badge}
               </span>
             </div>
-            <p className="text-[11px] font-medium text-[#88B89F] tracking-wide mt-1">
-              Operations Portal • Ops Core
+            <p className="text-[11px] font-medium text-[#88B89F] tracking-wide mt-1 truncate max-w-[190px]">
+              {portalInfo.name}
             </p>
           </div>
         </div>
@@ -146,57 +200,66 @@ export const PortalSidebar: React.FC = () => {
         </div>
       </div>
 
-      {/* Navigation Links Scroll Area */}
+      {/* Navigation Links Scroll Area - Filtered strictly by active portal permissions */}
       <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-6 custom-scrollbar">
-        {NAV_GROUPS.map((group) => (
-          <div key={group.title} className="space-y-1.5">
-            <div className="px-3 text-[10px] font-black tracking-wider text-[#699E83] uppercase">
-              {group.title}
+        {navGroups.map((group) => {
+          // Filter items by session permissions
+          const visibleItems = group.items.filter((item) =>
+            session.permissions.includes(item.permission)
+          );
+
+          if (visibleItems.length === 0) return null;
+
+          return (
+            <div key={group.title} className="space-y-1.5">
+              <div className="px-3 text-[10px] font-black tracking-wider text-[#699E83] uppercase">
+                {group.title}
+              </div>
+
+              <div className="space-y-1">
+                {visibleItems.map((item) => {
+                  const isActive =
+                    pathname === item.href ||
+                    (item.href !== '/portal' && pathname.startsWith(item.href));
+                  const Icon = item.icon;
+
+                  return (
+                    <Link
+                      key={item.id + item.href}
+                      href={item.href}
+                      className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 ${
+                        isActive
+                          ? 'bg-[#C6F04A] text-[#053221] font-bold shadow-md shadow-[#C6F04A]/10 translate-x-1'
+                          : 'text-[#A8CEB8] hover:text-white hover:bg-[#0B442C]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Icon
+                          className={`w-4 h-4 transition-transform group-hover:scale-110 ${
+                            isActive ? 'text-[#053221]' : 'text-[#7CA891]'
+                          }`}
+                        />
+                        <span className="truncate">{item.label}</span>
+                      </div>
+
+                      {item.badge && (
+                        <span
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-tight flex-shrink-0 ${
+                            isActive
+                              ? 'bg-[#053221] text-[#C6F04A]'
+                              : item.badgeColor || 'bg-[#0C4A30] text-[#A6CDB6]'
+                          }`}
+                        >
+                          {item.badge}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
-
-            <div className="space-y-1">
-              {group.items.map((item) => {
-                const isActive =
-                  pathname === item.href ||
-                  (item.href !== '/portal' && pathname.startsWith(item.href));
-                const Icon = item.icon;
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 ${
-                      isActive
-                        ? 'bg-[#C6F04A] text-[#053221] font-bold shadow-md shadow-[#C6F04A]/10 translate-x-1'
-                        : 'text-[#A8CEB8] hover:text-white hover:bg-[#0B442C]'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <Icon
-                        className={`w-4 h-4 transition-transform group-hover:scale-110 ${
-                          isActive ? 'text-[#053221]' : 'text-[#7CA891]'
-                        }`}
-                      />
-                      <span className="truncate">{item.label}</span>
-                    </div>
-
-                    {item.badge && (
-                      <span
-                        className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-tight flex-shrink-0 ${
-                          isActive
-                            ? 'bg-[#053221] text-[#C6F04A]'
-                            : item.badgeColor || 'bg-[#0C4A30] text-[#A6CDB6]'
-                        }`}
-                      >
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
       {/* Footer Info & Security Context */}
@@ -209,11 +272,11 @@ export const PortalSidebar: React.FC = () => {
           <span className="text-[10px] text-emerald-400 font-mono">v3.4.1</span>
         </div>
         <p className="text-[10px] leading-relaxed text-[#81AB95]">
-          Role: <strong className="text-white">Operations Manager</strong> • Coimbatore DC & Chennai FC
+          Active Context: <strong className="text-white">{portalInfo.role}</strong>
         </p>
         <div className="flex items-center justify-between pt-1 text-[9px] text-[#5C856F] uppercase tracking-wider font-mono">
           <span>TLS 1.3 256-BIT</span>
-          <span className="text-emerald-400">● AUDITED</span>
+          <span className="text-emerald-400">● PORTAL ISOLATED</span>
         </div>
       </div>
     </aside>

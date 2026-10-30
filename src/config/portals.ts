@@ -47,7 +47,7 @@ export const PORTAL_REGISTRY: PortalConfig[] = [
     accentBorder: "#FDE1B5",
     accentText: "#B45309",
     status: "active",
-    destination: "/admin/login?portal=admin",
+    destination: "/admin",
     permissionRequired: "admin:access",
     row: 1,
   },

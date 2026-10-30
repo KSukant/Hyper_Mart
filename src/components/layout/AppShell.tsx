@@ -16,19 +16,10 @@ export function AppShell({ children }: { children: ReactNode }) {
     rehydrateAll().finally(() => setReady(true));
   }, []);
 
-  if (pathname === "/") {
-    return (
-      <>
-        {children}
-        <Toaster />
-      </>
-    );
-  }
-
   if (isLandingOrEnterprise) {
     return (
       <>
-        {ready ? children : <Splash />}
+        {children}
         <Toaster />
       </>
     );

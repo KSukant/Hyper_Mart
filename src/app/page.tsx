@@ -1,256 +1,372 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState, useEffect } from "react";
 import {
-  ArrowRight,
-  BadgePercent,
+  ShoppingCart,
+  Package,
+  UserCheck,
+  Laptop,
+  Headphones,
+  CreditCard,
+  Calculator,
+  Warehouse,
   Truck,
-  Banknote,
+  BarChart3,
+  Lock,
+  ArrowRight,
   Sparkles,
+  Users,
+  Star,
   Leaf,
-  RotateCcw,
-  Gift,
   ShieldCheck,
-  BadgeCheck,
-  Check,
-  CalendarClock,
-  Milk,
 } from "lucide-react";
-import { SnapPage, SnapSection, FooterSection, Reveal } from "@/components/sections/Snap";
-import { ScooterScene } from "@/components/home/ScooterScene";
-import { DealsStrip } from "@/components/home/DealsStrip";
-import { DepartmentSpotlightSection } from "@/components/home/DepartmentSpotlight";
-import { CardRow } from "@/components/product/CardRow";
-import { ProductCard } from "@/components/product/ProductCard";
-import { ProductArt } from "@/components/product/ProductArt";
-import { DEPT_ICON } from "@/components/layout/Header";
-import { SectionHeading, LinkButton, btn, toast, Pill } from "@/components/ui/primitives";
-import { departments, homeQuickChips, membershipPlans, whyHyperMart } from "@/mocks";
-import { productsInCity, offersFor, heroSlidesFor, getProductById } from "@/lib/catalog";
-import { getDeliveryPromise } from "@/lib/delivery";
-import { formatDay } from "@/lib/format";
-import { useNow, useShopper } from "@/lib/hooks";
-import { useMember } from "@/store";
 import { cn } from "@/lib/cn";
 
-const ICONS = { Leaf, BadgePercent, RotateCcw, Sparkles, BadgeCheck, Truck, Store: ShieldCheck };
-
-export default function HomePage() {
-  const { cityId, warehouseId, city, area, isMember } = useShopper();
-  const now = useNow();
-  const slides = heroSlidesFor(cityId);
-  const [slide, setSlide] = useState(0);
-
-  useEffect(() => {
-    const t = setInterval(() => setSlide((s) => (s + 1) % slides.length), 5000);
-    return () => clearInterval(t);
-  }, [slides.length]);
-
-  const deals = offersFor(cityId, now)
-    .filter((o) => o.type === "deal")
-    .sort((a, b) => Date.parse(a.endsAt) - Date.parse(b.endsAt));
-
-  const food = getProductById("p-food-001")!,
-    gadget = getProductById("p-fash-001")!;
-  const fresh = getDeliveryPromise(food, area, new Date(now));
-  const other = getDeliveryPromise(gadget, area, new Date(now));
-  const plan = membershipPlans[0];
-  const setMember = useMember((s) => s.setMember);
-
+export default function UnifiedLandingPage() {
   return (
-    <SnapPage>
-      {/* S1 — Hero (#home) */}
-      <SnapSection id="home" title="Welcome" tone="bg" inner="gap-3 sm:gap-4">
-        <div className="grid min-h-0 flex-1 overflow-hidden rounded-4xl bg-primary shadow-pop lg:grid-cols-[1.05fr_1fr]">
-          <div className="relative flex flex-col justify-center gap-3 p-5 sm:gap-4 sm:p-8 lg:p-10">
-            <svg className="pointer-events-none absolute inset-0 h-full w-full opacity-[0.07]" aria-hidden>
-              <defs>
-                <pattern id="leaf" width="64" height="64" patternUnits="userSpaceOnUse">
-                  <path d="M10 40c0-16 12-28 28-28 0 16-12 28-28 28zM10 40l16-16" fill="none" stroke="#fff" strokeWidth="2" />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#leaf)" />
-            </svg>
-            <Reveal>
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-accent">
-                {slides[slide]?.eyebrow ?? "Fresh every day"} · {city.name}
+    <div className="min-h-screen bg-[#F4F6F4] text-[#1F2D25] flex flex-col font-sans selection:bg-[#C6F04A] selection:text-[#053221]">
+      {/* ── 1. Top Unified Header ── */}
+      <header className="w-full max-w-[1720px] mx-auto px-4 sm:px-8 py-5 flex items-center justify-between">
+        {/* Brand Logo & Tagline */}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-[#0B5132] flex items-center justify-center text-[#C6F04A] shadow-md">
+            <ShoppingCart className="w-6 h-6 stroke-[2.5]" />
+          </div>
+          <div>
+            <span className="font-display font-black text-2xl tracking-tight text-[#0B5132] leading-none block">
+              HyperMart
+            </span>
+            <span className="text-[10px] font-bold text-[#4B6B56] tracking-wide mt-0.5 block">
+              Good Products. Greater Living.
+            </span>
+          </div>
+        </div>
+
+        {/* Center Pillars */}
+        <nav className="hidden md:flex items-center gap-3 text-xs font-semibold text-[#4B6B56]">
+          <Link href="/shop" className="hover:text-[#0B5132] transition">Shop</Link>
+          <span className="text-neutral-300">•</span>
+          <span className="text-[#0B5132] font-bold">Operate</span>
+          <span className="text-neutral-300">•</span>
+          <span className="hover:text-[#0B5132] transition">Manage</span>
+          <span className="text-neutral-300">•</span>
+          <span className="hover:text-[#0B5132] transition">Grow</span>
+        </nav>
+
+        {/* Right Top Actions */}
+        <div className="flex items-center gap-4">
+          <Link
+            href="/help"
+            className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-[#4B6B56] hover:text-[#0B5132] transition"
+          >
+            <Headphones className="w-4 h-4 text-[#0B5132]" />
+            <span>Need help?</span>
+          </Link>
+
+          <Link
+            href="/admin/login"
+            className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#0B5132]/30 bg-white text-xs font-bold text-[#0B5132] hover:bg-[#0B5132] hover:text-white transition-all shadow-2xs"
+          >
+            <span>Employee login</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      </header>
+
+      {/* ── 2. Main Workspace Selection Section ── */}
+      <main className="flex-1 w-full max-w-[1720px] mx-auto px-4 sm:px-8 pb-10 flex flex-col justify-between">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.05fr_1.95fr] gap-6 lg:gap-8 items-stretch">
+          {/* ── Left Hero Panel (Supermarket Photography Card) ── */}
+          <div className="relative overflow-hidden rounded-3xl sm:rounded-4xl min-h-[480px] lg:min-h-[640px] shadow-xl border border-black/5 bg-[#083520] flex flex-col justify-end p-6 sm:p-8">
+            {/* Background Supermarket Image */}
+            <div
+              className="absolute inset-0 bg-cover bg-left sm:bg-center"
+              style={{
+                backgroundImage: "url('/hero/supermarket-aisle.jpg')",
+              }}
+            >
+              {/* Gradient Scrim for readable bottom card */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#042012]/95 via-[#042012]/30 to-transparent" />
+            </div>
+
+            {/* Floating Glass Metric Card at Bottom */}
+            <div className="relative z-10 rounded-2xl sm:rounded-3xl bg-[#052818]/90 backdrop-blur-md border border-white/15 p-5 sm:p-6 text-white shadow-2xl space-y-4">
+              <p className="text-sm sm:text-base font-bold text-white/95 leading-snug">
+                A connected retail ecosystem for customers, teams and operations.
               </p>
-            </Reveal>
-            <Reveal delay={0.05}>
-              <h1 className="font-display text-[clamp(28px,7vw,32px)] font-extrabold leading-[1.1] text-white sm:text-5xl xl:text-[56px] line-clamp-3">
-                Fresh food, fashion, electronics <span className="text-accent">and beauty.</span>
-              </h1>
-            </Reveal>
-            <Reveal delay={0.1}>
-              <p className="hidden max-w-lg text-sm text-white/80 sm:block sm:text-base">
-                Delivered to your door by our own team across Coimbatore, Chennai, Bengaluru and Kochi.
-              </p>
-            </Reveal>
-            <Reveal delay={0.15} className="flex flex-col sm:flex-row w-full gap-2.5 sm:gap-3">
-              <LinkButton href="/category" variant="accent" size="lg" className="w-full sm:w-auto justify-center">
-                Shop now <ArrowRight className="h-4 w-4" />
-              </LinkButton>
-              <LinkButton href="/deals" variant="white" size="lg" className="w-full sm:w-auto justify-center">
-                Today’s deals
-              </LinkButton>
-            </Reveal>
-            <Reveal delay={0.2} className="grid grid-cols-2 gap-2.5 pt-2 md:grid-cols-4">
-              {[
-                [BadgePercent, "Member prices"],
-                [Truck, "Delivered by our team"],
-                [Banknote, "Cash on delivery"],
-                [Sparkles, "New offers weekly"],
-              ].map(([Icon, t]) => {
-                const I = Icon as typeof Truck;
-                return (
-                  <div key={t as string} className="flex items-center gap-2 text-xs font-semibold leading-tight text-white/90">
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full ring-2 ring-accent/70">
-                      <I className="h-4 w-4 text-accent" />
-                    </span>
-                    {t as string}
+
+              {/* Slider Dash Indicators */}
+              <div className="flex items-center gap-1.5">
+                <span className="w-6 h-1 rounded-full bg-[#C6F04A]" />
+                <span className="w-4 h-1 rounded-full bg-white/20" />
+                <span className="w-4 h-1 rounded-full bg-white/20" />
+              </div>
+
+              {/* Stats Row */}
+              <div className="grid grid-cols-3 gap-3 pt-3 border-t border-white/10">
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
+                    <Users className="w-3.5 h-3.5 text-[#C6F04A]" />
+                    <span className="font-mono font-black text-sm sm:text-base text-white">10M+</span>
                   </div>
-                );
-              })}
-            </Reveal>
-          </div>
-          <div className="relative w-full aspect-[16/10] min-h-0 p-2 sm:p-3 lg:aspect-auto lg:h-auto lg:p-4">
-            <ScooterScene caption={fresh.type === "today" ? `Fresh delivery today in ${city.name}` : `Delivering to ${area.area || city.name}`} />
-          </div>
-        </div>
+                  <span className="text-[10px] text-white/70 block leading-tight">Happy Customers</span>
+                </div>
 
-        {/* Delivery promise & quick category navigation */}
-        <div className="flex flex-col gap-3 rounded-2xl sm:rounded-3xl bg-white p-3 sm:p-4 shadow-card ring-1 ring-line/60 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-3 text-sm">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary-tint text-primary">
-              <Truck className="h-5 w-5" />
-            </span>
-            <p className="text-xs leading-snug text-muted sm:text-sm">
-              Delivering to <strong className="text-ink">{area.pincode} · {area.area || city.name}</strong> — fresh items{" "}
-              <strong className="text-primary">{fresh.type === "today" ? "today" : formatDay(fresh.date!)}</strong>, others by{" "}
-              <strong className="text-ink">{other.date ? formatDay(other.date) : "tomorrow"}</strong>.
-            </p>
-          </div>
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
+                    <Package className="w-3.5 h-3.5 text-[#C6F04A]" />
+                    <span className="font-mono font-black text-sm sm:text-base text-white">500K+</span>
+                  </div>
+                  <span className="text-[10px] text-white/70 block leading-tight">Products Delivered</span>
+                </div>
 
-          <div className="no-scrollbar flex items-center gap-2 overflow-x-auto">
-            {homeQuickChips.map((c) => {
-              const I = ({ Leaf, BadgePercent, RotateCcw, Sparkles } as Record<string, typeof Leaf>)[c.icon] ?? Leaf;
-              return (
-                <Link
-                  key={c.label}
-                  href={c.href === "/search?sort=new" ? "/new-arrivals" : c.href}
-                  className="inline-flex h-8 sm:h-9 shrink-0 items-center gap-1.5 rounded-full bg-primary-soft px-3.5 text-xs sm:text-sm font-semibold text-primary ring-1 ring-primary/15 transition hover:bg-primary-tint"
-                >
-                  <I className="h-4 w-4" />
-                  {c.label}
-                </Link>
-              );
-            })}
-            <span className="hidden shrink-0 items-center gap-1.5 text-xs font-semibold text-muted pl-3 border-l border-line 2xl:flex whitespace-nowrap">
-              <Check className="h-4 w-4 text-primary" />
-              Free delivery above ₹499 · members above ₹199
-            </span>
-          </div>
-        </div>
-      </SnapSection>
-
-      {/* S2 — Departments (#departments) */}
-      <DepartmentSpotlightSection />
-
-      {/* S3 — Deals ending soon (#deals) */}
-      {deals.length > 0 && <DealsStrip deals={deals} />}
-
-      {/* S4 — Rewards & subscriptions (#rewards) */}
-      <SnapSection id="rewards" title="Rewards and subscriptions" tone="white" inner="gap-4">
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Reveal className="h-full">
-            <div className="relative flex h-full flex-col gap-3 overflow-hidden rounded-4xl bg-primary p-6 text-white shadow-pop sm:p-8">
-              <div className="absolute -right-10 -top-10 h-44 w-44 rounded-full bg-accent/20" />
-              <Pill tone="lime" icon={<Gift className="h-3.5 w-3.5" />}>
-                HyperMart Rewards
-              </Pill>
-              <h2 className="text-2xl font-extrabold sm:text-3xl">
-                Member prices on <span className="text-accent">everyday favourites</span>
-              </h2>
-              <p className="text-sm text-white/80">
-                ₹{plan.priceYearly} a year · first {plan.trialDays} days free
-              </p>
-              <ul className="hidden gap-1.5 text-sm sm:grid sm:grid-cols-2">
-                {plan.benefits.map((b) => (
-                  <li key={b} className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                    {b}
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-auto pt-2">
-                {isMember ? (
-                  <span className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-4 py-3 font-bold">
-                    <BadgeCheck className="h-5 w-5 text-accent" />
-                    You’re a member
-                  </span>
-                ) : (
-                  <button
-                    className={btn("accent", "lg")}
-                    onClick={() => {
-                      setMember(true);
-                      toast("You're now a member (demo)");
-                    }}
-                  >
-                    Join Rewards <ArrowRight className="h-4 w-4" />
-                  </button>
-                )}
-              </div>
-            </div>
-          </Reveal>
-          <Reveal delay={0.08} className="h-full">
-            <div className="flex h-full flex-col gap-3 rounded-4xl bg-accent-tint p-6 sm:p-8">
-              <Pill tone="dark" icon={<CalendarClock className="h-3.5 w-3.5" />}>
-                Subscribe and save
-              </Pill>
-              <h2 className="text-2xl font-extrabold text-accent-text sm:text-3xl">
-                Milk, eggs and veggies on your schedule
-              </h2>
-              <p className="text-sm text-accent-text/80">Pause or skip any day before 10 PM. Pay only for delivered days.</p>
-              <div className="hidden gap-3 sm:flex">
-                {["p-food-003", "p-food-006", "p-food-001"].map((id) => (
-                  <ProductArt
-                    key={id}
-                    product={getProductById(id)!}
-                    className="h-[clamp(56px,11svh,96px)] w-[clamp(56px,11svh,96px)] rounded-2xl ring-4 ring-white"
-                  />
-                ))}
-              </div>
-              <div className="mt-auto pt-2">
-                <LinkButton href="/product/amul-toned-milk-1l" size="lg">
-                  <Milk className="h-4 w-4" />
-                  Start a subscription
-                </LinkButton>
-              </div>
-            </div>
-          </Reveal>
-        </div>
-        {/* Promise strip: 2x2 grid on mobile, 4 columns on desktop */}
-        <div className="grid grid-cols-2 gap-2.5 rounded-3xl bg-primary-tint p-3 sm:p-4 lg:grid-cols-4 lg:gap-3">
-          {whyHyperMart.map((w) => {
-            const I = (ICONS as Record<string, typeof Leaf>)[w.icon] ?? BadgeCheck;
-            return (
-              <div key={w.title} className="flex items-start gap-3">
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-accent text-accent-text">
-                  <I className="h-5 w-5" />
-                </span>
-                <div>
-                  <p className="text-sm font-bold">{w.title}</p>
-                  <p className="line-clamp-2 text-xs text-muted">{w.text}</p>
+                <div className="space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
+                    <Star className="w-3.5 h-3.5 text-[#C6F04A] fill-[#C6F04A]" />
+                    <span className="font-mono font-black text-sm sm:text-base text-white">98%</span>
+                  </div>
+                  <span className="text-[10px] text-white/70 block leading-tight">Service Satisfaction</span>
                 </div>
               </div>
-            );
-          })}
-        </div>
-      </SnapSection>
+            </div>
+          </div>
 
-      {/* S6 — Footer (#footer) */}
-      <FooterSection />
-    </SnapPage>
+          {/* ── Right Workspace Selection Gateway ── */}
+          <div className="flex flex-col justify-between space-y-6">
+            <div>
+              {/* Badge */}
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E5EFE7] border border-[#CBDDCE] text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-[#0B5132]">
+                WELCOME TO HYPERMART
+              </span>
+
+              {/* Headline */}
+              <h1 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-extrabold tracking-tight text-[#16271E] mt-3 leading-tight">
+                Choose your workspace
+              </h1>
+              <p className="text-xs sm:text-sm text-[#5B7564] font-medium mt-1">
+                Select a portal to sign in and continue your journey.
+              </p>
+
+              {/* ── 4 Available Active Portals (Row 1) ── */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5 mt-6">
+                {/* 1. Customer Portal */}
+                <Link
+                  href="/shop"
+                  className="group rounded-2xl bg-white border border-[#E1EAE3] p-5 shadow-xs hover:shadow-lg hover:border-[#10B981]/50 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[175px]"
+                >
+                  <div className="space-y-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#E8F8F0] border border-[#C5F0DA] flex items-center justify-center text-[#10B981] shadow-2xs">
+                      <div className="flex items-center justify-center -space-x-1">
+                        <ShoppingCart className="w-6 h-6 stroke-[2.2]" />
+                      </div>
+                    </div>
+                    <div>
+                      <h3 className="font-display text-base font-bold text-[#16271E] group-hover:text-[#10B981] transition">
+                        Customer Portal
+                      </h3>
+                      <p className="text-[11px] text-[#637C6C] mt-1 leading-snug">
+                        Shop, track orders, manage account and more.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-3">
+                    <span className="w-8 h-8 rounded-full bg-[#10B981] text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </Link>
+
+                {/* 2. Admin Portal */}
+                <Link
+                  href="/admin/login?portal=admin"
+                  className="group rounded-2xl bg-white border border-[#E1EAE3] p-5 shadow-xs hover:shadow-lg hover:border-[#F59E0B]/50 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[175px]"
+                >
+                  <div className="space-y-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#FEF4E5] border border-[#FDE1B5] flex items-center justify-center text-[#F59E0B] shadow-2xs">
+                      <UserCheck className="w-6 h-6 stroke-[2.2]" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-base font-bold text-[#16271E] group-hover:text-[#F59E0B] transition">
+                        Admin Portal
+                      </h3>
+                      <p className="text-[11px] text-[#637C6C] mt-1 leading-snug">
+                        Platform management, users, inventory and settings.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-3">
+                    <span className="w-8 h-8 rounded-full bg-[#F59E0B] text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </Link>
+
+                {/* 3. Support Portal */}
+                <Link
+                  href="/portal/support"
+                  className="group rounded-2xl bg-white border border-[#E1EAE3] p-5 shadow-xs hover:shadow-lg hover:border-[#38BDF8]/50 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[175px]"
+                >
+                  <div className="space-y-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#EBF7FD] border border-[#BAE4F9] flex items-center justify-center text-[#0284C7] shadow-2xs">
+                      <Headphones className="w-6 h-6 stroke-[2.2]" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-base font-bold text-[#16271E] group-hover:text-[#0284C7] transition">
+                        Support Portal
+                      </h3>
+                      <p className="text-[11px] text-[#637C6C] mt-1 leading-snug">
+                        Customer cases, returns, warranty and resolutions.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-3">
+                    <span className="w-8 h-8 rounded-full bg-[#38BDF8] text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </Link>
+
+                {/* 4. Finance Portal */}
+                <Link
+                  href="/portal/payment-ledger"
+                  className="group rounded-2xl bg-white border border-[#E1EAE3] p-5 shadow-xs hover:shadow-lg hover:border-[#F87171]/50 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[175px]"
+                >
+                  <div className="space-y-3">
+                    <div className="w-12 h-12 rounded-xl bg-[#FEEFEF] border border-[#FDC8C8] flex items-center justify-center text-[#EF4444] shadow-2xs">
+                      <CreditCard className="w-6 h-6 stroke-[2.2]" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-base font-bold text-[#16271E] group-hover:text-[#EF4444] transition">
+                        Finance Portal
+                      </h3>
+                      <p className="text-[11px] text-[#637C6C] mt-1 leading-snug">
+                        Payments, refunds, reconciliation and reports.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end pt-3">
+                    <span className="w-8 h-8 rounded-full bg-[#F87171] text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                  </div>
+                </Link>
+              </div>
+
+              {/* ── 3 Coming Soon Portals (Row 2) ── */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-4">
+                {/* 5. Warehouse Manager (Coming Soon) */}
+                <div className="rounded-2xl bg-white/70 border border-[#E1EAE3] p-5 shadow-2xs flex flex-col justify-between min-h-[160px] opacity-80">
+                  <div className="space-y-2.5">
+                    <div className="w-10 h-10 rounded-xl bg-[#F3EFFB] border border-[#E1D7F7] flex items-center justify-center text-[#7C3AED]">
+                      <Warehouse className="w-5 h-5 stroke-[2]" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-sm font-bold text-[#16271E]">
+                        Warehouse Manager
+                      </h3>
+                      <p className="text-[11px] text-[#718779] mt-0.5 leading-snug">
+                        Inventory, fulfilment and warehouse operations.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-3 border-t border-[#EDF3EF]">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#EBF0EC] text-[10px] font-bold text-[#556E5F]">
+                      Coming Soon
+                    </span>
+                    <span className="w-6 h-6 rounded-full bg-[#EBF0EC] text-[#556E5F] flex items-center justify-center">
+                      <Lock className="w-3 h-3" />
+                    </span>
+                  </div>
+                </div>
+
+                {/* 6. Delivery Partner (Coming Soon) */}
+                <div className="rounded-2xl bg-white/70 border border-[#E1EAE3] p-5 shadow-2xs flex flex-col justify-between min-h-[160px] opacity-80">
+                  <div className="space-y-2.5">
+                    <div className="w-10 h-10 rounded-xl bg-[#E8F8F0] border border-[#C5F0DA] flex items-center justify-center text-[#059669]">
+                      <Truck className="w-5 h-5 stroke-[2]" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-sm font-bold text-[#16271E]">
+                        Delivery Partner
+                      </h3>
+                      <p className="text-[11px] text-[#718779] mt-0.5 leading-snug">
+                        Deliveries, routes and partner management.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-3 border-t border-[#EDF3EF]">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#EBF0EC] text-[10px] font-bold text-[#556E5F]">
+                      Coming Soon
+                    </span>
+                    <span className="w-6 h-6 rounded-full bg-[#EBF0EC] text-[#556E5F] flex items-center justify-center">
+                      <Lock className="w-3 h-3" />
+                    </span>
+                  </div>
+                </div>
+
+                {/* 7. Operations Manager (Coming Soon) */}
+                <div className="rounded-2xl bg-white/70 border border-[#E1EAE3] p-5 shadow-2xs flex flex-col justify-between min-h-[160px] opacity-80">
+                  <div className="space-y-2.5">
+                    <div className="w-10 h-10 rounded-xl bg-[#EBF5FB] border border-[#C5E3F7] flex items-center justify-center text-[#0284C7]">
+                      <BarChart3 className="w-5 h-5 stroke-[2]" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-sm font-bold text-[#16271E]">
+                        Operations Manager
+                      </h3>
+                      <p className="text-[11px] text-[#718779] mt-0.5 leading-snug">
+                        End-to-end operations and business insights.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-3 border-t border-[#EDF3EF]">
+                    <span className="px-2.5 py-0.5 rounded-full bg-[#EBF0EC] text-[10px] font-bold text-[#556E5F]">
+                      Coming Soon
+                    </span>
+                    <span className="w-6 h-6 rounded-full bg-[#EBF0EC] text-[#556E5F] flex items-center justify-center">
+                      <Lock className="w-3 h-3" />
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* ── Bottom Full-Width Brand Banner ── */}
+            <div className="rounded-2xl sm:rounded-3xl bg-white/90 border border-[#E1EAE3] p-4 sm:p-5 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#E8F8F0] border border-[#C5F0DA] flex items-center justify-center text-[#0B5132] shadow-2xs">
+                  <Leaf className="w-5 h-5 fill-[#0B5132]" />
+                </div>
+                <div>
+                  <h4 className="font-display font-extrabold text-base sm:text-lg text-[#16271E] tracking-tight">
+                    People. Products. Possibilities.
+                  </h4>
+                  <div className="w-12 h-1 rounded-full bg-[#10B981] mt-1" />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between sm:justify-end gap-3 text-xs font-semibold text-[#5B7564]">
+                <span className="text-right leading-snug">
+                  Different teams. A shared purpose. <br className="hidden sm:inline" /> A better tomorrow.
+                </span>
+                <Link
+                  href="/shop"
+                  className="w-9 h-9 rounded-full bg-[#D7F3E2] text-[#0B5132] hover:bg-[#10B981] hover:text-white transition flex items-center justify-center shadow-xs flex-shrink-0"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
   );
 }

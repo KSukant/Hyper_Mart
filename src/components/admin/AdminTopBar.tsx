@@ -357,14 +357,6 @@ export function AdminTopBar() {
 
               <div className="border-t border-neutral-100 pt-1 mt-1 space-y-0.5">
                 <Link
-                  href="/portal"
-                  onClick={() => setUserMenuOpen(false)}
-                  className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 transition"
-                >
-                  <ExternalLink className="h-3.5 w-3.5 text-emerald-700" />
-                  <span>Switch to Operations Portal</span>
-                </Link>
-                <Link
                   href="/admin/settings"
                   onClick={() => setUserMenuOpen(false)}
                   className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-neutral-700 hover:bg-neutral-50 transition"
@@ -373,7 +365,7 @@ export function AdminTopBar() {
                   <span>Admin Settings</span>
                 </Link>
                 <Link
-                  href="/admin/login"
+                  href="/"
                   onClick={() => setUserMenuOpen(false)}
                   className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-danger hover:bg-danger/10 transition"
                 >

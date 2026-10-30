@@ -9,14 +9,14 @@ import { Toaster } from "@/components/ui/primitives";
 /** Restores saved cart/location/member state, then renders the page. Isolates /admin and /portal from customer storefront chrome. */
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  const isEnterprisePortal = pathname?.startsWith("/admin") || pathname?.startsWith("/portal");
+  const isLandingOrEnterprise = pathname === "/" || pathname?.startsWith("/admin") || pathname?.startsWith("/portal");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
     rehydrateAll().finally(() => setReady(true));
   }, []);
 
-  if (isEnterprisePortal) {
+  if (isLandingOrEnterprise) {
     return (
       <>
         {ready ? children : <Splash />}

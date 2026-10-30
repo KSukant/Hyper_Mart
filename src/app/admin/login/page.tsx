@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Mail,
   Lock,
@@ -15,12 +15,14 @@ import {
   Truck,
   Sparkles,
 } from "lucide-react";
-import { useAdminStore } from "@/store/adminStore";
+import { useAdminStore, ADMIN_USERS } from "@/store/adminStore";
 import { toast } from "@/components/ui/primitives";
 import { cn } from "@/lib/cn";
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const requestedPortal = searchParams.get("portal");
   const { setCurrentUser } = useAdminStore();
 
   const [step, setStep] = useState<1 | 2 | 3>(1);
@@ -49,12 +51,35 @@ export default function AdminLoginPage() {
   const handleStep2Submit = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    const matchedUser = ADMIN_USERS.find(
+      (u) => u.email.toLowerCase() === email.toLowerCase()
+    ) || ADMIN_USERS[0];
+
+    setCurrentUser(matchedUser);
+
     setTimeout(() => {
       setLoading(false);
       setStep(3);
-      toast("Identity verified successfully. Initializing workspace...");
+      toast(`Identity verified as ${matchedUser.name}. Initializing workspace...`);
       setTimeout(() => {
-        router.push("/admin");
+        if (requestedPortal === "support") {
+          router.push("/portal/support");
+        } else if (requestedPortal === "finance") {
+          router.push("/portal/payment-ledger");
+        } else if (requestedPortal === "admin") {
+          router.push("/admin");
+        } else if (matchedUser.role === "operations_manager") {
+          router.push("/portal");
+        } else if (matchedUser.role === "support_agent") {
+          router.push("/portal/support");
+        } else if (matchedUser.role === "warehouse_manager") {
+          router.push("/portal/warehouse-readiness");
+        } else if (matchedUser.role === "restricted_operator") {
+          router.push("/admin/access-denied");
+        } else {
+          router.push("/admin");
+        }
       }, 800);
     }, 700);
   };
@@ -309,5 +334,13 @@ export default function AdminLoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen grid place-items-center text-xs font-semibold text-emerald-800">Loading authentication gateway...</div>}>
+      <AdminLoginForm />
+    </Suspense>
   );
 }

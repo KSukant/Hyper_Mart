@@ -70,6 +70,7 @@ export const PHOTOS = new Set<string>([
   "/hero/fresh-veg.jpg",
   "/hero/rewards.jpg",
   "/hero/silk-saree.jpg",
+  "/hero/supermarket-aisle.jpg",
   "/logo/hypermart-logo.png",
   "/logo/hypermart-logo.webp"
 ]);

@@ -110,11 +110,10 @@ export default function AdminBusinessDashboardPage() {
             <span>Create Product</span>
           </Link>
           <Link
-            href="/portal"
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-[#E1E8E1] text-xs font-bold text-emerald-800 hover:bg-emerald-50 shadow-xs transition"
+            href="/admin/approvals"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white border border-[#E1E8E1] text-xs font-bold text-neutral-800 hover:bg-neutral-50 shadow-xs transition"
           >
-            <span>Operations Portal</span>
-            <ExternalLink className="w-3.5 h-3.5" />
+            <span>Review Approvals (12)</span>
           </Link>
         </div>
       </div>

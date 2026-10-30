@@ -328,15 +328,6 @@ export const PortalTopbar: React.FC = () => {
               </div>
 
               <div className="px-4 py-2 space-y-1 text-xs text-gray-700">
-                <Link
-                  href="/admin"
-                  onClick={() => setIsProfileOpen(false)}
-                  className="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-emerald-50 text-emerald-900 font-bold hover:bg-emerald-100 transition-colors mb-2"
-                >
-                  <span>Switch to Admin Portal</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </Link>
-
                 <div className="flex justify-between py-1 text-[11px]">
                   <span className="text-gray-400">Regional DC</span>
                   <span className="font-semibold text-gray-800">Zone 04 South</span>
@@ -348,16 +339,14 @@ export const PortalTopbar: React.FC = () => {
               </div>
 
               <div className="px-4 pt-2 border-t border-gray-100">
-                <button
-                  onClick={() => {
-                    setIsProfileOpen(false);
-                    addToast('Shift Active', 'Shift logging maintained in session', 'info');
-                  }}
+                <Link
+                  href="/"
+                  onClick={() => setIsProfileOpen(false)}
                   className="w-full flex items-center gap-2 text-rose-600 hover:bg-rose-50 px-3 py-2 rounded-lg text-xs font-semibold transition-colors"
                 >
                   <LogOut className="w-3.5 h-3.5" />
-                  <span>Sign Out / End Shift</span>
-                </button>
+                  <span>Sign Out / Return to Home</span>
+                </Link>
               </div>
             </div>
           )}

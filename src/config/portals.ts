@@ -127,3 +127,4 @@ export const PORTAL_REGISTRY: PortalConfig[] = [
     row: 2,
   },
 ];
+

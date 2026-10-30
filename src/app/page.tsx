@@ -1,48 +1,70 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import {
   ShoppingCart,
   Headphones,
   ArrowRight,
-  Lock,
   Users,
   Package,
   Star,
   Leaf,
 } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
+import { PORTAL_REGISTRY } from "@/config/portals";
+import { PortalCard } from "@/components/landing/PortalCard";
 
 export default function UnifiedLandingPage() {
-  return (
-    <div className="min-h-screen bg-[#F2F5F2] text-[#19271E] font-sans selection:bg-[#C6F04A] selection:text-[#053221] flex flex-col justify-between relative overflow-x-hidden">
-      {/* Background Organic Wave Accents */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-        {/* Soft curving sage green background element on top/left */}
-        <div className="absolute -top-32 -left-32 w-[650px] h-[650px] rounded-full bg-[#E3EDE5]/60 blur-3xl" />
-        <div className="absolute top-1/4 -right-40 w-[600px] h-[600px] rounded-full bg-[#E8EFE8]/50 blur-3xl" />
-      </div>
+  const shouldReduceMotion = useReducedMotion();
 
-      {/* ── 1. Top Unified Header ── */}
-      <header className="relative z-10 w-full max-w-[1720px] mx-auto px-4 sm:px-8 pt-4 pb-3 flex items-center justify-between">
-        {/* Brand Logo & Tagline */}
-        <div className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-xl bg-[#0B5132] flex items-center justify-center text-[#C6F04A] shadow-xs">
+  // Split portals by row from configuration registry
+  const row1Portals = PORTAL_REGISTRY.filter((p) => p.row === 1);
+  const row2Portals = PORTAL_REGISTRY.filter((p) => p.row === 2);
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: shouldReduceMotion ? 0 : 0.07,
+        delayChildren: shouldReduceMotion ? 0 : 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.45, ease: "easeOut" },
+    },
+  };
+
+  return (
+    <div className="min-h-screen bg-[#F4F6F2] text-[#19271E] font-sans selection:bg-[#C6F04A] selection:text-[#053221] flex flex-col justify-between relative overflow-x-hidden">
+      {/* ── 1. Top Unified Header (Spans across entire viewport) ── */}
+      <header className="relative z-30 w-full px-4 sm:px-8 lg:px-12 pt-4 pb-3 flex items-center justify-between border-b border-black/5 bg-white/70 lg:bg-transparent backdrop-blur-md lg:backdrop-blur-none">
+        {/* Left: Brand Logo & Tagline */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#0B5132] flex items-center justify-center text-[#C6F04A] shadow-xs">
             <ShoppingCart className="w-5 h-5 stroke-[2.4]" />
           </div>
           <div>
-            <span className="font-display font-black text-xl tracking-tight text-[#0B5132] leading-none block">
+            <span className="font-display font-black text-xl sm:text-2xl tracking-tight text-[#0B5132] leading-none block">
               HyperMart
             </span>
-            <span className="text-[9.5px] font-bold text-[#55735F] tracking-wide block mt-0.5">
+            <span className="text-[9.5px] sm:text-[10px] font-bold text-[#55735F] tracking-wide block mt-0.5">
               Good Products. Greater Living.
             </span>
           </div>
         </div>
 
-        {/* Center Pillars */}
-        <nav className="hidden md:flex items-center gap-3 text-xs font-semibold text-[#486352]">
-          <Link href="/shop" className="hover:text-[#0B5132] transition">Shop</Link>
+        {/* Center: Brand Navigation Pillars */}
+        <nav className="hidden md:flex items-center gap-3.5 text-xs font-semibold text-[#486352]">
+          <Link href="/shop" className="hover:text-[#0B5132] transition">
+            Shop
+          </Link>
           <span className="text-neutral-300">•</span>
           <span className="text-[#0B5132] font-bold">Operate</span>
           <span className="text-neutral-300">•</span>
@@ -51,8 +73,8 @@ export default function UnifiedLandingPage() {
           <span className="hover:text-[#0B5132] transition">Grow</span>
         </nav>
 
-        {/* Right Top Actions */}
-        <div className="flex items-center gap-4">
+        {/* Right: Actions */}
+        <div className="flex items-center gap-3 sm:gap-5">
           <Link
             href="/help"
             className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-[#486352] hover:text-[#0B5132] transition"
@@ -71,306 +93,189 @@ export default function UnifiedLandingPage() {
         </div>
       </header>
 
-      {/* ── 2. Main Workspace Selection Section ── */}
-      <main className="relative z-10 flex-1 w-full max-w-[1720px] mx-auto px-4 sm:px-8 py-2 sm:py-3 flex flex-col justify-center">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1.9fr] gap-6 lg:gap-8 items-stretch">
-          {/* ── Left Hero Panel (Supermarket Photography Card) ── */}
-          <div className="relative overflow-hidden rounded-[28px] sm:rounded-[36px] min-h-[460px] lg:min-h-[580px] shadow-xl border border-black/5 bg-[#083520] flex flex-col justify-end p-5 sm:p-7">
-            {/* Background Supermarket Image */}
-            <div
-              className="absolute inset-0 bg-cover bg-left sm:bg-center"
-              style={{
-                backgroundImage: "url('/landing/hero-store.jpg')",
-              }}
-            >
-              {/* Subtle top/bottom gradient scrim for visual contrast */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#042012]/95 via-[#042012]/20 to-transparent" />
-            </div>
-
-            {/* Floating Glass Metric Card at Bottom */}
-            <div className="relative z-10 rounded-2xl sm:rounded-3xl bg-[#062A1A]/85 backdrop-blur-md border border-white/15 p-5 text-white shadow-2xl space-y-3.5">
-              <p className="text-sm font-bold text-white/95 leading-snug">
-                A connected retail ecosystem for customers, teams and operations.
-              </p>
-
-              {/* Slider Dash Indicators */}
-              <div className="flex items-center gap-1.5">
-                <span className="w-7 h-1 rounded-full bg-[#22C55E]" />
-                <span className="w-3.5 h-1 rounded-full bg-white/30" />
-                <span className="w-3.5 h-1 rounded-full bg-white/30" />
-              </div>
-
-              {/* Stats Row */}
-              <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/10 text-left">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
-                    <Users className="w-3.5 h-3.5 text-[#22C55E]" />
-                    <span className="font-mono font-black text-sm sm:text-base text-white">10M+</span>
-                  </div>
-                  <span className="text-[10px] text-white/70 block leading-tight">Happy Customers</span>
-                </div>
-
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
-                    <Package className="w-3.5 h-3.5 text-[#22C55E]" />
-                    <span className="font-mono font-black text-sm sm:text-base text-white">500K+</span>
-                  </div>
-                  <span className="text-[10px] text-white/70 block leading-tight">Products Delivered</span>
-                </div>
-
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
-                    <Star className="w-3.5 h-3.5 text-[#22C55E] fill-[#22C55E]" />
-                    <span className="font-mono font-black text-sm sm:text-base text-white">98%</span>
-                  </div>
-                  <span className="text-[10px] text-white/70 block leading-tight">Service Satisfaction</span>
-                </div>
-              </div>
-            </div>
+      {/* ── 2. Main Two-Zone Continuous Composition ── */}
+      <main className="relative flex-1 w-full flex flex-col lg:flex-row items-stretch">
+        {/* ── LEFT: Retail Hero Environment (~40% on Desktop) ── */}
+        <section
+          aria-label="HyperMart Brand Experience"
+          className="relative w-full lg:w-[42%] xl:w-[40%] flex-shrink-0 flex flex-col justify-between p-6 sm:p-10 lg:p-12 min-h-[500px] lg:min-h-[calc(100vh-76px)] z-10"
+        >
+          {/* Background Supermarket Photography */}
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: "url('/landing/hero-store.jpg')",
+            }}
+          >
+            {/* Scrim Gradients for contrast and realistic depth */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/15" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/25 to-black/35" />
           </div>
 
-          {/* ── Right Workspace Selection Gateway ── */}
-          <div className="flex flex-col justify-between space-y-4 sm:space-y-5">
+          {/* Hero Content Overlaid on Left */}
+          <motion.div
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="relative z-10 my-auto pt-4 lg:pt-8 max-w-lg"
+          >
+            <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/15 border border-white/20 text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-white backdrop-blur-xs">
+              WELCOME TO HYPERMART
+            </span>
+
+            <h1 className="font-display font-black text-3xl sm:text-4xl lg:text-[42px] xl:text-[48px] text-white leading-[1.08] tracking-tight mt-3 sm:mt-4 drop-shadow-sm">
+              One Platform.<br />
+              Every <span className="text-[#22C55E]">Possibility.</span>
+            </h1>
+
+            <div className="w-12 h-1 rounded-full bg-[#22C55E] mt-3 sm:mt-4 mb-3 sm:mb-4" />
+
+            <p className="text-white/90 text-xs sm:text-sm lg:text-[14px] font-normal leading-relaxed max-w-md drop-shadow-xs">
+              From everyday shopping to enterprise operations, HyperMart connects customers, teams and technology for a better tomorrow.
+            </p>
+          </motion.div>
+
+          {/* Glass Statistics Panel at Bottom */}
+          <motion.div
+            initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+            className="relative z-10 w-full max-w-md rounded-2xl sm:rounded-3xl bg-[#062A1A]/85 backdrop-blur-md border border-white/15 p-4 sm:p-5 text-white shadow-2xl space-y-3 mt-6 lg:mt-0"
+          >
+            <p className="text-xs sm:text-sm font-bold text-white/95 leading-snug">
+              A connected retail ecosystem for customers, teams and operations.
+            </p>
+
+            {/* Slider Dash Indicators */}
+            <div className="flex items-center gap-1.5">
+              <span className="w-7 h-1 rounded-full bg-[#22C55E]" />
+              <span className="w-3.5 h-1 rounded-full bg-white/30" />
+              <span className="w-3.5 h-1 rounded-full bg-white/30" />
+            </div>
+
+            {/* Stats Row */}
+            <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/10 text-left">
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
+                  <Users className="w-3.5 h-3.5 text-[#22C55E]" />
+                  <span className="font-mono font-black text-sm sm:text-base text-white">
+                    10M+
+                  </span>
+                </div>
+                <span className="text-[10px] text-white/70 block leading-tight">
+                  Happy Customers
+                </span>
+              </div>
+
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
+                  <Package className="w-3.5 h-3.5 text-[#22C55E]" />
+                  <span className="font-mono font-black text-sm sm:text-base text-white">
+                    500K+
+                  </span>
+                </div>
+                <span className="text-[10px] text-white/70 block leading-tight">
+                  Products Delivered
+                </span>
+              </div>
+
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
+                  <Star className="w-3.5 h-3.5 text-[#22C55E] fill-[#22C55E]" />
+                  <span className="font-mono font-black text-sm sm:text-base text-white">
+                    98%
+                  </span>
+                </div>
+                <span className="text-[10px] text-white/70 block leading-tight">
+                  Service Satisfaction
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+        {/* ── RIGHT: Unified Workspace Selection Gateway (~60% on Desktop) ── */}
+        <section
+          aria-label="Unified Workspace Selection"
+          className="relative flex-1 bg-[#F4F6F2] p-5 sm:p-8 lg:p-10 flex flex-col justify-between z-20"
+        >
+          {/* Organic Wave Transition SVG on Left Edge (Desktop Only) */}
+          <div
+            className="hidden lg:block absolute inset-y-0 -left-[90px] w-[92px] pointer-events-none overflow-visible z-20"
+            aria-hidden="true"
+          >
+            <svg
+              viewBox="0 0 100 1000"
+              preserveAspectRatio="none"
+              className="w-full h-full"
+            >
+              {/* Soft Translucent Sage Depth Contour Layer */}
+              <path
+                d="M 40,0 C 85,160 95,300 70,500 C 45,700 40,840 65,1000 L 100,1000 L 100,0 Z"
+                fill="#D8E5DC"
+                fillOpacity="0.75"
+              />
+              {/* Primary Cream Workspace Wave with Subtle Ambient Drop Shadow */}
+              <path
+                d="M 70,0 C 110,160 120,300 95,500 C 70,700 65,840 90,1000 L 100,1000 L 100,0 Z"
+                fill="#F4F6F2"
+                filter="drop-shadow(-8px 0px 14px rgba(0,0,0,0.12))"
+              />
+            </svg>
+          </div>
+
+          {/* Workspace Content Container */}
+          <div className="w-full max-w-[1100px] mx-auto flex flex-col justify-between h-full space-y-5">
             <div>
               {/* Badge */}
               <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#E5EFE7] border border-[#CBDDCE] text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-[#0B5132]">
-                WELCOME TO HYPERMART
+                CHOOSE YOUR WORKSPACE
               </span>
 
               {/* Headline */}
-              <h1 className="font-display text-3xl sm:text-4xl lg:text-[42px] font-black tracking-tight text-[#16271E] mt-2 leading-tight">
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-[38px] font-black tracking-tight text-[#16271E] mt-1.5 leading-tight">
                 Choose your workspace
-              </h1>
+              </h2>
               <p className="text-xs sm:text-sm text-[#5B7564] font-medium mt-0.5">
                 Select a portal to sign in and continue your journey.
               </p>
 
-              {/* ── 4 Available Active Portals (Row 1) ── */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5 mt-4 sm:mt-5">
-                {/* 1. Customer Portal */}
-                <Link
-                  href="/shop"
-                  className="group rounded-2xl bg-white border border-[#E1EAE3] p-4 shadow-xs hover:shadow-lg hover:border-[#20A065]/40 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[165px]"
-                >
-                  <div className="space-y-2.5">
-                    <div className="relative w-full h-14 rounded-xl overflow-hidden bg-[#E8F8F0] border border-[#C5F0DA]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/landing/card-customer.jpg"
-                        alt="Customer Portal"
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-sm sm:text-base font-bold text-[#16271E] group-hover:text-[#20A065] transition">
-                        Customer Portal
-                      </h3>
-                      <p className="text-[11px] text-[#637C6C] mt-0.5 leading-snug">
-                        Shop, track orders, manage account and more.
-                      </p>
-                    </div>
-                  </div>
+              {/* ── 4 Primary Active Portals (Row 1) ── */}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5 mt-4 sm:mt-5"
+              >
+                {row1Portals.map((portal) => (
+                  <motion.div key={portal.id} variants={itemVariants}>
+                    <PortalCard portal={portal} />
+                  </motion.div>
+                ))}
+              </motion.div>
 
-                  <div className="flex justify-end pt-2">
-                    <span className="w-7 h-7 rounded-full bg-[#20A065] text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
-                </Link>
-
-                {/* 2. Admin Portal */}
-                <Link
-                  href="/admin/login?portal=admin"
-                  className="group rounded-2xl bg-white border border-[#E1EAE3] p-4 shadow-xs hover:shadow-lg hover:border-[#E59819]/40 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[165px]"
-                >
-                  <div className="space-y-2.5">
-                    <div className="relative w-full h-14 rounded-xl overflow-hidden bg-[#FEF4E5] border border-[#FDE1B5]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/landing/card-admin.jpg"
-                        alt="Admin Portal"
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-sm sm:text-base font-bold text-[#16271E] group-hover:text-[#E59819] transition">
-                        Admin Portal
-                      </h3>
-                      <p className="text-[11px] text-[#637C6C] mt-0.5 leading-snug">
-                        Platform management, users, inventory and settings.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end pt-2">
-                    <span className="w-7 h-7 rounded-full bg-[#E59819] text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
-                </Link>
-
-                {/* 3. Support Portal */}
-                <Link
-                  href="/portal/support"
-                  className="group rounded-2xl bg-white border border-[#E1EAE3] p-4 shadow-xs hover:shadow-lg hover:border-[#51A2E4]/40 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[165px]"
-                >
-                  <div className="space-y-2.5">
-                    <div className="relative w-full h-14 rounded-xl overflow-hidden bg-[#EBF7FD] border border-[#BAE4F9]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/landing/card-support.jpg"
-                        alt="Support Portal"
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-sm sm:text-base font-bold text-[#16271E] group-hover:text-[#51A2E4] transition">
-                        Support Portal
-                      </h3>
-                      <p className="text-[11px] text-[#637C6C] mt-0.5 leading-snug">
-                        Customer cases, returns, warranty and resolutions.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end pt-2">
-                    <span className="w-7 h-7 rounded-full bg-[#51A2E4] text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
-                </Link>
-
-                {/* 4. Finance Portal */}
-                <Link
-                  href="/portal/payment-ledger"
-                  className="group rounded-2xl bg-white border border-[#E1EAE3] p-4 shadow-xs hover:shadow-lg hover:border-[#E85955]/40 hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between min-h-[165px]"
-                >
-                  <div className="space-y-2.5">
-                    <div className="relative w-full h-14 rounded-xl overflow-hidden bg-[#FEEFEF] border border-[#FDC8C8]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/landing/card-finance.jpg"
-                        alt="Finance Portal"
-                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-sm sm:text-base font-bold text-[#16271E] group-hover:text-[#E85955] transition">
-                        Finance Portal
-                      </h3>
-                      <p className="text-[11px] text-[#637C6C] mt-0.5 leading-snug">
-                        Payments, refunds, reconciliation and reports.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-end pt-2">
-                    <span className="w-7 h-7 rounded-full bg-[#E85955] text-white flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </span>
-                  </div>
-                </Link>
-              </div>
-
-              {/* ── 3 Coming Soon Portals (Row 2) ── */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-3.5">
-                {/* 5. Warehouse Manager (Coming Soon) */}
-                <div className="rounded-2xl bg-white/75 border border-[#E1EAE3] p-4 shadow-2xs flex flex-col justify-between min-h-[155px]">
-                  <div className="space-y-2">
-                    <div className="relative w-full h-14 rounded-xl overflow-hidden bg-[#F3EFFB] border border-[#E1D7F7]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/landing/card-warehouse.jpg"
-                        alt="Warehouse Manager"
-                        className="w-full h-full object-cover object-center"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-sm font-bold text-[#16271E]">
-                        Warehouse Manager
-                      </h3>
-                      <p className="text-[11px] text-[#718779] mt-0.5 leading-snug">
-                        Inventory, fulfilment and warehouse operations.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2.5 border-t border-[#EDF3EF] text-[10px]">
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#EBF0EC] font-bold text-[#556E5F]">
-                      Coming Soon
-                    </span>
-                    <span className="w-6 h-6 rounded-full bg-[#EBF0EC] text-[#556E5F] flex items-center justify-center">
-                      <Lock className="w-3 h-3" />
-                    </span>
-                  </div>
-                </div>
-
-                {/* 6. Delivery Partner (Coming Soon) */}
-                <div className="rounded-2xl bg-white/75 border border-[#E1EAE3] p-4 shadow-2xs flex flex-col justify-between min-h-[155px]">
-                  <div className="space-y-2">
-                    <div className="relative w-full h-14 rounded-xl overflow-hidden bg-[#E8F8F0] border border-[#C5F0DA]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/landing/card-delivery.jpg"
-                        alt="Delivery Partner"
-                        className="w-full h-full object-cover object-center"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-sm font-bold text-[#16271E]">
-                        Delivery Partner
-                      </h3>
-                      <p className="text-[11px] text-[#718779] mt-0.5 leading-snug">
-                        Deliveries, routes and partner management.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2.5 border-t border-[#EDF3EF] text-[10px]">
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#EBF0EC] font-bold text-[#556E5F]">
-                      Coming Soon
-                    </span>
-                    <span className="w-6 h-6 rounded-full bg-[#EBF0EC] text-[#556E5F] flex items-center justify-center">
-                      <Lock className="w-3 h-3" />
-                    </span>
-                  </div>
-                </div>
-
-                {/* 7. Operations Manager (Coming Soon) */}
-                <div className="rounded-2xl bg-white/75 border border-[#E1EAE3] p-4 shadow-2xs flex flex-col justify-between min-h-[155px]">
-                  <div className="space-y-2">
-                    <div className="relative w-full h-14 rounded-xl overflow-hidden bg-[#EBF5FB] border border-[#C5E3F7]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/landing/card-operations.jpg"
-                        alt="Operations Manager"
-                        className="w-full h-full object-cover object-center"
-                      />
-                    </div>
-                    <div>
-                      <h3 className="font-display text-sm font-bold text-[#16271E]">
-                        Operations Manager
-                      </h3>
-                      <p className="text-[11px] text-[#718779] mt-0.5 leading-snug">
-                        End-to-end operations and business insights.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2.5 border-t border-[#EDF3EF] text-[10px]">
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#EBF0EC] font-bold text-[#556E5F]">
-                      Coming Soon
-                    </span>
-                    <span className="w-6 h-6 rounded-full bg-[#EBF0EC] text-[#556E5F] flex items-center justify-center">
-                      <Lock className="w-3 h-3" />
-                    </span>
-                  </div>
-                </div>
-              </div>
+              {/* ── 3 Secondary Portals (Row 2, including active Operations Manager) ── */}
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-3.5"
+              >
+                {row2Portals.map((portal) => (
+                  <motion.div key={portal.id} variants={itemVariants}>
+                    <PortalCard portal={portal} />
+                  </motion.div>
+                ))}
+              </motion.div>
             </div>
 
-            {/* ── Bottom Full-Width Brand Banner ── */}
-            <div className="rounded-2xl sm:rounded-3xl bg-white/95 border border-[#E1EAE3] p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+            {/* ── Bottom Full-Width Vision Banner ── */}
+            <motion.div
+              initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="rounded-2xl sm:rounded-3xl bg-white border border-[#E1EAE3] p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4"
+            >
               <div className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-2xl bg-[#E8F8F0] border border-[#C5F0DA] flex items-center justify-center text-[#0B5132] shadow-2xs">
                   <Leaf className="w-5 h-5 fill-[#0B5132]" />
@@ -394,9 +299,9 @@ export default function UnifiedLandingPage() {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </section>
       </main>
     </div>
   );

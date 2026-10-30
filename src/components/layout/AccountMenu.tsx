@@ -162,6 +162,22 @@ export function AccountMenu({ className }: { className?: string }) {
                   <HelpCircle className="h-4 w-4 text-primary" />
                   <span>Help & Support</span>
                 </Link>
+
+                <div className="my-1 border-t border-line/60" />
+
+                <Link
+                  href="/admin"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-between rounded-lg px-3 py-2 font-bold text-[#07563B] bg-[#EAF5E9] hover:bg-[#C6F04A]/30 transition"
+                >
+                  <span className="flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-[#07563B]" />
+                    <span>Operations Hub (Staff)</span>
+                  </span>
+                  <span className="text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-[#07563B] text-white">
+                    Portal
+                  </span>
+                </Link>
               </div>
 
               {/* Sign Out Button */}
@@ -234,6 +250,22 @@ export function AccountMenu({ className }: { className?: string }) {
                 >
                   <HelpCircle className="h-3.5 w-3.5 text-muted" />
                   <span>24/7 Customer Care</span>
+                </Link>
+
+                <div className="my-1 border-t border-line/60" />
+
+                <Link
+                  href="/admin/login"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center justify-between rounded-lg px-2 py-1.5 font-bold text-[#07563B] bg-[#EAF5E9] hover:bg-[#C6F04A]/30 transition"
+                >
+                  <span className="flex items-center gap-1.5">
+                    <ShieldCheck className="h-3.5 w-3.5 text-[#07563B]" />
+                    <span>Staff Login (Operations)</span>
+                  </span>
+                  <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-[#07563B] text-white">
+                    Login
+                  </span>
                 </Link>
               </div>
             </div>

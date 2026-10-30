@@ -53,6 +53,7 @@ const FOOTER_NAV = [
       { label: "Smart Subscriptions", href: "/account/subscriptions" },
       { label: "Member Savings", href: "/account/rewards" },
       { label: "Store Locator", href: "/help/delivery" },
+      { label: "Operations Hub (Staff)", href: "/admin" },
     ],
   },
   {
@@ -302,6 +303,10 @@ export function Footer({ compact = false }: { compact?: boolean }) {
             <span>·</span>
             <Link href="/legal/grievance" className="hover:text-white transition py-1">
               Grievance Officer
+            </Link>
+            <span>·</span>
+            <Link href="/admin/login" className="hover:text-accent font-bold text-accent transition py-1">
+              Staff Portal Login
             </Link>
           </div>
         </div>

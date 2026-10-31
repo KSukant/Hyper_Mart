@@ -102,7 +102,7 @@ export default function UnifiedLandingPage() {
         {/* ── RIGHT: Unified Workspace Selection Gateway (~60% on Desktop) ── */}
         <section
           aria-label="Unified Workspace Selection"
-          className="relative flex-1 bg-[#F4F6F2] px-6 sm:px-8 lg:px-12 py-5 sm:py-6 lg:py-8 flex flex-col justify-between h-full z-20"
+          className="relative flex-1 bg-[#F4F6F2] px-6 sm:px-8 lg:px-12 pt-3 sm:pt-4 lg:pt-5 pb-5 sm:pb-6 lg:pb-8 flex flex-col justify-start h-full z-20"
         >
           {/* Organic Wave Transition SVG on Left Edge (Desktop Only) */}
           <div
@@ -130,7 +130,7 @@ export default function UnifiedLandingPage() {
           </div>
 
           {/* Workspace Content Container */}
-          <div className="w-full max-w-[1140px] mx-auto flex flex-col justify-between h-full">
+          <div className="w-full max-w-[1140px] mx-auto flex flex-col justify-start space-y-3 sm:space-y-3.5">
             <div>
               {/* Headline */}
               <h2 className="font-display text-2xl sm:text-3xl lg:text-[32px] font-black tracking-tight text-[#16271E] leading-tight">
@@ -141,7 +141,7 @@ export default function UnifiedLandingPage() {
               </p>
             </div>
 
-            <div className="space-y-3.5 sm:space-y-4 my-auto">
+            <div className="space-y-3 sm:space-y-3.5">
               {/* ── 4 Primary Active Portals (Row 1) ── */}
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5 sm:gap-4">
                 {row1Portals.map((portal) => (

@@ -102,7 +102,7 @@ export default function UnifiedLandingPage() {
         {/* ── RIGHT: Unified Workspace Selection Gateway (~60% on Desktop) ── */}
         <section
           aria-label="Unified Workspace Selection"
-          className="relative flex-1 bg-[#F4F6F2] p-5 sm:p-8 lg:p-10 flex flex-col justify-between z-20"
+          className="relative flex-1 bg-[#F4F6F2] px-5 sm:px-8 lg:px-10 py-4 sm:py-6 lg:py-7 flex flex-col justify-start z-20"
         >
           {/* Organic Wave Transition SVG on Left Edge (Desktop Only) */}
           <div
@@ -130,15 +130,10 @@ export default function UnifiedLandingPage() {
           </div>
 
           {/* Workspace Content Container */}
-          <div className="w-full max-w-[1100px] mx-auto flex flex-col justify-center my-auto space-y-5">
+          <div className="w-full max-w-[1100px] mx-auto flex flex-col space-y-4">
             <div>
-              {/* Badge */}
-              <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#E5EFE7] border border-[#CBDDCE] text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-[#0B5132]">
-                CHOOSE YOUR WORKSPACE
-              </span>
-
               {/* Headline */}
-              <h2 className="font-display text-2xl sm:text-3xl lg:text-[38px] font-black tracking-tight text-[#16271E] mt-1.5 leading-tight">
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-[38px] font-black tracking-tight text-[#16271E] leading-tight">
                 Choose your workspace
               </h2>
               <p className="text-xs sm:text-sm text-[#5B7564] font-medium mt-0.5">

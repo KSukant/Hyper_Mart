@@ -97,7 +97,11 @@ const SLIDES: SlideData[] = [
 
 const AUTOPLAY_INTERVAL = 5000; // 5 seconds per slide
 
-export function EcosystemStatsCarousel() {
+interface EcosystemStatsCarouselProps {
+  className?: string;
+}
+
+export function EcosystemStatsCarousel({ className = "" }: EcosystemStatsCarouselProps = {}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -120,7 +124,7 @@ export function EcosystemStatsCarousel() {
     <div
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className="relative z-10 w-full max-w-md rounded-2xl sm:rounded-3xl bg-[#062A1A]/90 backdrop-blur-md border border-white/20 p-4 sm:p-5 text-white shadow-2xl space-y-3 mt-8 lg:mt-0 transition-all duration-300 hover:border-white/30"
+      className={`relative z-10 w-full max-w-md rounded-2xl sm:rounded-3xl bg-[#062A1A]/90 backdrop-blur-md border border-white/20 p-4 sm:p-5 text-white shadow-2xl space-y-3 mt-8 lg:mt-0 transition-all duration-300 hover:border-white/30 ${className}`}
       role="region"
       aria-label="HyperMart Ecosystem Highlights"
     >

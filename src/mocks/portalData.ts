@@ -124,7 +124,7 @@ export const INITIAL_COMPLAINT_DETAIL: ComplaintDetail = {
     { step: 'Manager escalation (if needed)', done: false },
     { step: 'Resolution executed', done: false },
   ],
-  customerPhotos: ['/photos/beauty-generic.webp', '/photos/lipstick-seal.webp'],
+  customerPhotos: ['/products/beauty/minimalist-niacinamide-serum-30ml-1.jpg', '/products/beauty/lakme-9to5-matte-lipstick-1.jpg'],
   warehousePhotoStatus: 'Pending',
   lastAction: 'Agent review',
   actor: 'Mara Tan',

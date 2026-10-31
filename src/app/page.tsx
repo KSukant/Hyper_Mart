@@ -96,7 +96,7 @@ export default function UnifiedLandingPage() {
           </div>
 
           {/* Interactive Animated Glass Statistics Carousel */}
-          <EcosystemStatsCarousel className="mt-auto flex-shrink-0" />
+          <EcosystemStatsCarousel className="mt-auto mb-2 sm:mb-3 flex-shrink-0" />
         </section>
 
         {/* ── RIGHT: Unified Workspace Selection Gateway (~60% on Desktop) ── */}

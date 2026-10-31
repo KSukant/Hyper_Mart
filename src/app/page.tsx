@@ -102,7 +102,7 @@ export default function UnifiedLandingPage() {
         {/* ── RIGHT: Unified Workspace Selection Gateway (~60% on Desktop) ── */}
         <section
           aria-label="Unified Workspace Selection"
-          className="relative flex-1 bg-[#F4F6F2] px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5 flex flex-col justify-center h-full z-20 overflow-hidden"
+          className="relative flex-1 bg-[#F4F6F2] px-6 sm:px-8 lg:px-12 py-5 sm:py-6 lg:py-8 flex flex-col justify-between h-full z-20 overflow-hidden"
         >
           {/* Organic Wave Transition SVG on Left Edge (Desktop Only) */}
           <div
@@ -130,18 +130,20 @@ export default function UnifiedLandingPage() {
           </div>
 
           {/* Workspace Content Container */}
-          <div className="w-full max-w-[1100px] mx-auto flex flex-col justify-center my-auto space-y-3 sm:space-y-3.5">
+          <div className="w-full max-w-[1140px] mx-auto flex flex-col justify-between h-full">
             <div>
               {/* Headline */}
-              <h2 className="font-display text-xl sm:text-2xl lg:text-[26px] font-black tracking-tight text-[#16271E] leading-tight">
+              <h2 className="font-display text-2xl sm:text-3xl lg:text-[32px] font-black tracking-tight text-[#16271E] leading-tight">
                 Choose your workspace
               </h2>
-              <p className="text-[11px] sm:text-xs text-[#5B7564] font-medium mt-0.5">
+              <p className="text-xs sm:text-sm text-[#5B7564] font-medium mt-1">
                 Select a portal to sign in and continue your journey.
               </p>
+            </div>
 
+            <div className="space-y-3.5 sm:space-y-4 my-auto">
               {/* ── 4 Primary Active Portals (Row 1) ── */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2.5 sm:gap-3 mt-2 sm:mt-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5 sm:gap-4">
                 {row1Portals.map((portal) => (
                   <div key={portal.id}>
                     <PortalCard portal={portal} />
@@ -150,7 +152,7 @@ export default function UnifiedLandingPage() {
               </div>
 
               {/* ── 3 Secondary Portals (Row 2, including active Operations Manager) ── */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 mt-2 sm:mt-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
                 {row2Portals.map((portal) => (
                   <div key={portal.id}>
                     <PortalCard portal={portal} />

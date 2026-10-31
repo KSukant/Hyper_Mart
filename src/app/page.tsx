@@ -15,26 +15,26 @@ export default function UnifiedLandingPage() {
   const row2Portals = PORTAL_REGISTRY.filter((p) => p.row === 2);
 
   return (
-    <div className="min-h-screen bg-[#F4F6F2] text-[#19271E] font-sans selection:bg-[#C6F04A] selection:text-[#053221] flex flex-col justify-between relative overflow-x-hidden">
+    <div className="h-screen w-full bg-[#F4F6F2] text-[#19271E] font-sans selection:bg-[#C6F04A] selection:text-[#053221] flex flex-col justify-between overflow-hidden relative">
       {/* ── 1. Top Unified Header (Spans across entire viewport) ── */}
-      <header className="relative z-30 w-full px-4 sm:px-8 lg:px-12 py-3.5 flex items-center justify-between border-b border-black/5 bg-white/90 backdrop-blur-md shadow-2xs">
+      <header className="relative z-30 w-full px-4 sm:px-6 lg:px-8 py-2 sm:py-2.5 flex items-center justify-between border-b border-black/5 bg-white/90 backdrop-blur-md shadow-2xs flex-shrink-0">
         {/* Left: Brand Logo & Tagline */}
-        <div className="flex items-center gap-2.5 sm:gap-3 flex-shrink-0">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#0B5132] flex items-center justify-center text-[#C6F04A] shadow-xs">
-            <ShoppingCart className="w-5 h-5 stroke-[2.4]" />
+        <div className="flex items-center gap-2.5 flex-shrink-0">
+          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-[#0B5132] flex items-center justify-center text-[#C6F04A] shadow-xs">
+            <ShoppingCart className="w-4 h-4 sm:w-4.5 sm:h-4.5 stroke-[2.4]" />
           </div>
           <div>
-            <span className="font-display font-black text-xl sm:text-2xl tracking-tight text-[#0B5132] leading-none block">
+            <span className="font-display font-black text-lg sm:text-xl tracking-tight text-[#0B5132] leading-none block">
               HyperMart
             </span>
-            <span className="text-[9.5px] sm:text-[10px] font-bold text-[#55735F] tracking-wide block mt-0.5">
+            <span className="text-[9px] sm:text-[9.5px] font-bold text-[#55735F] tracking-wide block mt-0.5">
               Good Products. Greater Living.
             </span>
           </div>
         </div>
 
         {/* Center: Brand Navigation Pillars */}
-        <nav className="hidden lg:flex items-center gap-4 text-xs font-semibold text-[#486352]">
+        <nav className="hidden lg:flex items-center gap-3.5 text-xs font-semibold text-[#486352]">
           <Link href="/shop" className="hover:text-[#0B5132] transition">
             Shop
           </Link>
@@ -47,7 +47,7 @@ export default function UnifiedLandingPage() {
         </nav>
 
         {/* Right: Actions */}
-        <div className="flex items-center gap-3 sm:gap-5 flex-shrink-0">
+        <div className="flex items-center gap-3 sm:gap-4 flex-shrink-0">
           <Link
             href="/help"
             className="flex items-center gap-1.5 text-xs font-bold text-[#486352] hover:text-[#0B5132] transition"
@@ -58,12 +58,12 @@ export default function UnifiedLandingPage() {
         </div>
       </header>
 
-      {/* ── 2. Main Two-Zone Continuous Composition ── */}
-      <main className="relative flex-1 w-full flex flex-col lg:flex-row items-stretch">
+      {/* ── 2. Main Two-Zone Continuous Composition (Zero Scroll, Fits 100vh) ── */}
+      <main className="relative flex-1 w-full flex flex-col lg:flex-row items-stretch overflow-hidden">
         {/* ── LEFT: Retail Hero Environment (~40% on Desktop) ── */}
         <section
           aria-label="HyperMart Brand Experience"
-          className="relative w-full lg:w-[42%] xl:w-[40%] flex-shrink-0 flex flex-col justify-between p-6 sm:p-10 lg:p-12 min-h-[560px] lg:min-h-[calc(100vh-76px)] z-10"
+          className="relative w-full lg:w-[40%] xl:w-[38%] flex-shrink-0 flex flex-col justify-between p-4 sm:p-6 lg:p-7 h-full z-10 overflow-hidden"
         >
           {/* Background Supermarket Photography */}
           <div
@@ -78,31 +78,31 @@ export default function UnifiedLandingPage() {
           </div>
 
           {/* Hero Content Overlaid on Left */}
-          <div className="relative z-10 my-auto pt-6 lg:pt-8 max-w-lg">
-            <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 border border-white/25 text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-white backdrop-blur-xs">
+          <div className="relative z-10 my-auto max-w-md pt-1">
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-white/20 border border-white/25 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-white backdrop-blur-xs">
               WELCOME TO HYPERMART
             </span>
 
-            <h1 className="font-display font-black text-3xl sm:text-4xl lg:text-[44px] xl:text-[50px] text-white leading-[1.08] tracking-tight mt-3 sm:mt-4 drop-shadow-md">
+            <h1 className="font-display font-black text-2xl sm:text-3xl lg:text-[32px] xl:text-[36px] text-white leading-[1.08] tracking-tight mt-2 mb-2 drop-shadow-md">
               One Platform.<br />
               Every <span className="text-[#22C55E]">Possibility.</span>
             </h1>
 
-            <div className="w-12 h-1 rounded-full bg-[#22C55E] mt-3 sm:mt-4 mb-3 sm:mb-4" />
+            <div className="w-10 h-0.5 rounded-full bg-[#22C55E] my-2" />
 
-            <p className="text-white/95 text-xs sm:text-sm lg:text-[14px] font-normal leading-relaxed max-w-md drop-shadow-sm">
+            <p className="text-white/95 text-[11px] sm:text-xs lg:text-[13px] font-normal leading-relaxed max-w-sm drop-shadow-sm">
               From everyday shopping to enterprise operations, HyperMart connects customers, teams and technology for a better tomorrow.
             </p>
           </div>
 
-          {/* Interactive Animated Glass Statistics Carousel (Moved upwards by 2cm) */}
-          <EcosystemStatsCarousel className="mb-6 sm:mb-10 lg:mb-[2cm]" />
+          {/* Interactive Animated Glass Statistics Carousel */}
+          <EcosystemStatsCarousel className="mt-auto flex-shrink-0" />
         </section>
 
         {/* ── RIGHT: Unified Workspace Selection Gateway (~60% on Desktop) ── */}
         <section
           aria-label="Unified Workspace Selection"
-          className="relative flex-1 bg-[#F4F6F2] px-5 sm:px-8 lg:px-10 py-4 sm:py-6 lg:py-7 flex flex-col justify-start z-20"
+          className="relative flex-1 bg-[#F4F6F2] px-4 sm:px-6 lg:px-8 py-3 sm:py-4 lg:py-5 flex flex-col justify-center h-full z-20 overflow-hidden"
         >
           {/* Organic Wave Transition SVG on Left Edge (Desktop Only) */}
           <div
@@ -130,18 +130,18 @@ export default function UnifiedLandingPage() {
           </div>
 
           {/* Workspace Content Container */}
-          <div className="w-full max-w-[1100px] mx-auto flex flex-col space-y-4">
+          <div className="w-full max-w-[1100px] mx-auto flex flex-col justify-center my-auto space-y-3 sm:space-y-3.5">
             <div>
               {/* Headline */}
-              <h2 className="font-display text-2xl sm:text-3xl lg:text-[38px] font-black tracking-tight text-[#16271E] leading-tight">
+              <h2 className="font-display text-xl sm:text-2xl lg:text-[26px] font-black tracking-tight text-[#16271E] leading-tight">
                 Choose your workspace
               </h2>
-              <p className="text-xs sm:text-sm text-[#5B7564] font-medium mt-0.5">
+              <p className="text-[11px] sm:text-xs text-[#5B7564] font-medium mt-0.5">
                 Select a portal to sign in and continue your journey.
               </p>
 
               {/* ── 4 Primary Active Portals (Row 1) ── */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3.5 mt-4 sm:mt-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2.5 sm:gap-3 mt-2 sm:mt-2.5">
                 {row1Portals.map((portal) => (
                   <div key={portal.id}>
                     <PortalCard portal={portal} />
@@ -150,7 +150,7 @@ export default function UnifiedLandingPage() {
               </div>
 
               {/* ── 3 Secondary Portals (Row 2, including active Operations Manager) ── */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mt-3.5">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3 mt-2 sm:mt-2.5">
                 {row2Portals.map((portal) => (
                   <div key={portal.id}>
                     <PortalCard portal={portal} />

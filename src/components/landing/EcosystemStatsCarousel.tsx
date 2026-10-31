@@ -124,20 +124,20 @@ export function EcosystemStatsCarousel({ className = "" }: EcosystemStatsCarouse
     <div
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className={`relative z-10 w-full max-w-md rounded-2xl sm:rounded-3xl bg-[#062A1A]/90 backdrop-blur-md border border-white/20 p-4 sm:p-5 text-white shadow-2xl space-y-3 mt-8 lg:mt-0 transition-all duration-300 hover:border-white/30 ${className}`}
+      className={`relative z-10 w-full max-w-md rounded-xl sm:rounded-2xl bg-[#062A1A]/90 backdrop-blur-md border border-white/20 p-3 sm:p-3.5 text-white shadow-xl space-y-2 transition-all duration-300 hover:border-white/30 ${className}`}
       role="region"
       aria-label="HyperMart Ecosystem Highlights"
     >
       {/* ── Headline Message with Smooth Crossfade & Upward Slide ── */}
-      <div className="min-h-[40px] flex items-center">
+      <div className="min-h-[32px] flex items-center">
         <AnimatePresence mode="wait">
           <motion.p
             key={activeSlide.id}
-            initial={{ opacity: 0, y: 6 }}
+            initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -6 }}
-            transition={{ duration: 0.35, ease: "easeOut" }}
-            className="text-xs sm:text-sm font-bold text-white/95 leading-snug"
+            exit={{ opacity: 0, y: -4 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="text-[11.5px] sm:text-xs font-bold text-white/95 leading-snug"
           >
             {activeSlide.message}
           </motion.p>
@@ -178,14 +178,14 @@ export function EcosystemStatsCarousel({ className = "" }: EcosystemStatsCarouse
       </div>
 
       {/* ── Animated Stats Row ── */}
-      <div className="pt-3 border-t border-white/15">
+      <div className="pt-2 border-t border-white/15">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeSlide.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            transition={{ duration: 0.2 }}
             className="grid grid-cols-3 gap-2 text-left"
           >
             {activeSlide.stats.map((stat, idx) => {
@@ -193,26 +193,26 @@ export function EcosystemStatsCarousel({ className = "" }: EcosystemStatsCarouse
               return (
                 <motion.div
                   key={stat.label}
-                  initial={{ opacity: 0, y: 8 }}
+                  initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{
-                    duration: 0.35,
-                    delay: idx * 0.08,
+                    duration: 0.25,
+                    delay: idx * 0.05,
                     ease: "easeOut",
                   }}
                   className="space-y-0.5"
                 >
-                  <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
+                  <div className="flex items-center gap-1 text-[11px] text-[#A7D1BA]">
                     <Icon
-                      className={`w-3.5 h-3.5 text-[#22C55E] flex-shrink-0 ${
+                      className={`w-3 h-3 text-[#22C55E] flex-shrink-0 ${
                         stat.fillIcon ? "fill-[#22C55E]" : ""
                       }`}
                     />
-                    <span className="font-mono font-black text-sm sm:text-base text-white tracking-tight">
+                    <span className="font-mono font-black text-xs sm:text-[13px] text-white tracking-tight">
                       {stat.value}
                     </span>
                   </div>
-                  <span className="text-[10px] text-white/75 block leading-tight">
+                  <span className="text-[9.5px] text-white/75 block leading-tight">
                     {stat.label}
                   </span>
                 </motion.div>

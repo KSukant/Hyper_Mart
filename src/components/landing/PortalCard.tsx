@@ -56,23 +56,30 @@ export function PortalCard({ portal, className = "" }: PortalCardProps) {
       }}
     >
       <div className="space-y-3">
-        {/* Top Photographic Container with embedded artwork & colored icon badge */}
+        {/* Top Photographic Container with embedded artwork & elevated icon badge */}
         <div
-          className="relative w-full h-24 sm:h-28 rounded-xl sm:rounded-2xl overflow-hidden border border-black/5 flex items-center justify-center"
+          className={`relative w-full ${
+            portal.row === 2 ? "h-32 sm:h-36" : "h-28 sm:h-32"
+          } rounded-xl sm:rounded-2xl overflow-hidden border border-black/5 flex items-center justify-center`}
           style={{ backgroundColor: portal.accentBg }}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={portal.image}
             alt={portal.name}
-            className={`w-full h-full object-cover object-center transition-transform duration-500 ${
+            loading="lazy"
+            decoding="async"
+            className={`w-full h-full object-cover object-center transition-transform duration-500 ease-out ${
               isActive ? "group-hover:scale-105" : ""
             }`}
           />
 
-          {/* Icon Badge container placed on top-left of image area */}
+          {/* Contrast scrim at bottom to anchor floating badge */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/5 to-transparent pointer-events-none" />
+
+          {/* Elevated Icon Badge placed at bottom-left */}
           <div
-            className="absolute top-2.5 left-2.5 w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-sm backdrop-blur-sm border transition-transform duration-300 group-hover:scale-110"
+            className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 w-8 h-8 sm:w-9 sm:h-9 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-md backdrop-blur-sm border transition-transform duration-300 group-hover:scale-110 z-10"
             style={{
               backgroundColor: portal.accentBg,
               borderColor: portal.accentBorder,

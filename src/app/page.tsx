@@ -102,7 +102,7 @@ export default function UnifiedLandingPage() {
         {/* ── RIGHT: Unified Workspace Selection Gateway (~60% on Desktop) ── */}
         <section
           aria-label="Unified Workspace Selection"
-          className="relative flex-1 bg-[#F4F6F2] px-6 sm:px-8 lg:px-12 py-5 sm:py-6 lg:py-8 flex flex-col justify-between h-full z-20 overflow-hidden"
+          className="relative flex-1 bg-[#F4F6F2] px-6 sm:px-8 lg:px-12 py-5 sm:py-6 lg:py-8 flex flex-col justify-between h-full z-20"
         >
           {/* Organic Wave Transition SVG on Left Edge (Desktop Only) */}
           <div

@@ -95,7 +95,7 @@ const SLIDES: SlideData[] = [
   },
 ];
 
-const AUTOPLAY_INTERVAL = 5000; // 5 seconds per slide
+const AUTOPLAY_INTERVAL = 3500; // 3.5s active continuous rotation
 
 interface EcosystemStatsCarouselProps {
   className?: string;
@@ -103,12 +103,9 @@ interface EcosystemStatsCarouselProps {
 
 export function EcosystemStatsCarousel({ className = "" }: EcosystemStatsCarouselProps = {}) {
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (isPaused) return;
-
     timerRef.current = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % SLIDES.length);
     }, AUTOPLAY_INTERVAL);
@@ -116,26 +113,40 @@ export function EcosystemStatsCarousel({ className = "" }: EcosystemStatsCarouse
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [isPaused, currentIndex]);
+  }, [currentIndex]);
 
   const activeSlide = SLIDES[currentIndex];
 
   return (
     <div
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
       className={`relative z-10 w-full max-w-md rounded-xl sm:rounded-2xl bg-[#062A1A]/90 backdrop-blur-md border border-white/20 p-3 sm:p-3.5 text-white shadow-xl space-y-2 transition-all duration-300 hover:border-white/30 ${className}`}
       role="region"
       aria-label="HyperMart Ecosystem Highlights"
     >
+      {/* ── Top Live Pulse Status Bar ── */}
+      <div className="flex items-center justify-between text-[9.5px]">
+        <div className="flex items-center gap-1.5">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#22C55E]"></span>
+          </span>
+          <span className="font-bold uppercase tracking-wider text-[#A7D1BA]">
+            Live Ecosystem Pulse
+          </span>
+        </div>
+        <span className="font-mono text-white/50 text-[10px]">
+          0{currentIndex + 1} / 0{SLIDES.length}
+        </span>
+      </div>
+
       {/* ── Headline Message with Smooth Crossfade & Upward Slide ── */}
-      <div className="min-h-[32px] flex items-center">
+      <div className="min-h-[30px] flex items-center">
         <AnimatePresence mode="wait">
           <motion.p
             key={activeSlide.id}
-            initial={{ opacity: 0, y: 4 }}
+            initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -4 }}
+            exit={{ opacity: 0, y: -5 }}
             transition={{ duration: 0.3, ease: "easeOut" }}
             className="text-[11.5px] sm:text-xs font-bold text-white/95 leading-snug"
           >
@@ -161,15 +172,14 @@ export function EcosystemStatsCarousel({ className = "" }: EcosystemStatsCarouse
             >
               {isActive && (
                 <motion.span
-                  key={`progress-${currentIndex}-${isPaused ? "paused" : "running"}`}
+                  key={`progress-${currentIndex}`}
                   initial={{ width: "0%" }}
-                  animate={{ width: isPaused ? undefined : "100%" }}
+                  animate={{ width: "100%" }}
                   transition={{
                     duration: AUTOPLAY_INTERVAL / 1000,
                     ease: "linear",
                   }}
-                  className="absolute inset-y-0 left-0 bg-[#22C55E] rounded-full"
-                  style={{ width: isPaused ? "100%" : undefined }}
+                  className="absolute inset-y-0 left-0 bg-[#22C55E] rounded-full shadow-[0_0_8px_#22C55E]"
                 />
               )}
             </button>
@@ -208,9 +218,15 @@ export function EcosystemStatsCarousel({ className = "" }: EcosystemStatsCarouse
                         stat.fillIcon ? "fill-[#22C55E]" : ""
                       }`}
                     />
-                    <span className="font-mono font-black text-xs sm:text-[13px] text-white tracking-tight">
+                    <motion.span
+                      key={`val-${stat.value}`}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.35, ease: "backOut" }}
+                      className="font-mono font-black text-xs sm:text-[13px] text-white tracking-tight"
+                    >
                       {stat.value}
-                    </span>
+                    </motion.span>
                   </div>
                   <span className="text-[9.5px] text-white/75 block leading-tight">
                     {stat.label}
@@ -224,4 +240,3 @@ export function EcosystemStatsCarousel({ className = "" }: EcosystemStatsCarouse
     </div>
   );
 }
-

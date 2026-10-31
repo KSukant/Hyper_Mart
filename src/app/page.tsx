@@ -52,18 +52,10 @@ export default function UnifiedLandingPage() {
         <div className="flex items-center gap-3 sm:gap-5 flex-shrink-0">
           <Link
             href="/help"
-            className="hidden sm:flex items-center gap-1.5 text-xs font-bold text-[#486352] hover:text-[#0B5132] transition"
+            className="flex items-center gap-1.5 text-xs font-bold text-[#486352] hover:text-[#0B5132] transition"
           >
             <Headphones className="w-3.5 h-3.5 text-[#0B5132]" />
             <span>Need help?</span>
-          </Link>
-
-          <Link
-            href="/admin/login"
-            className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#0B5132]/30 bg-white text-xs font-bold text-[#0B5132] hover:bg-[#0B5132] hover:text-white transition-all shadow-2xs"
-          >
-            <span>Employee login</span>
-            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </header>

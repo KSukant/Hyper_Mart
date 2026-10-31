@@ -5,13 +5,11 @@ import {
   ShoppingCart,
   Headphones,
   ArrowRight,
-  Users,
-  Package,
-  Star,
   Leaf,
 } from "lucide-react";
 import { PORTAL_REGISTRY } from "@/config/portals";
 import { PortalCard } from "@/components/landing/PortalCard";
+import { EcosystemStatsCarousel } from "@/components/landing/EcosystemStatsCarousel";
 
 export default function UnifiedLandingPage() {
   // Split portals by row from configuration registry
@@ -107,58 +105,8 @@ export default function UnifiedLandingPage() {
             </p>
           </div>
 
-          {/* Glass Statistics Panel at Bottom */}
-          <div className="relative z-10 w-full max-w-md rounded-2xl sm:rounded-3xl bg-[#062A1A]/90 backdrop-blur-md border border-white/20 p-4 sm:p-5 text-white shadow-2xl space-y-3 mt-8 lg:mt-0">
-            <p className="text-xs sm:text-sm font-bold text-white/95 leading-snug">
-              A connected retail ecosystem for customers, teams and operations.
-            </p>
-
-            {/* Slider Dash Indicators */}
-            <div className="flex items-center gap-1.5">
-              <span className="w-7 h-1 rounded-full bg-[#22C55E]" />
-              <span className="w-3.5 h-1 rounded-full bg-white/40" />
-              <span className="w-3.5 h-1 rounded-full bg-white/40" />
-            </div>
-
-            {/* Stats Row */}
-            <div className="grid grid-cols-3 gap-2 pt-3 border-t border-white/15 text-left">
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
-                  <Users className="w-3.5 h-3.5 text-[#22C55E]" />
-                  <span className="font-mono font-black text-sm sm:text-base text-white">
-                    10M+
-                  </span>
-                </div>
-                <span className="text-[10px] text-white/75 block leading-tight">
-                  Happy Customers
-                </span>
-              </div>
-
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
-                  <Package className="w-3.5 h-3.5 text-[#22C55E]" />
-                  <span className="font-mono font-black text-sm sm:text-base text-white">
-                    500K+
-                  </span>
-                </div>
-                <span className="text-[10px] text-white/75 block leading-tight">
-                  Products Delivered
-                </span>
-              </div>
-
-              <div className="space-y-0.5">
-                <div className="flex items-center gap-1.5 text-xs text-[#A7D1BA]">
-                  <Star className="w-3.5 h-3.5 text-[#22C55E] fill-[#22C55E]" />
-                  <span className="font-mono font-black text-sm sm:text-base text-white">
-                    98%
-                  </span>
-                </div>
-                <span className="text-[10px] text-white/75 block leading-tight">
-                  Service Satisfaction
-                </span>
-              </div>
-            </div>
-          </div>
+          {/* Interactive Animated Glass Statistics Carousel at Bottom */}
+          <EcosystemStatsCarousel />
         </section>
 
         {/* ── RIGHT: Unified Workspace Selection Gateway (~60% on Desktop) ── */}

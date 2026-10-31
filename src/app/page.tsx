@@ -4,8 +4,6 @@ import Link from "next/link";
 import {
   ShoppingCart,
   Headphones,
-  ArrowRight,
-  Leaf,
 } from "lucide-react";
 import { PORTAL_REGISTRY } from "@/config/portals";
 import { PortalCard } from "@/components/landing/PortalCard";
@@ -132,7 +130,7 @@ export default function UnifiedLandingPage() {
           </div>
 
           {/* Workspace Content Container */}
-          <div className="w-full max-w-[1100px] mx-auto flex flex-col justify-between h-full space-y-5">
+          <div className="w-full max-w-[1100px] mx-auto flex flex-col justify-center my-auto space-y-5">
             <div>
               {/* Badge */}
               <span className="inline-flex items-center px-3 py-0.5 rounded-full bg-[#E5EFE7] border border-[#CBDDCE] text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-[#0B5132]">
@@ -163,33 +161,6 @@ export default function UnifiedLandingPage() {
                     <PortalCard portal={portal} />
                   </div>
                 ))}
-              </div>
-            </div>
-
-            {/* ── Bottom Full-Width Vision Banner ── */}
-            <div className="rounded-2xl sm:rounded-3xl bg-white border border-[#E1EAE3] p-3.5 sm:p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4">
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-2xl bg-[#E8F8F0] border border-[#C5F0DA] flex items-center justify-center text-[#0B5132] shadow-2xs">
-                  <Leaf className="w-5 h-5 fill-[#0B5132]" />
-                </div>
-                <div>
-                  <h4 className="font-display font-black text-base sm:text-lg text-[#16271E] tracking-tight">
-                    People. Products. Possibilities.
-                  </h4>
-                  <div className="w-12 h-1 rounded-full bg-[#20A065] mt-1" />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between sm:justify-end gap-3 text-xs font-semibold text-[#5B7564]">
-                <span className="text-right leading-tight">
-                  Different teams. A shared purpose. <br className="hidden sm:inline" /> A better tomorrow.
-                </span>
-                <Link
-                  href="/shop"
-                  className="w-8 h-8 rounded-full bg-[#D7F3E2] text-[#0B5132] hover:bg-[#20A065] hover:text-white transition flex items-center justify-center shadow-xs flex-shrink-0"
-                >
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
               </div>
             </div>
           </div>

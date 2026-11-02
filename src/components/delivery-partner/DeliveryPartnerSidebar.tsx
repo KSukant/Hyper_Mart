@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -34,10 +35,18 @@ const NAV_ITEMS: NavItem[] = [
 
 export function DeliveryPartnerSidebar() {
   const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const isActive = (href: string) => {
-    if (href === '/delivery-partner/dashboard') return pathname === href;
-    return pathname.startsWith(href);
+    const current = pathname || '';
+    if (href === '/delivery-partner/dashboard') {
+      return current === '/delivery-partner' || current === '/delivery-partner/dashboard' || current === '';
+    }
+    return Boolean(current && current.startsWith(href));
   };
 
   return (
@@ -68,6 +77,7 @@ export function DeliveryPartnerSidebar() {
             <Link
               key={item.href}
               href={item.href}
+              suppressHydrationWarning
               className={cn(
                 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-colors duration-150',
                 active
@@ -76,6 +86,7 @@ export function DeliveryPartnerSidebar() {
               )}
             >
               <Icon
+                suppressHydrationWarning
                 className={cn(
                   'w-[18px] h-[18px] shrink-0',
                   active ? 'text-[#073922]' : 'text-[rgba(255,255,255,0.6)]'

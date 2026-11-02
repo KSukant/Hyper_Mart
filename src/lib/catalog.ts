@@ -34,7 +34,8 @@ export interface StockInfo { status: StockStatus; available: number; restockDate
 export function getStock(productId: string, warehouseId: string, variantKey?: string): StockInfo {
   const rows = stock.filter((s) => s.productId === productId && s.warehouseId === warehouseId);
   if (!rows.length) return { status: "not_stocked", available: 0 };
-  const pick = variantKey ? rows.filter((r) => r.variantKey === variantKey) : rows;
+  const cleanKey = variantKey ? variantKey.replace(/\|rental$/, "") : undefined;
+  const pick = cleanKey ? rows.filter((r) => r.variantKey === cleanKey) : rows;
   if (!pick.length) return { status: "not_stocked", available: 0 };
   const available = pick.reduce((a, r) => a + r.available, 0);
   const row = pick[0];

@@ -38,7 +38,7 @@ const DEPT_ICONS: Record<Department, typeof Apple> = {
 const DOMAIN_COLORS: Record<Department, string> = {
   food: "#0E5E3A",       // food green
   fashion: "#6B2E5F",    // fashion plum
-  electronics: "#1D4E89",// electronics blue
+  electronics: "#085A2E",// electronics forest green
   beauty: "#9C2F55",     // beauty rose
 };
 

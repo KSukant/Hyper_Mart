@@ -6,10 +6,10 @@ export function Logo({ light = false, size = "md" }: { light?: boolean; size?: "
   const h = { sm: 30, md: 38, lg: 48 }[size];
   const file = ["/logo/hypermart-logo.webp", "/logo/hypermart-logo.png", "/logo/hypermart-logo.svg"].find((f) => PHOTOS.has(f));
   return (
-    <Link href="/" aria-label="HyperMart home" className="inline-flex shrink-0 items-center gap-2">
-      {file ? (
+    <Link href="/shop" aria-label="HyperMart home" className="inline-flex shrink-0 items-center gap-2">
+      {file && !light ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={file} alt="HyperMart" style={{ height: h }} className={light ? "rounded-lg bg-white p-1" : ""} />
+        <img src={file} alt="HyperMart" style={{ height: h }} />
       ) : (
         <>
           <svg viewBox="0 0 40 40" style={{ height: h, width: h }} aria-hidden>

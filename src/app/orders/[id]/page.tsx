@@ -392,7 +392,7 @@ function OrderView() {
                     <button
                       type="button"
                       onClick={() => toast("Shipment is out with courier partner (Van #KA01-9876)")}
-                      className="block text-[10px] text-[#1E3A8A] font-bold hover:underline mt-0.5"
+                      className="block text-[10px] text-[#085A2E] font-bold hover:underline mt-0.5"
                     >
                       Track shipment &rsaquo;
                     </button>
@@ -458,11 +458,11 @@ function OrderView() {
                     <span className="text-[10px] text-muted">13 Mar, 9:10 AM</span>
                   </div>
                   <div className="flex flex-col items-center">
-                    <span className="grid h-6 w-6 place-items-center rounded-full border-2 border-[#1E3A8A] bg-white text-[#1E3A8A] text-[10px] font-bold">
+                    <span className="grid h-6 w-6 place-items-center rounded-full border-2 border-[#085A2E] bg-white text-[#085A2E] text-[10px] font-bold">
                       <Clock className="h-3 w-3" />
                     </span>
-                    <strong className="text-[11px] font-bold text-[#1E3A8A] mt-1.5 leading-tight">Delivery &amp; installation</strong>
-                    <span className="text-[10px] text-[#1E3A8A] font-semibold">Today, 2:00 – 6:00 PM</span>
+                    <strong className="text-[11px] font-bold text-[#085A2E] mt-1.5 leading-tight">Delivery &amp; installation</strong>
+                    <span className="text-[10px] text-[#085A2E] font-semibold">Today, 2:00 – 6:00 PM</span>
                   </div>
                 </div>
               </div>
@@ -472,7 +472,7 @@ function OrderView() {
                 {/* Warranty */}
                 <div className="rounded-2xl border border-line/80 bg-white p-3.5 shadow-xs space-y-1">
                   <div className="flex items-center gap-2">
-                    <ShieldCheck className="h-4 w-4 text-[#1E3A8A]" />
+                    <ShieldCheck className="h-4 w-4 text-[#085A2E]" />
                     <h4 className="text-xs font-bold text-ink">Warranty</h4>
                   </div>
                   <p className="text-xs font-extrabold text-ink">2 years limited warranty</p>
@@ -480,7 +480,7 @@ function OrderView() {
                   <button
                     type="button"
                     onClick={() => setWarrantyOpen(true)}
-                    className="text-[11px] font-bold text-[#1E3A8A] hover:underline pt-1 block"
+                    className="text-[11px] font-bold text-[#085A2E] hover:underline pt-1 block"
                   >
                     View details &rsaquo;
                   </button>
@@ -489,7 +489,7 @@ function OrderView() {
                 {/* Invoice */}
                 <div className="rounded-2xl border border-line/80 bg-white p-3.5 shadow-xs space-y-1">
                   <div className="flex items-center gap-2">
-                    <FileText className="h-4 w-4 text-[#1E3A8A]" />
+                    <FileText className="h-4 w-4 text-[#085A2E]" />
                     <h4 className="text-xs font-bold text-ink">Invoice</h4>
                   </div>
                   <p className="text-xs font-extrabold text-ink">#INV72845193</p>
@@ -497,7 +497,7 @@ function OrderView() {
                   <button
                     type="button"
                     onClick={() => toast("Downloading invoice #INV72845193.pdf")}
-                    className="text-[11px] font-bold text-[#1E3A8A] hover:underline pt-1 block"
+                    className="text-[11px] font-bold text-[#085A2E] hover:underline pt-1 block"
                   >
                     Download &rsaquo;
                   </button>
@@ -506,7 +506,7 @@ function OrderView() {
                 {/* Compatibility */}
                 <div className="rounded-2xl border border-line/80 bg-white p-3.5 shadow-xs space-y-1">
                   <div className="flex items-center gap-2">
-                    <Settings className="h-4 w-4 text-[#1E3A8A]" />
+                    <Settings className="h-4 w-4 text-[#085A2E]" />
                     <h4 className="text-xs font-bold text-ink">Compatibility</h4>
                   </div>
                   <p className="text-xs font-extrabold text-ink">Compatible</p>
@@ -514,7 +514,7 @@ function OrderView() {
                   <button
                     type="button"
                     onClick={() => setCompatibilityOpen(true)}
-                    className="text-[11px] font-bold text-[#1E3A8A] hover:underline pt-1 block"
+                    className="text-[11px] font-bold text-[#085A2E] hover:underline pt-1 block"
                   >
                     View details &rsaquo;
                   </button>
@@ -523,7 +523,7 @@ function OrderView() {
                 {/* Home fit result */}
                 <div className="rounded-2xl border border-line/80 bg-white p-3.5 shadow-xs space-y-1">
                   <div className="flex items-center gap-2">
-                    <Home className="h-4 w-4 text-[#1E3A8A]" />
+                    <Home className="h-4 w-4 text-[#085A2E]" />
                     <h4 className="text-xs font-bold text-ink">Home fit result</h4>
                   </div>
                   <p className="text-xs font-extrabold text-ink">Suitable</p>
@@ -531,7 +531,7 @@ function OrderView() {
                   <button
                     type="button"
                     onClick={() => setHomeFitOpen(true)}
-                    className="text-[11px] font-bold text-[#1E3A8A] hover:underline pt-1 block"
+                    className="text-[11px] font-bold text-[#085A2E] hover:underline pt-1 block"
                   >
                     View details &rsaquo;
                   </button>
@@ -541,7 +541,7 @@ function OrderView() {
               {/* Product Information Card */}
               <div className="rounded-2xl border border-line/80 bg-white p-4 shadow-xs space-y-2 text-xs">
                 <div className="flex items-center gap-2 font-bold text-ink">
-                  <Laptop className="h-4 w-4 text-[#1E3A8A]" />
+                  <Laptop className="h-4 w-4 text-[#085A2E]" />
                   <span>Product information</span>
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-2 text-muted">
@@ -553,7 +553,7 @@ function OrderView() {
                   <button
                     type="button"
                     onClick={() => toast("Viewing complete hardware specifications")}
-                    className="text-[11px] font-bold text-[#1E3A8A] hover:underline"
+                    className="text-[11px] font-bold text-[#085A2E] hover:underline"
                   >
                     View all specs &rsaquo;
                   </button>
@@ -573,7 +573,7 @@ function OrderView() {
                     className="flex items-center justify-between rounded-xl border border-line/80 p-3 hover:bg-bg text-left transition"
                   >
                     <div className="flex items-center gap-2.5">
-                      <Package className="h-4 w-4 text-[#1E3A8A]" />
+                      <Package className="h-4 w-4 text-[#085A2E]" />
                       <div>
                         <strong className="block text-ink font-bold">Report delivery damage</strong>
                         <span className="text-[10px] text-muted">Item arrived damaged</span>
@@ -588,7 +588,7 @@ function OrderView() {
                     className="flex items-center justify-between rounded-xl border border-line/80 p-3 hover:bg-bg text-left transition"
                   >
                     <div className="flex items-center gap-2.5">
-                      <ShieldCheck className="h-4 w-4 text-[#1E3A8A]" />
+                      <ShieldCheck className="h-4 w-4 text-[#085A2E]" />
                       <div>
                         <strong className="block text-ink font-bold">Request warranty service</strong>
                         <span className="text-[10px] text-muted">Under warranty support</span>
@@ -603,7 +603,7 @@ function OrderView() {
                     className="flex items-center justify-between rounded-xl border border-line/80 p-3 hover:bg-bg text-left transition"
                   >
                     <div className="flex items-center gap-2.5">
-                      <Wrench className="h-4 w-4 text-[#1E3A8A]" />
+                      <Wrench className="h-4 w-4 text-[#085A2E]" />
                       <div>
                         <strong className="block text-ink font-bold">Start repair</strong>
                         <span className="text-[10px] text-muted">Book a repair service</span>
@@ -618,7 +618,7 @@ function OrderView() {
                     className="flex items-center justify-between rounded-xl border border-line/80 p-3 hover:bg-bg text-left transition"
                   >
                     <div className="flex items-center gap-2.5">
-                      <Clock className="h-4 w-4 text-[#1E3A8A]" />
+                      <Clock className="h-4 w-4 text-[#085A2E]" />
                       <div>
                         <strong className="block text-ink font-bold">Track repair</strong>
                         <span className="text-[10px] text-muted">Check repair status</span>
@@ -633,7 +633,7 @@ function OrderView() {
                     className="flex items-center justify-between rounded-xl border border-line/80 p-3 hover:bg-bg text-left transition"
                   >
                     <div className="flex items-center gap-2.5">
-                      <Repeat className="h-4 w-4 text-[#1E3A8A]" />
+                      <Repeat className="h-4 w-4 text-[#085A2E]" />
                       <div>
                         <strong className="block text-ink font-bold">Request exchange</strong>
                         <span className="text-[10px] text-muted">Replacement for this item</span>
@@ -648,7 +648,7 @@ function OrderView() {
                     className="flex items-center justify-between rounded-xl border border-line/80 p-3 hover:bg-bg text-left transition"
                   >
                     <div className="flex items-center gap-2.5">
-                      <FileText className="h-4 w-4 text-[#1E3A8A]" />
+                      <FileText className="h-4 w-4 text-[#085A2E]" />
                       <div>
                         <strong className="block text-ink font-bold">Report missing accessory</strong>
                         <span className="text-[10px] text-muted">Missing items from package</span>
@@ -664,7 +664,7 @@ function OrderView() {
                     className="flex items-center justify-between rounded-xl border border-line/80 p-3 hover:bg-bg text-left transition text-xs"
                   >
                     <div className="flex items-center gap-2.5">
-                      <Headphones className="h-4 w-4 text-[#1E3A8A]" />
+                      <Headphones className="h-4 w-4 text-[#085A2E]" />
                       <div>
                         <strong className="block text-ink font-bold">Contact support</strong>
                         <span className="text-[10px] text-muted">Get help from our support team</span>
@@ -698,7 +698,7 @@ function OrderView() {
                     <button
                       type="button"
                       onClick={() => setReviewChangeOpen(true)}
-                      className="text-[11px] font-bold text-[#1E3A8A] hover:underline"
+                      className="text-[11px] font-bold text-[#085A2E] hover:underline"
                     >
                       Edit &rsaquo;
                     </button>
@@ -716,7 +716,7 @@ function OrderView() {
                     <button
                       type="button"
                       onClick={() => toast("Quantity locked to 1 for this serial-tracked item")}
-                      className="text-[11px] font-bold text-[#1E3A8A] hover:underline"
+                      className="text-[11px] font-bold text-[#085A2E] hover:underline"
                     >
                       Edit &rsaquo;
                     </button>
@@ -734,7 +734,7 @@ function OrderView() {
                     <button
                       type="button"
                       onClick={() => toast("Address change requested")}
-                      className="text-[11px] font-bold text-[#1E3A8A] hover:underline"
+                      className="text-[11px] font-bold text-[#085A2E] hover:underline"
                     >
                       Edit &rsaquo;
                     </button>
@@ -752,7 +752,7 @@ function OrderView() {
                     <button
                       type="button"
                       onClick={() => toast("Slot reschedule active")}
-                      className="text-[11px] font-bold text-[#1E3A8A] hover:underline"
+                      className="text-[11px] font-bold text-[#085A2E] hover:underline"
                     >
                       Edit &rsaquo;
                     </button>
@@ -770,7 +770,7 @@ function OrderView() {
                     <button
                       type="button"
                       onClick={() => toast("Installation preferences confirmed")}
-                      className="text-[11px] font-bold text-[#1E3A8A] hover:underline"
+                      className="text-[11px] font-bold text-[#085A2E] hover:underline"
                     >
                       Edit &rsaquo;
                     </button>
@@ -788,7 +788,7 @@ function OrderView() {
                     <button
                       type="button"
                       onClick={() => toast("Gate code updated")}
-                      className="text-[11px] font-bold text-[#1E3A8A] hover:underline"
+                      className="text-[11px] font-bold text-[#085A2E] hover:underline"
                     >
                       Edit &rsaquo;
                     </button>
@@ -848,7 +848,7 @@ function OrderView() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-muted">New value</span>
-                      <span className="font-bold text-[#1E3A8A] text-right">TL14-512<br />(16 GB RAM / 512 GB SSD)</span>
+                      <span className="font-bold text-[#085A2E] text-right">TL14-512<br />(16 GB RAM / 512 GB SSD)</span>
                     </div>
                     <div className="flex justify-between border-t border-line/60 pt-1">
                       <span className="text-muted">Price difference</span>

@@ -6,6 +6,8 @@ import { ArrowLeft, X, Check, Bell, AlertCircle } from "lucide-react";
 import type { Product } from "@/types";
 import type { PdpSelection } from "../types";
 import { toast } from "@/components/ui/primitives";
+import { getStock } from "@/lib/catalog";
+import { useShopper } from "@/lib/hooks";
 import { cn } from "@/lib/cn";
 
 interface AvailabilityMatrixModalProps {
@@ -27,57 +29,38 @@ export function AvailabilityMatrixModal({
   onSave,
   onOpenNotifyModal,
 }: AvailabilityMatrixModalProps) {
+  const { warehouseId } = useShopper();
   const a = p.attrs;
   const isFashion = a.department === "fashion";
 
-  const colours = isFashion && a.colours ? a.colours : [
-    { name: "Blue", hex: "#4B6B94" },
-    { name: "Black", hex: "#171717" },
-    { name: "Ivory", hex: "#F5F5DC" },
-    { name: "Patterned", hex: "#9E9E9E" },
+  const colours = isFashion && a.colours && a.colours.length > 0 ? a.colours : [
+    { name: "Standard", hex: "#171717" },
   ];
 
-  const sizes = isFashion && a.sizes ? a.sizes : ["XS", "S", "M", "L", "XL"];
+  const sizes = isFashion && a.sizes && a.sizes.length > 0 ? a.sizes : ["Free size"];
 
   const [selectedColour, setSelectedColour] = useState<string>(
-    selection.colour ?? colours[0]?.name ?? "Blue"
+    selection.colour ?? colours[0]?.name ?? "Standard"
   );
   const [selectedSize, setSelectedSize] = useState<string>(
-    selection.size ?? sizes[3] ?? "L"
+    selection.size ?? sizes[0] ?? "Free size"
   );
+  const [activeImageIdx, setActiveImageIdx] = useState(0);
 
   if (!open) return null;
 
-  // Mock matrix data according to Screen 4
+  const validImages = p.images.length > 0
+    ? p.images.slice(0, 4)
+    : [{ src: "/products/fashion/manyavar-mens-cotton-kurta-1.jpg", alt: p.name }];
+
+  const currentPreviewSrc = validImages[activeImageIdx]?.src ?? validImages[0]?.src;
+
+  // Real-time stock status from HyperMart warehouse inventory
   const getMatrixStatus = (s: string, c: string): StockStatus => {
-    if (s === "XS") {
-      if (c === "Blue") return "available";
-      if (c === "Black") return "few";
-      if (c === "Ivory") return "unavailable";
-      return "notify";
-    }
-    if (s === "S") {
-      if (c === "Blue" || c === "Black") return "available";
-      if (c === "Ivory") return "few";
-      return "unavailable";
-    }
-    if (s === "M") {
-      if (c === "Blue") return "few";
-      return "available";
-    }
-    if (s === "L") {
-      if (c === "Blue") return "available";
-      if (c === "Black") return "few";
-      if (c === "Ivory") return "unavailable";
-      return "notify";
-    }
-    if (s === "XL") {
-      if (c === "Blue") return "unavailable";
-      if (c === "Black") return "notify";
-      if (c === "Ivory") return "few";
-      return "available";
-    }
-    return "available";
+    const st = getStock(p.id, warehouseId, `${s}|${c}`);
+    if (st.status === "in_stock") return "available";
+    if (st.status === "low") return "few";
+    return "unavailable";
   };
 
   const currentStatus = getMatrixStatus(selectedSize, selectedColour);
@@ -86,7 +69,9 @@ export function AvailabilityMatrixModal({
     setSelectedSize(s);
     setSelectedColour(c);
     const status = getMatrixStatus(s, c);
-    if (status === "notify" || status === "unavailable") {
+    if (status === "unavailable") {
+      toast(`Selected ${c} / Size ${s} (out of stock)`);
+    } else {
       toast(`Selected ${c} / Size ${s}`);
     }
   };
@@ -96,11 +81,9 @@ export function AvailabilityMatrixModal({
       colour: selectedColour,
       size: selectedSize,
     });
-    toast(`Variant saved: ${selectedColour} / Size ${selectedSize}`);
+    toast(`Saved variant: ${selectedColour} / Size ${selectedSize}`);
     onClose();
   };
-
-  const imageSrc = p.images[0]?.src ?? "/products/fashion/manyavar-mens-cotton-kurta-1.jpg";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
@@ -131,7 +114,7 @@ export function AvailabilityMatrixModal({
               Colour and size availability
             </h2>
             <p className="mt-1 text-xs text-muted sm:text-sm">
-              Choose a colour and size to see availability, images and add to bag.
+              Live warehouse inventory per colour and size in your city.
             </p>
           </div>
 
@@ -139,22 +122,27 @@ export function AvailabilityMatrixModal({
             {/* Left: Product Images (3 cols) */}
             <div className="lg:col-span-3 flex gap-3">
               <div className="flex flex-col gap-2 shrink-0">
-                {[0, 1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="relative h-14 w-12 overflow-hidden rounded-xl bg-bg border border-line"
+                {validImages.map((img, i) => (
+                  <button
+                    key={img.src || i}
+                    type="button"
+                    onClick={() => setActiveImageIdx(i)}
+                    className={cn(
+                      "relative h-14 w-12 overflow-hidden rounded-xl bg-bg border transition cursor-pointer",
+                      activeImageIdx === i ? "border-primary ring-2 ring-primary/20" : "border-line hover:border-ink/40"
+                    )}
                   >
                     <Image
-                      src={p.images[i]?.src ?? imageSrc}
+                      src={img.src}
                       alt=""
                       fill
                       className="object-contain p-0.5"
                     />
-                  </div>
+                  </button>
                 ))}
               </div>
               <div className="relative aspect-3/4 flex-1 overflow-hidden rounded-2xl bg-bg border border-line shadow-xs">
-                <Image src={imageSrc} alt={p.name} fill className="object-contain p-2" />
+                <Image src={currentPreviewSrc} alt={p.name} fill className="object-contain p-2" />
               </div>
             </div>
 
@@ -172,8 +160,8 @@ export function AvailabilityMatrixModal({
                         type="button"
                         onClick={() => setSelectedColour(col.name)}
                         className={cn(
-                          "flex flex-col items-center gap-1.5 p-1 rounded-2xl transition",
-                          isSelected ? "ring-2 ring-black" : "hover:opacity-80"
+                          "flex flex-col items-center gap-1.5 p-1 rounded-2xl transition cursor-pointer",
+                          isSelected ? "ring-2 ring-black bg-neutral-50" : "hover:opacity-80"
                         )}
                       >
                         <span
@@ -216,31 +204,25 @@ export function AvailabilityMatrixModal({
                                 onClick={() => handleCellClick(s, col.name)}
                                 className={cn(
                                   "py-3 px-3 text-center cursor-pointer transition",
-                                  isCellActive && "bg-[#FAF0F6] ring-1 ring-inset ring-black font-bold"
+                                  isCellActive && "bg-[#F0F8EC] ring-1 ring-inset ring-black font-bold"
                                 )}
                               >
                                 {status === "available" && (
                                   <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-ink">
-                                    <span className="h-2 w-2 rounded-full bg-black shrink-0" />
+                                    <span className="h-2 w-2 rounded-full bg-emerald-600 shrink-0" />
                                     <span>Available</span>
                                   </span>
                                 )}
                                 {status === "few" && (
                                   <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-800">
-                                    <span className="h-2 w-2 rounded-full border border-black shrink-0" />
-                                    <span>Only a few available</span>
+                                    <span className="h-2 w-2 rounded-full border border-amber-600 bg-amber-200 shrink-0" />
+                                    <span>Few left</span>
                                   </span>
                                 )}
                                 {status === "unavailable" && (
                                   <span className="inline-flex items-center gap-1 text-[11px] text-muted">
                                     <X className="h-3 w-3 inline text-muted" />
-                                    <span>Temporarily unavailable</span>
-                                  </span>
-                                )}
-                                {status === "notify" && (
-                                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary">
-                                    <Bell className="h-3 w-3" />
-                                    <span>Notify me</span>
+                                    <span>Sold out</span>
                                   </span>
                                 )}
                               </td>
@@ -252,23 +234,23 @@ export function AvailabilityMatrixModal({
                   </table>
                 </div>
 
-                {/* Legend matching Screen 4 */}
+                {/* Legend */}
                 <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] text-muted">
                   <div className="flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full bg-black" />
-                    <span>Available</span>
+                    <span className="h-2 w-2 rounded-full bg-emerald-600" />
+                    <span>In stock</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="h-2 w-2 rounded-full border border-black" />
-                    <span>Only a few available</span>
+                    <span className="h-2 w-2 rounded-full border border-amber-600 bg-amber-200" />
+                    <span>Few units left</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <X className="h-3 w-3 inline text-muted" />
-                    <span>Temporarily unavailable</span>
+                    <span>Sold out</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Bell className="h-3 w-3 text-ink" />
-                    <span>Notify me</span>
+                    <span>Restock alert available</span>
                   </div>
                 </div>
               </div>
@@ -278,10 +260,10 @@ export function AvailabilityMatrixModal({
             <div className="lg:col-span-3 space-y-4">
               <div className="rounded-3xl border border-line bg-white p-5 shadow-xs space-y-4">
                 <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-bg border border-line/60">
-                  <Image src={imageSrc} alt="" fill className="object-contain p-2" />
+                  <Image src={currentPreviewSrc} alt="" fill className="object-contain p-2" />
                 </div>
                 <p className="text-[11px] text-muted text-center">
-                  Colour may vary slightly by lighting and screen.
+                  Photographed in calibrated natural daylight (5500K).
                 </p>
 
                 <div className="border-t border-line/60 pt-3 space-y-2">
@@ -294,15 +276,15 @@ export function AvailabilityMatrixModal({
                     <div className="text-xs">
                       <div className="flex items-center gap-1.5 font-bold text-emerald-800">
                         <span className="h-2 w-2 rounded-full bg-emerald-600" />
-                        <span>In stock</span>
+                        <span>In stock at warehouse</span>
                       </div>
-                      <span className="text-[11px] text-muted block">Ships within 24 hours</span>
+                      <span className="text-[11px] text-muted block">Ready for prompt dispatch</span>
                     </div>
                   ) : (
                     <div className="text-xs">
                       <div className="flex items-center gap-1.5 font-bold text-danger">
                         <AlertCircle className="h-3.5 w-3.5 text-danger" />
-                        <span>Currently unavailable</span>
+                        <span>Currently sold out</span>
                       </div>
                       <span className="text-[11px] text-muted block">Restocking soon</span>
                     </div>
@@ -311,34 +293,33 @@ export function AvailabilityMatrixModal({
                   <button
                     type="button"
                     onClick={handleSave}
-                    disabled={currentStatus === "unavailable" || currentStatus === "notify"}
-                    className="w-full rounded-2xl bg-[#17201B] hover:bg-black disabled:opacity-40 py-3 text-xs font-extrabold text-white shadow-md transition"
+                    disabled={currentStatus === "unavailable"}
+                    className="w-full rounded-2xl bg-[#17201B] hover:bg-black disabled:opacity-40 py-3 text-xs font-extrabold text-white shadow-md transition cursor-pointer"
                   >
                     Save variant
                   </button>
 
                   <p className="text-[10px] text-muted leading-tight">
-                    This variant will be retained to the product page, cart, checkout and your order
-                    record.
+                    Variant saves directly to your selection for cart and order fulfillment.
                   </p>
                 </div>
 
                 {/* Size unavailable? Notify me */}
                 <div className="border-t border-line/60 pt-3 space-y-2">
-                  <span className="text-xs font-bold text-ink block">Size unavailable?</span>
+                  <span className="text-xs font-bold text-ink block">Size out of stock?</span>
                   <button
                     type="button"
                     onClick={() => {
                       onClose();
                       if (onOpenNotifyModal) onOpenNotifyModal(selectedSize, selectedColour);
                     }}
-                    className="w-full flex items-center justify-center gap-1.5 rounded-2xl border border-line bg-white hover:bg-bg py-2.5 text-xs font-bold text-ink transition"
+                    className="w-full flex items-center justify-center gap-1.5 rounded-2xl border border-line bg-white hover:bg-bg py-2.5 text-xs font-bold text-ink transition cursor-pointer"
                   >
                     <Bell className="h-3.5 w-3.5 text-ink" />
-                    <span>Notify me when this size is available</span>
+                    <span>Notify me when available</span>
                   </button>
                   <p className="text-[10px] text-muted text-center">
-                    We&apos;ll email you when it&apos;s back in stock.
+                    Instant SMS / WhatsApp notification when restocked.
                   </p>
                 </div>
               </div>

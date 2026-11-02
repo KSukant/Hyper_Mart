@@ -2,7 +2,7 @@
 import { Suspense, useMemo } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { ArrowRight, BadgePercent, Truck, Tag, Gift, AlarmClock, Shirt } from "lucide-react";
-import { SnapPage, SnapSection, FooterSection, Reveal } from "@/components/sections/Snap";
+import { SnapPage, SnapSection, Reveal } from "@/components/sections/Snap";
 import { CardRow } from "@/components/product/CardRow";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductArt } from "@/components/product/ProductArt";
@@ -73,7 +73,6 @@ function Offers() {
           <CardRow items={clearance.map((o) => <ProductCard key={o.id} product={getProductById(o.productId)!} showOfferExtras />)} perView={{ base: 2, sm: 2, lg: 3, xl: 4 }} />
         </SnapSection>
       )}
-      <FooterSection />
     </SnapPage>
   );
 }

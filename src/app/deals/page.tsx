@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Zap, ArrowRight, Users, Tag } from "lucide-react";
-import { SnapPage, SnapSection, FooterSection, Reveal } from "@/components/sections/Snap";
+import { SnapPage, SnapSection, Reveal } from "@/components/sections/Snap";
 import { CardRow } from "@/components/product/CardRow";
 import { ProductCard } from "@/components/product/ProductCard";
 import { ProductArt } from "@/components/product/ProductArt";
@@ -71,7 +71,6 @@ function Deals() {
             : <EmptyState icon={<Tag className="h-7 w-7" />} title="No other deals here right now" action={<LinkButton href="/offers" variant="secondary">See offers</LinkButton>} />}
         </SnapSection>
       )}
-      <FooterSection />
     </SnapPage>
   );
 }

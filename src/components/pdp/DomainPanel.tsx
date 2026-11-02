@@ -1,10 +1,16 @@
 "use client";
-import { ChevronRight, ExternalLink } from "lucide-react";
+import { ChevronRight, ExternalLink, Sparkles, Scale } from "lucide-react";
 import type { Product } from "@/types";
 import type { StockInfo } from "@/lib/catalog";
 import type { PdpSelection } from "./types";
-import { formatDate } from "@/lib/format";
+import { formatDate, formatINR } from "@/lib/format";
 import { cn } from "@/lib/cn";
+import {
+  getProducePieceCount,
+  calculateProducePrice,
+  getRipenessDetails,
+  getGradeDetails,
+} from "@/lib/groceryDescriptions";
 
 interface DomainPanelProps {
   product: Product;
@@ -90,51 +96,57 @@ export function DomainPanel({
 
   const rows: RowDef[] = [];
 
-  if (domain === "food" && a.department === "food") {
-    // 1. Grade
-    rows.push({
-      label: "Grade",
-      value: selection.grade
-        ? `Grade ${selection.grade} · ${selection.grade === "A" ? "Export table quality" : selection.grade === "B" ? "Daily table quality" : "Cooking stew quality"}`
-        : a.grades
-        ? `Grade ${a.grades[0]?.grade ?? "A"}`
-        : "Not provided",
-      onClick: onOpenFreshness,
-    });
+  const isFood = domain === "food" && a.department === "food";
+  const foodKg = selection.kg ?? 1;
+  const foodPricing = calculateProducePrice(product, selection.grade, foodKg, qty);
+  const foodPieceCount = getProducePieceCount(product, foodKg, qty);
 
-    // 2. Ripeness
-    rows.push({
-      label: "Ripeness",
-      value: selection.ripeness
-        ? selection.ripeness === "ready_to_eat"
-          ? "Ready to eat (Peak sweetness)"
-          : selection.ripeness === "very_ripe"
-          ? "Very ripe (Best for immediate use)"
-          : "Raw (Ripens in 2–3 days)"
-        : a.ripenessOptions?.[0]
-        ? a.ripenessOptions[0].replace("_", " ")
-        : "Not provided",
-      onClick: onOpenFreshness,
-    });
+  if (isFood) {
+    // 1. Grade (ONLY if product has grades)
+    if (a.grades && a.grades.length > 0) {
+      const activeGrade = selection.grade ?? a.grades[0].grade;
+      const gObj = a.grades.find((g) => g.grade === activeGrade);
+      rows.push({
+        label: "Quality Grade",
+        value: `Grade ${activeGrade} · ${gObj?.note ?? "Graded before packing"}`,
+        onClick: onOpenFreshness,
+      });
+    }
 
-    // 3. Estimated total
-    const estimatedGrams = a.soldByWeight
-      ? (selection.kg ?? 1) * 1000 * qty
-      : qty * 500;
-    rows.push({
-      label: "Estimated total",
-      value: `~ ${estimatedGrams} g (${qty} item${qty > 1 ? "s" : ""})`,
-      onClick: onOpenWeighing,
-    });
+    // 2. Ripeness (ONLY if product has ripeness options)
+    if (a.ripenessOptions && a.ripenessOptions.length > 0) {
+      const activeRipeness = (selection.ripeness ?? a.ripenessOptions[0]) as "raw" | "ready_to_eat" | "very_ripe";
+      const rDetails = getRipenessDetails(product, activeRipeness);
+      rows.push({
+        label: "Ripeness",
+        value: `${rDetails.title} · ${rDetails.badge}`,
+        onClick: onOpenFreshness,
+      });
+    }
+
+    // 3. Estimated total & Piece count
+    if (a.soldByWeight) {
+      rows.push({
+        label: "Estimated total",
+        value: `~ ${foodKg * qty} kg (${foodPieceCount}) · ${formatINR(foodPricing.estimatedTotal)}`,
+        onClick: onOpenWeighing,
+      });
+    } else {
+      rows.push({
+        label: "Quantity",
+        value: `${qty} × ${product.unit || "unit"} · ${formatINR(foodPricing.estimatedTotal)}`,
+        onClick: onOpenWeighing,
+      });
+    }
 
     // 4. Remaining shelf life
     rows.push({
       label: "Remaining shelf life",
       value: a.minRemainingShelfLifeDays
-        ? `At least ${a.minRemainingShelfLifeDays} days guaranteed`
+        ? `At least ${a.minRemainingShelfLifeDays} days guaranteed on arrival`
         : a.shelfLifeDays
         ? `${a.shelfLifeDays} days total shelf life`
-        : "Not provided",
+        : "Standard freshness guarantee",
       onClick: onOpenShelfLife,
     });
 
@@ -146,29 +158,33 @@ export function DomainPanel({
           ? "0°C to 4°C active chilled transit"
           : a.storage === "frozen"
           ? "-18°C frozen insulated transit"
-          : "Ambient temperature monitored",
+          : "Ambient temperature monitored dispatch",
       onClick: onOpenShelfLife,
     });
 
     // 6. Substitution preference
-    rows.push({
-      label: "Substitution preference",
-      value:
-        selection.substitution === "ask"
-          ? "Call before substituting"
-          : selection.substitution === "similar"
-          ? "Auto-substitute best grade match"
-          : "Refund item if unavailable",
-      onClick: onOpenSubstitution,
-    });
+    if (a.substitutable) {
+      rows.push({
+        label: "Substitution preference",
+        value:
+          selection.substitution === "ask"
+            ? "Call me before substituting"
+            : selection.substitution === "similar"
+            ? "Auto-substitute closest match"
+            : "Do not substitute — refund item",
+        onClick: onOpenSubstitution,
+      });
+    }
 
-    // 7. Subscribe and repeat (Link)
-    rows.push({
-      label: "Subscribe & save",
-      value: "Subscribe and repeat — save 5% on scheduled deliveries",
-      onClick: onOpenSubscribe,
-      isLink: true,
-    });
+    // 7. Subscribe and repeat
+    if (a.subscribable) {
+      rows.push({
+        label: "Subscribe & save",
+        value: "Save 5% on recurring weekly deliveries · Pause anytime",
+        onClick: onOpenSubscribe,
+        isLink: true,
+      });
+    }
   } else if (domain === "fashion" && a.department === "fashion") {
     // 1. Fabric and feel
     rows.push({
@@ -401,6 +417,28 @@ export function DomainPanel({
           </div>
           <ChevronRight className="h-4 w-4 text-muted transition-transform duration-200 group-open:rotate-90" />
         </summary>
+        {isFood && (
+          <div className="px-4 py-2.5 bg-[#F6FAF3] border-t border-b border-[#DCEDD2] space-y-1.5 text-xs">
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-[10px] uppercase font-extrabold text-[#1B4D20] tracking-wider">
+                Selected
+              </span>
+              <span className="rounded-full bg-white border border-[#BFDFAB] px-2.5 py-0.5 text-[11px] font-black text-[#14532D]">
+                {[
+                  selection.grade ? `Grade ${selection.grade}` : (a.grades?.[0] ? `Grade ${a.grades[0].grade}` : null),
+                  selection.ripeness ? selection.ripeness.replace("_", " ") : null,
+                  a.soldByWeight ? `${foodKg * qty} kg` : `${qty} item${qty > 1 ? "s" : ""}`,
+                ]
+                  .filter(Boolean)
+                  .join(" · ")}
+              </span>
+            </div>
+            <div className="flex items-center justify-between pt-1 border-t border-[#DFEED6] text-xs">
+              <span className="font-extrabold text-neutral-800">Estimated Total:</span>
+              <span className="font-black text-sm text-[#085A2E] tabular">{formatINR(foodPricing.estimatedTotal)}</span>
+            </div>
+          </div>
+        )}
         <div className="p-4 pt-1 border-t border-neutral-100">{content}</div>
       </details>
     );
@@ -416,10 +454,46 @@ export function DomainPanel({
 
       {/* Header */}
       <div className="p-4 pb-2 border-b border-neutral-100 shrink-0">
-        <h2 className="text-sm font-extrabold text-ink tracking-tight">
-          {panelTitles[domain]}
-        </h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-extrabold text-ink tracking-tight">
+            {panelTitles[domain]}
+          </h2>
+          {isFood && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+              <Sparkles className="h-3 w-3 text-emerald-600" /> Graded Fresh
+            </span>
+          )}
+        </div>
       </div>
+
+      {/* For Food: Compact Current Selection Summary & Estimated Total Breakdown */}
+      {isFood && (
+        <div className="px-3.5 py-3 bg-[#F6FAF3] border-b border-[#DCEDD2] space-y-1.5 shrink-0 text-xs">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[10px] uppercase font-extrabold text-[#1B4D20] tracking-wider">
+              Selected
+            </span>
+            <span className="rounded-full bg-white border border-[#BFDFAB] px-2.5 py-0.5 text-[11px] font-black text-[#14532D] shadow-2xs">
+              {[
+                selection.grade ? `Grade ${selection.grade}` : (a.grades?.[0] ? `Grade ${a.grades[0].grade}` : null),
+                selection.ripeness ? selection.ripeness.replace("_", " ") : null,
+                a.soldByWeight ? `${foodKg * qty} kg` : `${qty} item${qty > 1 ? "s" : ""}`,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </span>
+          </div>
+          <div className="flex items-center justify-between pt-1 border-t border-[#DFEED6] text-xs">
+            <span className="font-extrabold text-neutral-800">Estimated Total:</span>
+            <span className="font-black text-sm text-[#085A2E] tabular">{formatINR(foodPricing.estimatedTotal)}</span>
+          </div>
+          <p className="text-[10px] text-neutral-500 leading-tight">
+            {a.soldByWeight
+              ? `* Scale weighing at warehouse. Approx. ${foodPieceCount}.`
+              : `* Delivered from local city fulfilment centre.`}
+          </p>
+        </div>
+      )}
 
       {/* Scrollable list of rows */}
       <div className="p-2 overflow-y-auto">{content}</div>

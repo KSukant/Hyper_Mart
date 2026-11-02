@@ -20,6 +20,7 @@ import { brandName } from "@/lib/catalog";
 import type { getPrice } from "@/lib/pricing";
 import type { getStock } from "@/lib/catalog";
 import { cn } from "@/lib/cn";
+import { getProducePieceCount } from "@/lib/groceryDescriptions";
 
 interface FoodCartItemProps {
   item: CartItem;
@@ -57,10 +58,8 @@ export function FoodCartItem({
       : "Very ripe (Sweet & aromatic)";
 
   const weightText = byWeight
-    ? item.qty >= 1
-      ? `${item.qty} kg (approx. ${Math.round(item.qty * 6)}-${Math.round(item.qty * 8)} pcs)`
-      : `${Math.round(item.qty * 1000)} g (approx. 3-4 pcs)`
-    : `${item.qty} x ${p.unit}`;
+    ? `${item.qty >= 1 ? `${item.qty} kg` : `${Math.round(item.qty * 1000)} g`} (${getProducePieceCount(p, item.qty)})`
+    : `${item.qty} × ${p.unit}`;
 
   const subPreference = item.substitution ?? "similar";
   const subText =
@@ -145,43 +144,47 @@ export function FoodCartItem({
 
             {/* Food Attribute Box (Reference Screenshot Style) */}
             <div className="divide-y divide-[#DFE7D8]/60 rounded-2xl border border-[#DFE7D8] bg-[#F8FAF5] px-3.5 py-1 text-xs sm:text-sm">
-              {/* 1. Quality Grade */}
-              <div className="flex items-center justify-between py-2.5">
-                <div className="flex items-center gap-2.5">
-                  <Award className="h-4 w-4 text-[#2E7032] shrink-0" />
-                  <div>
-                    <span className="block text-[11px] text-muted">Quality grade</span>
-                    <strong className="block text-ink font-bold">
-                      Grade {currentGrade} {isFood && a.grades && `(Checked standard)`}
-                    </strong>
+              {/* 1. Quality Grade (Only if grades exist) */}
+              {isFood && a.grades && a.grades.length > 0 && (
+                <div className="flex items-center justify-between py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <Award className="h-4 w-4 text-[#2E7032] shrink-0" />
+                    <div>
+                      <span className="block text-[11px] text-muted">Quality grade</span>
+                      <strong className="block text-ink font-bold">
+                        Grade {currentGrade} {a.grades.find((g) => g.grade === currentGrade)?.note ? `· ${a.grades.find((g) => g.grade === currentGrade)?.note}` : "(Checked standard)"}
+                      </strong>
+                    </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => onEdit("freshness")}
+                    className="text-xs font-bold text-muted hover:text-[#2E7032] hover:underline"
+                  >
+                    Edit &rsaquo;
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => onEdit("freshness")}
-                  className="text-xs font-bold text-muted hover:text-[#2E7032] hover:underline"
-                >
-                  Edit &rsaquo;
-                </button>
-              </div>
+              )}
 
-              {/* 2. Ripeness */}
-              <div className="flex items-center justify-between py-2.5">
-                <div className="flex items-center gap-2.5">
-                  <Sparkles className="h-4 w-4 text-[#2E7032] shrink-0" />
-                  <div>
-                    <span className="block text-[11px] text-muted">Ripeness stage</span>
-                    <strong className="block text-ink font-bold">{ripenessLabel}</strong>
+              {/* 2. Ripeness (Only if ripeness options exist) */}
+              {isFood && a.ripenessOptions && a.ripenessOptions.length > 0 && (
+                <div className="flex items-center justify-between py-2.5">
+                  <div className="flex items-center gap-2.5">
+                    <Sparkles className="h-4 w-4 text-[#2E7032] shrink-0" />
+                    <div>
+                      <span className="block text-[11px] text-muted">Ripeness stage</span>
+                      <strong className="block text-ink font-bold">{ripenessLabel}</strong>
+                    </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => onEdit("freshness")}
+                    className="text-xs font-bold text-muted hover:text-[#2E7032] hover:underline"
+                  >
+                    Edit &rsaquo;
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => onEdit("freshness")}
-                  className="text-xs font-bold text-muted hover:text-[#2E7032] hover:underline"
-                >
-                  Edit &rsaquo;
-                </button>
-              </div>
+              )}
 
               {/* 3. Weight / Quantity */}
               <div className="flex items-center justify-between py-2.5">

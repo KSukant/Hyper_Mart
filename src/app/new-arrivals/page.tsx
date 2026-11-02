@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { SnapPage, SnapSection, FooterSection, Reveal } from "@/components/sections/Snap";
+import { SnapPage, SnapSection, Reveal } from "@/components/sections/Snap";
 import { CardRow } from "@/components/product/CardRow";
 import { ProductCard, ProductCardCompact } from "@/components/product/ProductCard";
 import { ProductArt } from "@/components/product/ProductArt";
@@ -55,7 +55,6 @@ function NewArrivals() {
           </SnapSection>
         );
       })}
-      <FooterSection />
     </SnapPage>
   );
 }

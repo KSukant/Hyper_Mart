@@ -13,6 +13,9 @@ import {
   Tag,
   Info,
   RotateCcw,
+  Sparkles,
+  Calendar,
+  ShieldCheck,
 } from "lucide-react";
 import type { CartItem, Product } from "@/types";
 import { ProductArt } from "@/components/product/ProductArt";
@@ -63,8 +66,8 @@ export function FashionCartItem({
   // Hex color for swatch dot
   const colourHex =
     isFashion && a.colours
-      ? a.colours.find((c) => c.name.toLowerCase() === currentColour.toLowerCase())?.hex ?? "#4B6B94"
-      : "#4B6B94";
+      ? a.colours.find((c) => c.name.toLowerCase() === currentColour.toLowerCase())?.hex ?? "#085A2E"
+      : "#085A2E";
 
   // Size chart description
   const sizeObj = isFashion ? a.sizeChart?.find((s) => s.size === currentSize) : null;
@@ -83,7 +86,10 @@ export function FashionCartItem({
   const fitText = isFashion ? `${a.fit} fit · True to size` : "Regular fit";
   const fabricText = isFashion && a.fabric ? `${a.fabric}, soft and breathable` : "100% cotton, soft and breathable";
 
-  const lineTotal = price.finalPrice * item.qty;
+  const isRental = !!item.rental;
+  const lineTotal = item.rental
+    ? (item.rental.totalRentalFee + item.rental.deposit) * item.qty
+    : price.finalPrice * item.qty;
 
   return (
     <div className="space-y-3">
@@ -139,7 +145,7 @@ export function FashionCartItem({
                 </span>
               )}
               {price.discountPct > 0 && (
-                <span className="rounded-md bg-[#E6FFFA] border border-[#D8E8E5] px-2 py-0.5 text-[11px] font-black text-[#0F766E]">
+                <span className="rounded-md bg-[#F0F8EC] border border-[#DCEDD2] px-2 py-0.5 text-[11px] font-black text-[#085A2E]">
                   {price.discountPct}% OFF
                 </span>
               )}
@@ -151,11 +157,11 @@ export function FashionCartItem({
             </div>
 
             {/* Fashion Attribute Rows (Matching Reference Screenshot) */}
-            <div className="divide-y divide-[#D8E8E5]/60 rounded-2xl border border-[#D8E8E5] bg-[#F5FBFA] px-3.5 py-1 text-xs sm:text-sm">
+            <div className="divide-y divide-[#DCEDD2]/60 rounded-2xl border border-[#DCEDD2] bg-[#F8FAF6] px-3.5 py-1 text-xs sm:text-sm">
               {/* 1. Colour */}
               <div className="flex items-center justify-between py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <Palette className="h-4 w-4 text-[#0F766E] shrink-0" />
+                  <Palette className="h-4 w-4 text-[#085A2E] shrink-0" />
                   <div>
                     <span className="block text-[11px] text-muted">Colour</span>
                     <div className="flex items-center gap-1.5 font-bold text-ink">
@@ -170,7 +176,7 @@ export function FashionCartItem({
                 <button
                   type="button"
                   onClick={() => onEdit("matrix")}
-                  className="text-xs font-bold text-muted hover:text-[#0F766E] hover:underline"
+                  className="text-xs font-bold text-muted hover:text-[#085A2E] hover:underline"
                 >
                   Edit &rsaquo;
                 </button>
@@ -179,7 +185,7 @@ export function FashionCartItem({
               {/* 2. Size */}
               <div className="flex items-center justify-between py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <Ruler className="h-4 w-4 text-[#0F766E] shrink-0" />
+                  <Ruler className="h-4 w-4 text-[#085A2E] shrink-0" />
                   <div>
                     <span className="block text-[11px] text-muted">Size</span>
                     <strong className="block text-ink font-bold">
@@ -190,7 +196,7 @@ export function FashionCartItem({
                 <button
                   type="button"
                   onClick={() => onEdit("size")}
-                  className="text-xs font-bold text-muted hover:text-[#0F766E] hover:underline"
+                  className="text-xs font-bold text-muted hover:text-[#085A2E] hover:underline"
                 >
                   Edit &rsaquo;
                 </button>
@@ -199,7 +205,7 @@ export function FashionCartItem({
               {/* 3. Fit */}
               <div className="flex items-center justify-between py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <Shirt className="h-4 w-4 text-[#0F766E] shrink-0" />
+                  <Shirt className="h-4 w-4 text-[#085A2E] shrink-0" />
                   <div>
                     <span className="block text-[11px] text-muted">Fit</span>
                     <strong className="block text-ink font-bold">{fitText}</strong>
@@ -208,7 +214,7 @@ export function FashionCartItem({
                 <button
                   type="button"
                   onClick={() => onEdit("fit")}
-                  className="text-xs font-bold text-muted hover:text-[#0F766E] hover:underline"
+                  className="text-xs font-bold text-muted hover:text-[#085A2E] hover:underline"
                 >
                   Edit &rsaquo;
                 </button>
@@ -217,7 +223,7 @@ export function FashionCartItem({
               {/* 4. Fabric */}
               <div className="flex items-center justify-between py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <Layers className="h-4 w-4 text-[#0F766E] shrink-0" />
+                  <Layers className="h-4 w-4 text-[#085A2E] shrink-0" />
                   <div>
                     <span className="block text-[11px] text-muted">Fabric</span>
                     <strong className="block text-ink font-bold line-clamp-1">{fabricText}</strong>
@@ -226,7 +232,7 @@ export function FashionCartItem({
                 <button
                   type="button"
                   onClick={() => onEdit("fit")}
-                  className="text-xs font-bold text-muted hover:text-[#0F766E] hover:underline"
+                  className="text-xs font-bold text-muted hover:text-[#085A2E] hover:underline"
                 >
                   Edit &rsaquo;
                 </button>
@@ -235,7 +241,7 @@ export function FashionCartItem({
               {/* 5. Item Condition */}
               <div className="flex items-center justify-between py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <Tag className="h-4 w-4 text-[#0F766E] shrink-0" />
+                  <Tag className="h-4 w-4 text-[#085A2E] shrink-0" />
                   <div>
                     <span className="block text-[11px] text-muted">Item condition</span>
                     <strong className="block text-ink font-bold">New (Original brand tags)</strong>
@@ -244,23 +250,52 @@ export function FashionCartItem({
                 <button
                   type="button"
                   onClick={() => onEdit("fit")}
-                  className="text-xs font-bold text-muted hover:text-[#0F766E] hover:underline"
+                  className="text-xs font-bold text-muted hover:text-[#085A2E] hover:underline"
                 >
                   Edit &rsaquo;
                 </button>
               </div>
             </div>
 
+            {/* Active Occasion Rental Details */}
+            {item.rental && (
+              <div className="rounded-2xl border border-[#085A2E]/40 bg-[#F0F8EC] p-3.5 space-y-2 text-xs text-[#14532D]">
+                <div className="flex items-center justify-between">
+                  <span className="inline-flex items-center gap-1.5 font-extrabold text-[#085A2E]">
+                    <Sparkles className="h-4 w-4" />
+                    Occasion Rental ({item.rental.durationDays} Days)
+                  </span>
+                  <span className="font-extrabold text-ink tabular">
+                    ₹ {(item.rental.totalRentalFee + item.rental.deposit).toLocaleString("en-IN")}
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] pt-1.5 border-t border-[#DCEDD2]">
+                  <div className="flex items-center gap-1.5">
+                    <Calendar className="h-3.5 w-3.5 text-[#085A2E] shrink-0" />
+                    <span>
+                      Dates: <strong className="text-ink">{item.rental.startDate} &rarr; {item.rental.returnDate}</strong>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <ShieldCheck className="h-3.5 w-3.5 text-[#085A2E] shrink-0" />
+                    <span>
+                      Deposit: <strong className="text-ink">₹{item.rental.deposit.toLocaleString("en-IN")} (100% refundable)</strong>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Optional Fashion Features (Rentable, Clearance, Size Guide) */}
-            {isFashion && a.rentable && (
-              <div className="flex items-center justify-between rounded-xl bg-[#E6FFFA]/70 border border-[#D8E8E5] p-2.5 text-xs text-[#18302F]">
+            {isFashion && a.rentable && !item.rental && (
+              <div className="flex items-center justify-between rounded-xl bg-[#F0F8EC]/70 border border-[#DCEDD2] p-2.5 text-xs text-[#14532D]">
                 <span>
                   Rentable outfit: ₹{a.rentable.perDay}/day (Refundable deposit: ₹{a.rentable.deposit})
                 </span>
                 <button
                   type="button"
                   onClick={() => onEdit("rental")}
-                  className="font-bold text-[#0F766E] hover:underline shrink-0"
+                  className="font-bold text-[#085A2E] hover:underline shrink-0"
                 >
                   Rental details &rsaquo;
                 </button>

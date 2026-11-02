@@ -14,13 +14,17 @@ import {
   FileText,
   Copy,
   ChevronRight,
-  Headphones,
-  Sliders,
+  Tv,
+  Refrigerator,
   Laptop,
+  Smartphone,
+  Headphones,
+  Calendar,
 } from "lucide-react";
 import type { Product } from "@/types";
 import { toast } from "@/components/ui/primitives";
 import { cn } from "@/lib/cn";
+import { formatINR } from "@/lib/format";
 
 interface WarrantyModalProps {
   open: boolean;
@@ -34,17 +38,28 @@ export function WarrantyModal({ open, onClose, product: p }: WarrantyModalProps)
   if (!open) return null;
 
   const a = p.attrs;
-  const warrantyMonths = a.department === "electronics" ? a.warranty?.months ?? 24 : 24;
+  const warrantyMonths =
+    a.department === "electronics" ? a.warranty?.months ?? 24 : 24;
   const warrantyYrs = Math.round(warrantyMonths / 12);
-  const provider = a.department === "electronics" ? a.warranty?.provider ?? "HP / HyperMart" : "HyperMart";
+  const provider =
+    a.department === "electronics"
+      ? a.warranty?.provider ?? "Brand Authorised Service"
+      : "HyperMart Authorised";
+
+  // Serial number generation based on product ID
+  const serialNumber = `HM-${p.id.toUpperCase()}-2026`;
 
   const copySerial = () => {
-    navigator.clipboard.writeText("SN4Z8X7Q1P3");
-    toast("Serial number copied to clipboard: SN4Z8X7Q1P3");
+    navigator.clipboard.writeText(serialNumber);
+    toast(`Serial number copied: ${serialNumber}`);
   };
 
   const imageSrc =
     p.images[0]?.src ?? "/products/electronics/hp-14-laptop-i5-16gb-1.jpg";
+
+  // Dynamic installation status
+  const requiresInstall =
+    p.categoryId === "elec-tv" || p.categoryId === "elec-appliances";
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
@@ -54,30 +69,30 @@ export function WarrantyModal({ open, onClose, product: p }: WarrantyModalProps)
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-ink sm:text-sm"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-ink sm:text-sm cursor-pointer"
           >
-            <ArrowLeft className="h-4 w-4" /> Back to product
+            <ArrowLeft className="h-4 w-4 text-[#085A2E]" /> Back to product
           </button>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={() => toast("Digital warranty card downloaded (PDF)")}
-              className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-white px-3 py-1.5 text-xs font-bold text-ink hover:bg-bg shadow-xs"
+              onClick={() => toast("Digital warranty card PDF downloaded")}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-line bg-white px-3 py-1.5 text-xs font-bold text-ink hover:bg-neutral-50 shadow-2xs cursor-pointer"
             >
-              <Download className="h-3.5 w-3.5" /> Download warranty card
+              <Download className="h-3.5 w-3.5 text-[#085A2E]" /> Download Warranty Card
             </button>
             <button
               type="button"
               onClick={() => toast("Warranty service request initiated")}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-[#17201B] hover:bg-black text-white px-3.5 py-1.5 text-xs font-bold shadow-xs"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-[#085A2E] hover:bg-[#064825] text-white px-3.5 py-1.5 text-xs font-bold shadow-xs cursor-pointer"
             >
-              <Wrench className="h-3.5 w-3.5" /> Request service
+              <Wrench className="h-3.5 w-3.5" /> Book Brand Service
             </button>
             <button
               type="button"
               onClick={onClose}
-              className="grid h-8 w-8 place-items-center rounded-full hover:bg-bg text-muted hover:text-ink ml-1"
+              className="grid h-8 w-8 place-items-center rounded-full hover:bg-neutral-100 text-muted hover:text-ink ml-1 cursor-pointer"
               aria-label="Close dialog"
             >
               <X className="h-5 w-5" />
@@ -90,60 +105,58 @@ export function WarrantyModal({ open, onClose, product: p }: WarrantyModalProps)
           <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
             {/* Left Column: Product Thumbnail, Details & Sidebar Tabs (3 cols) */}
             <div className="space-y-4 lg:col-span-3">
-              <div className="rounded-2xl border border-line/80 bg-[#F8FAF7] p-4 text-center">
-                <div className="relative mx-auto aspect-square w-32 overflow-hidden rounded-xl">
-                  <Image src={imageSrc} alt={p.name} fill className="object-contain" />
+              <div className="rounded-2xl border border-[#DCEDD2] bg-[#F0F8EC]/40 p-4 text-center">
+                <div className="relative mx-auto aspect-square w-32 overflow-hidden rounded-xl border border-line bg-white p-2">
+                  <Image src={imageSrc} alt={p.name} fill className="object-contain p-2" />
                 </div>
                 <div className="mt-3 text-left">
-                  <h3 className="text-sm font-extrabold text-ink leading-snug">{p.name}</h3>
-                  <p className="text-[11px] text-muted">
-                    {a.department === "electronics" ? a.specs[1]?.value ?? "16 GB RAM / 512 GB SSD" : p.unit}
+                  <h3 className="text-sm font-extrabold text-ink leading-snug line-clamp-2">
+                    {p.name}
+                  </h3>
+                  <p className="text-[11px] text-[#085A2E] font-bold mt-0.5">
+                    {p.categoryId || "Electronics"}
                   </p>
                 </div>
 
                 <div className="mt-4 border-t border-line/60 pt-3 text-[11px] space-y-1.5 text-left text-muted">
                   <div className="flex justify-between">
-                    <span>Model</span>
+                    <span>Model SKU</span>
                     <strong className="text-ink font-bold">
-                      {a.department === "electronics" ? a.model : "TL14-512"}
+                      {a.department === "electronics" ? a.model : p.id}
                     </strong>
                   </div>
-                  <div className="flex justify-between">
-                    <span>SKU</span>
-                    <strong className="text-ink font-bold">12345678</strong>
-                  </div>
                   <div className="flex items-center justify-between">
-                    <span>Serial Number</span>
+                    <span>Serial Code</span>
                     <button
                       type="button"
                       onClick={copySerial}
-                      className="inline-flex items-center gap-1 font-bold text-ink hover:text-[#1D4E89]"
-                      title="Copy serial number"
+                      className="inline-flex items-center gap-1 font-bold text-[#085A2E] hover:underline cursor-pointer"
+                      title="Copy serial code"
                     >
-                      <span>SN4Z8X7Q1P3</span>
-                      <Copy className="h-3 w-3 text-muted" />
+                      <span className="font-mono text-[10px]">{serialNumber}</span>
+                      <Copy className="h-3 w-3" />
                     </button>
                   </div>
                   <div className="flex justify-between">
-                    <span>Purchase Date</span>
-                    <strong className="text-ink font-bold">Mar 12, 2024</strong>
+                    <span>Coverage Type</span>
+                    <strong className="text-ink font-bold">Comprehensive Brand</strong>
                   </div>
                   <div className="flex justify-between">
-                    <span>Purchase From</span>
-                    <strong className="text-ink font-bold">Online Store</strong>
+                    <span>Service Provider</span>
+                    <strong className="text-ink font-bold">{provider}</strong>
                   </div>
                 </div>
               </div>
 
               {/* Sidebar Navigation Links */}
-              <div className="rounded-2xl border border-line bg-white divide-y divide-line/60 text-xs font-bold">
+              <div className="rounded-2xl border border-line bg-white divide-y divide-line/60 text-xs font-bold shadow-2xs">
                 <button
                   type="button"
                   onClick={() => setActiveTab("warranty")}
                   className={cn(
-                    "w-full flex items-center justify-between p-3 text-left transition",
+                    "w-full flex items-center justify-between p-3 text-left transition cursor-pointer",
                     activeTab === "warranty"
-                      ? "bg-[#EFF6FF] text-[#1D4E89]"
+                      ? "bg-[#F0F8EC] text-[#085A2E]"
                       : "text-muted hover:text-ink"
                   )}
                 >
@@ -158,15 +171,15 @@ export function WarrantyModal({ open, onClose, product: p }: WarrantyModalProps)
                   type="button"
                   onClick={() => setActiveTab("fit")}
                   className={cn(
-                    "w-full flex items-center justify-between p-3 text-left transition",
+                    "w-full flex items-center justify-between p-3 text-left transition cursor-pointer",
                     activeTab === "fit"
-                      ? "bg-[#EFF6FF] text-[#1D4E89]"
+                      ? "bg-[#F0F8EC] text-[#085A2E]"
                       : "text-muted hover:text-ink"
                   )}
                 >
                   <div className="flex items-center gap-2">
-                    <Sliders className="h-4 w-4" />
-                    <span>Fit &amp; Compatibility</span>
+                    <CheckCircle2 className="h-4 w-4" />
+                    <span>Included In Box</span>
                   </div>
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -175,15 +188,15 @@ export function WarrantyModal({ open, onClose, product: p }: WarrantyModalProps)
                   type="button"
                   onClick={() => setActiveTab("support")}
                   className={cn(
-                    "w-full flex items-center justify-between p-3 text-left transition",
+                    "w-full flex items-center justify-between p-3 text-left transition cursor-pointer",
                     activeTab === "support"
-                      ? "bg-[#EFF6FF] text-[#1D4E89]"
+                      ? "bg-[#F0F8EC] text-[#085A2E]"
                       : "text-muted hover:text-ink"
                   )}
                 >
                   <div className="flex items-center gap-2">
                     <Wrench className="h-4 w-4" />
-                    <span>Support</span>
+                    <span>Authorised Support</span>
                   </div>
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -193,108 +206,110 @@ export function WarrantyModal({ open, onClose, product: p }: WarrantyModalProps)
             {/* Center & Right: Warranty, Exclusions & Ownership Information (9 cols) */}
             <div className="space-y-5 lg:col-span-9">
               <div>
-                <h2 className="text-2xl font-extrabold text-ink sm:text-3xl">
-                  Warranty and ownership information
+                <div className="flex items-center gap-2">
+                  <span className="rounded-md bg-[#085A2E] text-white text-[10px] font-black uppercase tracking-wider px-2 py-0.5">
+                    Official Guarantee
+                  </span>
+                  <span className="text-xs font-bold text-muted">Digital Certificate</span>
+                </div>
+                <h2 className="text-2xl font-extrabold text-ink sm:text-3xl mt-1">
+                  Warranty &amp; Service Protection
                 </h2>
                 <p className="mt-1 text-xs text-muted sm:text-sm">
-                  Coverage details, ownership records, and service information for your product.
+                  100% genuine brand warranty sourced directly from official manufacturers.
                 </p>
               </div>
 
               {/* Top Row: Warranty Summary + Coverage Details */}
               <div className="grid gap-4 sm:grid-cols-2">
                 {/* Warranty Summary Card */}
-                <div className="rounded-2xl border border-line/80 bg-white p-4 space-y-3 shadow-xs">
-                  <h4 className="text-xs font-extrabold text-ink">Warranty summary</h4>
-                  <p className="text-[11px] text-muted">A quick overview of your coverage.</p>
+                <div className="rounded-2xl border border-[#DCEDD2] bg-white p-4 space-y-3 shadow-2xs">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-[#085A2E]">
+                    Warranty Summary
+                  </h4>
+                  <p className="text-[11px] text-muted">Coverage duration and service model.</p>
 
                   <div className="flex items-center gap-3 pt-1">
-                    <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#EFF6FF] text-[#1D4E89] border border-[#CFE0F5]">
+                    <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#F0F8EC] text-[#085A2E] border border-[#DCEDD2]">
                       <ShieldCheck className="h-5 w-5" />
                     </span>
                     <div>
                       <span className="text-[10px] font-bold text-muted block uppercase">
-                        Standard Warranty
+                        Brand Manufacturer Warranty
                       </span>
-                      <strong className="text-xl font-extrabold text-ink">
-                        {warrantyYrs} Year{warrantyYrs > 1 ? "s" : ""}
+                      <strong className="text-xl font-extrabold text-[#085A2E]">
+                        {warrantyYrs} Year{warrantyYrs > 1 ? "s" : ""} ({warrantyMonths} Months)
                       </strong>
-                      <span className="text-[10px] text-muted block">from purchase date</span>
+                      <span className="text-[10px] text-muted block">
+                        Activates automatically upon delivery
+                      </span>
                     </div>
                   </div>
 
                   <ul className="space-y-1.5 border-t border-line/60 pt-3 text-[11px] text-ink">
                     <li className="flex items-center gap-1.5">
-                      <Check className="h-3.5 w-3.5 text-[#15803D]" />
-                      <span>Manufacturing defects covered</span>
+                      <Check className="h-3.5 w-3.5 text-[#085A2E]" />
+                      <span>100% Genuine brand parts replacement</span>
                     </li>
                     <li className="flex items-center gap-1.5">
-                      <Check className="h-3.5 w-3.5 text-[#15803D]" />
-                      <span>Parts and labor included</span>
+                      <Check className="h-3.5 w-3.5 text-[#085A2E]" />
+                      <span>Free technician doorstep visit for TVs &amp; Appliances</span>
                     </li>
                     <li className="flex items-center gap-1.5">
-                      <Check className="h-3.5 w-3.5 text-[#15803D]" />
-                      <span>Service through authorised providers</span>
-                    </li>
-                    <li className="flex items-center gap-1.5">
-                      <Check className="h-3.5 w-3.5 text-[#15803D]" />
-                      <span>Proof of purchase required</span>
+                      <Check className="h-3.5 w-3.5 text-[#085A2E]" />
+                      <span>Zero paper invoice required — digital GST bill on file</span>
                     </li>
                   </ul>
                 </div>
 
                 {/* Coverage Details Card */}
-                <div className="rounded-2xl border border-line/80 bg-white p-4 space-y-2 shadow-xs">
-                  <h4 className="text-xs font-extrabold text-ink">Coverage details</h4>
-                  <p className="text-[11px] text-muted">What&apos;s included in your warranty.</p>
+                <div className="rounded-2xl border border-line/80 bg-white p-4 space-y-2 shadow-2xs">
+                  <h4 className="text-xs font-black uppercase tracking-wider text-[#085A2E]">
+                    What&apos;s Covered
+                  </h4>
+                  <p className="text-[11px] text-muted">Authorised repair and component terms.</p>
 
                   <ul className="space-y-2.5 pt-2 text-xs text-ink/90">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#15803D] shrink-0 mt-0.5" />
-                      <span>Repairs for manufacturing defects in materials or workmanship</span>
+                      <CheckCircle2 className="h-4 w-4 text-[#085A2E] shrink-0 mt-0.5" />
+                      <span>Motherboard, display panel, compressor or motor defects</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#15803D] shrink-0 mt-0.5" />
-                      <span>Replacement of defective parts</span>
+                      <CheckCircle2 className="h-4 w-4 text-[#085A2E] shrink-0 mt-0.5" />
+                      <span>Factory workmanship failures and assembly issues</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#15803D] shrink-0 mt-0.5" />
-                      <span>Labor costs for covered repair</span>
+                      <CheckCircle2 className="h-4 w-4 text-[#085A2E] shrink-0 mt-0.5" />
+                      <span>Labour costs fully waived at authorised brand centres</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-[#15803D] shrink-0 mt-0.5" />
-                      <span>Technical support for warranty-related issues</span>
+                      <CheckCircle2 className="h-4 w-4 text-[#085A2E] shrink-0 mt-0.5" />
+                      <span>HyperMart 10-day replacement support if unrepairable</span>
                     </li>
                   </ul>
                 </div>
               </div>
 
-              {/* Middle Row: Exclusions, Installation Cost, Required Accessories (3 cols) */}
+              {/* Middle Row: Exclusions, Installation & In-Box Equipment */}
               <div className="grid gap-4 sm:grid-cols-3">
                 {/* Exclusions */}
                 <div className="rounded-2xl border border-line/80 bg-white p-4 space-y-2">
-                  <h4 className="text-xs font-extrabold text-ink">Exclusions</h4>
-                  <p className="text-[10px] text-muted">Items not covered under warranty.</p>
+                  <h4 className="text-xs font-black uppercase tracking-wider text-rose-800">
+                    Exclusions
+                  </h4>
+                  <p className="text-[10px] text-muted">Standard industry non-covered items.</p>
                   <ul className="space-y-1.5 pt-1 text-[11px] text-muted">
                     <li className="flex items-start gap-1.5">
-                      <X className="h-3.5 w-3.5 text-danger shrink-0 mt-0.5" />
-                      <span>Accidental damage (drops, spills, etc.)</span>
+                      <X className="h-3.5 w-3.5 text-rose-600 shrink-0 mt-0.5" />
+                      <span>Physical screen cracks, drops or water immersion</span>
                     </li>
                     <li className="flex items-start gap-1.5">
-                      <X className="h-3.5 w-3.5 text-danger shrink-0 mt-0.5" />
-                      <span>Normal wear and tear (e.g., ear pads, cables, batteries)</span>
+                      <X className="h-3.5 w-3.5 text-rose-600 shrink-0 mt-0.5" />
+                      <span>Unauthorised third-party repair tampering</span>
                     </li>
                     <li className="flex items-start gap-1.5">
-                      <X className="h-3.5 w-3.5 text-danger shrink-0 mt-0.5" />
-                      <span>Damage from unauthorised repairs or modifications</span>
-                    </li>
-                    <li className="flex items-start gap-1.5">
-                      <X className="h-3.5 w-3.5 text-danger shrink-0 mt-0.5" />
-                      <span>Cosmetic damage (scratches, dents, etc.)</span>
-                    </li>
-                    <li className="flex items-start gap-1.5">
-                      <X className="h-3.5 w-3.5 text-danger shrink-0 mt-0.5" />
-                      <span>Loss or theft</span>
+                      <X className="h-3.5 w-3.5 text-rose-600 shrink-0 mt-0.5" />
+                      <span>Voltage surge damage without stabiliser</span>
                     </li>
                   </ul>
                 </div>
@@ -302,111 +317,74 @@ export function WarrantyModal({ open, onClose, product: p }: WarrantyModalProps)
                 {/* Installation Cost */}
                 <div className="rounded-2xl border border-line/80 bg-white p-4 space-y-3">
                   <div>
-                    <h4 className="text-xs font-extrabold text-ink">Installation cost</h4>
-                    <p className="text-[10px] text-muted">Cost to setup or install, if applicable.</p>
+                    <h4 className="text-xs font-black uppercase tracking-wider text-[#085A2E]">
+                      Installation &amp; Demo
+                    </h4>
+                    <p className="text-[10px] text-muted">HyperMart certified setup.</p>
                   </div>
-                  <div className="flex items-center gap-3 pt-2">
-                    <span className="grid h-10 w-10 place-items-center rounded-2xl bg-bg text-muted border border-line">
+                  <div className="flex items-center gap-3 pt-1">
+                    <span className="grid h-10 w-10 place-items-center rounded-2xl bg-[#F0F8EC] text-[#085A2E] border border-[#DCEDD2]">
                       <Wrench className="h-5 w-5" />
                     </span>
                     <div>
-                      <strong className="block text-sm font-extrabold text-ink">Not applicable</strong>
-                      <p className="text-[10px] text-muted">This product does not require professional installation.</p>
+                      <strong className="block text-sm font-extrabold text-ink">
+                        {requiresInstall ? "Free Brand Setup" : "Plug & Play Ready"}
+                      </strong>
+                      <p className="text-[10px] text-muted">
+                        {requiresInstall
+                          ? "Technician brings wall mount or stand and unboxes"
+                          : "Self-setup in under 2 minutes with included guide"}
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Required Accessories */}
-                <div className="rounded-2xl border border-line/80 bg-white p-4 space-y-2">
+                {/* Extended Protection Add-on */}
+                <div className="rounded-2xl border border-[#DCEDD2] bg-[#F0F8EC]/60 p-4 space-y-2 flex flex-col justify-between">
                   <div>
-                    <h4 className="text-xs font-extrabold text-ink">Required accessories</h4>
-                    <p className="text-[10px] text-muted">Items needed for proper use (sold separately unless noted).</p>
-                  </div>
-                  <div className="space-y-1.5 pt-1 text-[11px]">
-                    <div className="flex justify-between">
-                      <span className="text-ink">3.5 mm audio cable (optional)</span>
-                      <span className="text-muted font-semibold">Not included</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-ink font-bold">USB-C charging cable</span>
-                      <span className="text-emerald-700 font-bold">Included</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-ink">USB power adapter</span>
-                      <span className="text-muted font-semibold">Not included</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-ink font-bold">Carrying case</span>
-                      <span className="text-emerald-700 font-bold">Included</span>
+                    <h4 className="text-xs font-black uppercase tracking-wider text-[#085A2E]">
+                      HyperMart Care+
+                    </h4>
+                    <p className="text-[10px] text-neutral-600">
+                      Add 1 extra year of comprehensive protection.
+                    </p>
+                    <div className="mt-2">
+                      <span className="text-xs font-extrabold text-ink">₹899</span>
+                      <span className="text-[10px] text-muted"> / additional year</span>
                     </div>
                   </div>
+                  <button
+                    type="button"
+                    onClick={() => toast("HyperMart Care+ 1-Year Extended Warranty added")}
+                    className="w-full rounded-xl bg-[#085A2E] hover:bg-[#064825] text-white py-1.5 text-xs font-bold transition shadow-2xs cursor-pointer"
+                  >
+                    Add Extended Warranty
+                  </button>
                 </div>
               </div>
 
-              {/* Bottom Row: Known Service Information + Ownership Information */}
-              <div className="grid gap-4 sm:grid-cols-2">
-                {/* Known Service Information */}
-                <div className="rounded-2xl border border-line/80 bg-white p-4 space-y-3">
-                  <div>
-                    <h4 className="text-xs font-extrabold text-ink">Known service information</h4>
-                    <p className="text-[11px] text-muted">Important updates about your product.</p>
+              {/* Bottom Row: Ownership Lifecycle & Digital Guarantee */}
+              <div className="rounded-2xl border border-[#DCEDD2] bg-[#F0F8EC]/40 p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="grid h-10 w-10 place-items-center rounded-2xl bg-[#085A2E] text-white shrink-0">
+                    <ShieldCheck className="h-5 w-5" />
                   </div>
-
-                  <div className="space-y-2">
-                    <div className="rounded-xl border border-line bg-bg/50 p-2.5 flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-[#1D4E89]" />
-                        <div>
-                          <strong className="block font-bold text-ink">Battery performance update</strong>
-                          <span className="text-[10px] text-muted">Source: Service Bulletin &bull; Jan 15, 2024</span>
-                        </div>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted" />
-                    </div>
-
-                    <div className="rounded-xl border border-line bg-bg/50 p-2.5 flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-[#1D4E89]" />
-                        <div>
-                          <strong className="block font-bold text-ink">Firmware stability patch v2.4</strong>
-                          <span className="text-[10px] text-muted">Source: Support Advisory &bull; Nov 02, 2023</span>
-                        </div>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted" />
-                    </div>
+                  <div>
+                    <h4 className="text-xs font-extrabold text-ink">
+                      Automatic Warranty Registration
+                    </h4>
+                    <p className="text-[11px] text-muted">
+                      Your warranty activates digitally on the day of delivery. No paper coupons or registration queues required.
+                    </p>
                   </div>
                 </div>
-
-                {/* Ownership Information */}
-                <div className="rounded-2xl border border-line/80 bg-white p-4 space-y-2">
-                  <div>
-                    <h4 className="text-xs font-extrabold text-ink">Ownership information</h4>
-                    <p className="text-[11px] text-muted">Details from your purchase record.</p>
-                  </div>
-
-                  <div className="space-y-1.5 pt-1 text-xs divide-y divide-line/60">
-                    <div className="flex justify-between py-1">
-                      <span className="text-muted">Registered Owner</span>
-                      <strong className="text-ink font-bold">Alex Smith</strong>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span className="text-muted">Purchase Date</span>
-                      <strong className="text-ink font-bold">Mar 12, 2024</strong>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span className="text-muted">Purchase From</span>
-                      <strong className="text-ink font-bold">Online Store</strong>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span className="text-muted">Proof of Purchase</span>
-                      <span className="rounded-md bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 text-[10px] font-bold">On file</span>
-                    </div>
-                    <div className="flex justify-between py-1">
-                      <span className="text-muted">Warranty Status</span>
-                      <strong className="text-emerald-700 font-bold">Active (Expires Mar 12, 2026)</strong>
-                    </div>
-                  </div>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => toast("Digital certificate PDF sent to registered email")}
+                  className="rounded-xl border border-[#085A2E] bg-white text-[#085A2E] px-4 py-2 text-xs font-bold hover:bg-[#F0F8EC] transition shrink-0 cursor-pointer"
+                >
+                  Email Warranty Certificate
+                </button>
               </div>
             </div>
           </div>

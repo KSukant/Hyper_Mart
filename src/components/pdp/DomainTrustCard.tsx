@@ -126,8 +126,8 @@ export function DomainTrustCard({
           {/* Row 1: Best for */}
           <div className="flex items-center justify-between py-3.5">
             <div className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#EFF6FF] text-[#1D4E89] border border-[#CFE0F5] shrink-0">
-                <Laptop className="h-4 w-4 text-[#1D4E89]" />
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#F0F8EC] text-[#085A2E] border border-[#DCEDD2] shrink-0">
+                <Laptop className="h-4 w-4 text-[#085A2E]" />
               </span>
               <div className="text-xs">
                 <span className="text-muted block text-[11px]">Best for:</span>
@@ -138,7 +138,7 @@ export function DomainTrustCard({
               <button
                 type="button"
                 onClick={onOpenSuitabilityModal}
-                className="text-xs font-bold text-ink hover:text-[#1D4E89] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
+                className="text-xs font-bold text-ink hover:text-[#085A2E] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
               >
                 View details &rsaquo;
               </button>
@@ -148,8 +148,8 @@ export function DomainTrustCard({
           {/* Row 2: Compatibility */}
           <div className="flex items-center justify-between py-3.5">
             <div className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#EFF6FF] text-[#1D4E89] border border-[#CFE0F5] shrink-0">
-                <Cpu className="h-4 w-4 text-[#1D4E89]" />
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#F0F8EC] text-[#085A2E] border border-[#DCEDD2] shrink-0">
+                <Cpu className="h-4 w-4 text-[#085A2E]" />
               </span>
               <div className="text-xs">
                 <span className="text-muted block text-[11px]">Compatibility:</span>
@@ -162,7 +162,7 @@ export function DomainTrustCard({
               <button
                 type="button"
                 onClick={onOpenCompatibilityModal}
-                className="text-xs font-bold text-ink hover:text-[#1D4E89] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
+                className="text-xs font-bold text-ink hover:text-[#085A2E] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
               >
                 View details &rsaquo;
               </button>
@@ -172,8 +172,8 @@ export function DomainTrustCard({
           {/* Row 3: Home fit */}
           <div className="flex items-center justify-between py-3.5">
             <div className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#EFF6FF] text-[#1D4E89] border border-[#CFE0F5] shrink-0">
-                <Home className="h-4 w-4 text-[#1D4E89]" />
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#F0F8EC] text-[#085A2E] border border-[#DCEDD2] shrink-0">
+                <Home className="h-4 w-4 text-[#085A2E]" />
               </span>
               <div className="text-xs">
                 <span className="text-muted block text-[11px]">Home fit:</span>
@@ -186,7 +186,7 @@ export function DomainTrustCard({
               <button
                 type="button"
                 onClick={onOpenHomeFitModal}
-                className="text-xs font-bold text-ink hover:text-[#1D4E89] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
+                className="text-xs font-bold text-ink hover:text-[#085A2E] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
               >
                 View details &rsaquo;
               </button>
@@ -196,8 +196,8 @@ export function DomainTrustCard({
           {/* Row 4: Delivery */}
           <div className="flex items-center justify-between py-3.5">
             <div className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#EFF6FF] text-[#1D4E89] border border-[#CFE0F5] shrink-0">
-                <Truck className="h-4 w-4 text-[#1D4E89]" />
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#F0F8EC] text-[#085A2E] border border-[#DCEDD2] shrink-0">
+                <Truck className="h-4 w-4 text-[#085A2E]" />
               </span>
               <div className="text-xs">
                 <span className="text-muted block text-[11px]">Delivery:</span>
@@ -210,7 +210,7 @@ export function DomainTrustCard({
               <button
                 type="button"
                 onClick={onOpenHomeFitModal}
-                className="text-xs font-bold text-ink hover:text-[#1D4E89] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
+                className="text-xs font-bold text-ink hover:text-[#085A2E] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
               >
                 View details &rsaquo;
               </button>
@@ -220,8 +220,8 @@ export function DomainTrustCard({
           {/* Row 5: Warranty */}
           <div className="flex items-center justify-between py-3.5">
             <div className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#EFF6FF] text-[#1D4E89] border border-[#CFE0F5] shrink-0">
-                <ShieldCheck className="h-4 w-4 text-[#1D4E89]" />
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#F0F8EC] text-[#085A2E] border border-[#DCEDD2] shrink-0">
+                <ShieldCheck className="h-4 w-4 text-[#085A2E]" />
               </span>
               <div className="text-xs">
                 <span className="text-muted block text-[11px]">Warranty:</span>
@@ -234,7 +234,7 @@ export function DomainTrustCard({
               <button
                 type="button"
                 onClick={onOpenWarrantyModal}
-                className="text-xs font-bold text-ink hover:text-[#1D4E89] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
+                className="text-xs font-bold text-ink hover:text-[#085A2E] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
               >
                 View details &rsaquo;
               </button>
@@ -244,8 +244,8 @@ export function DomainTrustCard({
           {/* Row 6: Support */}
           <div className="flex items-center justify-between py-3.5">
             <div className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#EFF6FF] text-[#1D4E89] border border-[#CFE0F5] shrink-0">
-                <Wrench className="h-4 w-4 text-[#1D4E89]" />
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#F0F8EC] text-[#085A2E] border border-[#DCEDD2] shrink-0">
+                <Wrench className="h-4 w-4 text-[#085A2E]" />
               </span>
               <div className="text-xs">
                 <span className="text-muted block text-[11px]">Support:</span>
@@ -256,7 +256,7 @@ export function DomainTrustCard({
               <button
                 type="button"
                 onClick={onOpenRepairModal}
-                className="text-xs font-bold text-ink hover:text-[#1D4E89] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
+                className="text-xs font-bold text-ink hover:text-[#085A2E] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
               >
                 View details &rsaquo;
               </button>
@@ -266,8 +266,8 @@ export function DomainTrustCard({
           {/* Row 7: Ownership */}
           <div className="flex items-center justify-between py-3.5">
             <div className="flex items-center gap-3">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#EFF6FF] text-[#1D4E89] border border-[#CFE0F5] shrink-0">
-                <FileText className="h-4 w-4 text-[#1D4E89]" />
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-[#F0F8EC] text-[#085A2E] border border-[#DCEDD2] shrink-0">
+                <FileText className="h-4 w-4 text-[#085A2E]" />
               </span>
               <div className="text-xs">
                 <span className="text-muted block text-[11px]">Ownership:</span>
@@ -278,7 +278,7 @@ export function DomainTrustCard({
               <button
                 type="button"
                 onClick={onOpenWarrantyModal}
-                className="text-xs font-bold text-ink hover:text-[#1D4E89] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
+                className="text-xs font-bold text-ink hover:text-[#085A2E] hover:underline flex items-center gap-0.5 shrink-0 ml-2"
               >
                 Edit &rsaquo;
               </button>

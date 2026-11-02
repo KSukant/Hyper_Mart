@@ -5,7 +5,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import * as Icons from "lucide-react";
 import { ChevronRight, Search, X, ArrowRight } from "lucide-react";
 import type { Department, Product } from "@/types";
-import { SnapPage, SnapSection, FooterSection, Reveal } from "@/components/sections/Snap";
+import { SnapPage, SnapSection, Reveal } from "@/components/sections/Snap";
 import { CardRow } from "@/components/product/CardRow";
 import { ProductCard, ProductCardCompact } from "@/components/product/ProductCard";
 import { ProductArt } from "@/components/product/ProductArt";
@@ -22,10 +22,19 @@ import { AddToCart } from "@/components/product/parts";
 import { formatDay, formatINR } from "@/lib/format";
 import { getDeliveryPromise } from "@/lib/delivery";
 import { useWish } from "@/store";
+import { FashionFeatureModal, type FashionFeatureType } from "@/components/fashion/FashionFeatureModal";
+import { SuitabilityModal } from "@/components/pdp/modals/SuitabilityModal";
+import { CompatibilityModal } from "@/components/pdp/modals/CompatibilityModal";
+import { HomeFitModal } from "@/components/pdp/modals/HomeFitModal";
+import { WarrantyModal } from "@/components/pdp/modals/WarrantyModal";
+import { RepairAndExchangeModal } from "@/components/pdp/modals/RepairAndExchangeModal";
+import { DeviceExchangePrepModal } from "@/components/pdp/modals/DeviceExchangePrepModal";
+import { CompareDevicesModal } from "@/components/pdp/modals/CompareDevicesModal";
+import { getProductById } from "@/lib/catalog";
 
 type Opt = { value: string; label: string };
 type FilterDef = { key: string; label: string; options: (ps: Product[]) => Opt[]; test: (p: Product, v: string, ctx: { warehouseId: string; price: number }) => boolean };
-const uniq = (xs: string[]) => [...new Set(xs)].sort().map((v) => ({ value: v, label: v }));
+const uniq = (xs: string[]) => [...new Set(xs.filter(Boolean))].sort().map((v) => ({ value: v, label: v }));
 const brandF: FilterDef = { key: "brand", label: "Brand", options: (ps) => uniq(ps.map(brandName)), test: (p, v) => brandName(p) === v };
 const availF: FilterDef = { key: "stock", label: "Availability", options: () => [{ value: "in", label: "In stock only" }], test: (p, _v, c) => ["in_stock", "low"].includes(getStock(p.id, c.warehouseId).status) };
 
@@ -40,7 +49,19 @@ const FILTERS: Record<Department, FilterDef[]> = {
   ],
   fashion: [
     { key: "gender", label: "Gender", options: () => [{ value: "men", label: "Men" }, { value: "women", label: "Women" }, { value: "kids", label: "Kids" }], test: (p, v) => p.attrs.department === "fashion" && p.attrs.gender === v },
-    { key: "size", label: "Size", options: (ps) => uniq(ps.flatMap((p) => (p.attrs.department === "fashion" ? p.attrs.sizes : []))), test: (p, v) => p.attrs.department === "fashion" && p.attrs.sizes.includes(v) },
+    { key: "rentable", label: "Occasion Rental", options: () => [{ value: "1", label: "Available to Rent" }], test: (p, v) => p.attrs.department === "fashion" && (v === "1" ? !!p.attrs.rentable : true) },
+    {
+      key: "size",
+      label: "Size",
+      options: (ps) => {
+        const rawSizes = uniq(ps.flatMap((p) => (p.attrs.department === "fashion" ? p.attrs.sizes : [])));
+        return rawSizes.map((s) => {
+          const count = ps.filter((p) => p.attrs.department === "fashion" && p.attrs.sizes.includes(s.value)).length;
+          return { value: s.value, label: count > 0 ? `${s.label} (${count})` : s.label };
+        });
+      },
+      test: (p, v) => p.attrs.department === "fashion" && p.attrs.sizes.includes(v),
+    },
     { key: "colour", label: "Colour", options: (ps) => uniq(ps.flatMap((p) => (p.attrs.department === "fashion" ? p.attrs.colours.map((c) => c.name) : []))), test: (p, v) => p.attrs.department === "fashion" && p.attrs.colours.some((c) => c.name === v) },
     { key: "fit", label: "Fit", options: (ps) => uniq(ps.map((p) => (p.attrs.department === "fashion" ? p.attrs.fit : ""))), test: (p, v) => p.attrs.department === "fashion" && p.attrs.fit === v },
     { key: "fabric", label: "Fabric", options: (ps) => uniq(ps.map((p) => (p.attrs.department === "fashion" ? p.attrs.fabric.split(",")[0] : ""))), test: (p, v) => p.attrs.department === "fashion" && p.attrs.fabric.toLowerCase().includes(v.toLowerCase()) },
@@ -51,9 +72,27 @@ const FILTERS: Record<Department, FilterDef[]> = {
     brandF,
   ],
   electronics: [
-    { key: "type", label: "Type", options: () => topCategories("electronics").map((c) => ({ value: c.id, label: c.name })), test: (p, v) => topCategoryOf(p)?.id === v },
+    { key: "type", label: "Category", options: () => topCategories("electronics").map((c) => ({ value: c.id, label: c.name })), test: (p, v) => topCategoryOf(p)?.id === v },
     brandF,
     { key: "price", label: "Price", options: () => [{ value: "lt2", label: "Under ₹2,000" }, { value: "2to20", label: "₹2,000–₹20,000" }, { value: "gt20", label: "Above ₹20,000" }], test: (_p, v, c) => (v === "lt2" ? c.price < 2000 : v === "2to20" ? c.price >= 2000 && c.price <= 20000 : c.price > 20000) },
+    {
+      key: "screen",
+      label: "Screen / Size",
+      options: (ps) => uniq(ps.flatMap((p) => p.attrs.department === "electronics" ? p.attrs.specs.filter(s => s.label.toLowerCase().includes("screen") || s.label.toLowerCase().includes("display")).map(s => s.value) : [])),
+      test: (p, v) => p.attrs.department === "electronics" && p.attrs.specs.some(s => (s.label.toLowerCase().includes("screen") || s.label.toLowerCase().includes("display")) && s.value === v),
+    },
+    {
+      key: "ram",
+      label: "RAM / Memory",
+      options: (ps) => uniq(ps.flatMap((p) => p.attrs.department === "electronics" ? p.attrs.specs.filter(s => s.label.toLowerCase().includes("ram") || s.label.toLowerCase().includes("memory")).map(s => s.value) : [])),
+      test: (p, v) => p.attrs.department === "electronics" && p.attrs.specs.some(s => (s.label.toLowerCase().includes("ram") || s.label.toLowerCase().includes("memory")) && s.value === v),
+    },
+    {
+      key: "storage",
+      label: "Storage",
+      options: (ps) => uniq(ps.flatMap((p) => p.attrs.department === "electronics" ? p.attrs.specs.filter(s => s.label.toLowerCase().includes("storage") || s.label.toLowerCase().includes("capacity") || s.label.toLowerCase().includes("ssd")).map(s => s.value) : [])),
+      test: (p, v) => p.attrs.department === "electronics" && p.attrs.specs.some(s => (s.label.toLowerCase().includes("storage") || s.label.toLowerCase().includes("capacity") || s.label.toLowerCase().includes("ssd")) && s.value === v),
+    },
     { key: "use", label: "Best for", options: () => ["study", "office", "gaming", "editing", "streaming", "calls"].map((u) => ({ value: u, label: u[0].toUpperCase() + u.slice(1) })), test: (p, v) => p.attrs.department === "electronics" && !!p.attrs.bestFor?.some((b) => b.useCase === v && b.verdict === "best") },
     { key: "warranty", label: "Warranty", options: () => [{ value: "12", label: "1 Year" }, { value: "24", label: "2 Years" }, { value: "36", label: "3+ Years" }], test: (p, v) => p.attrs.department === "electronics" && (v === "36" ? p.attrs.warranty.months >= 36 : p.attrs.warranty.months === Number(v)) },
     { key: "installation", label: "Installation", options: () => [{ value: "req", label: "Installation provided" }, { value: "free", label: "Free installation" }], test: (p, v) => p.attrs.department === "electronics" && !!(v === "free" ? p.attrs.installation?.required && p.attrs.installation?.fee === 0 : p.attrs.installation?.required) },
@@ -183,6 +222,10 @@ export function DepartmentView({ department }: { department: Department }) {
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(8);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [fashionModal, setFashionModal] = useState<FashionFeatureType | null>(null);
+  const [elecModal, setElecModal] = useState<"suitability" | "compatibility" | "homeFit" | "warranty" | "repair" | "exchangePrep" | "compare" | null>(null);
+  const [selectedProductForModal, setSelectedProductForModal] = useState<Product | null>(null);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
   useEffect(() => { const t = setInterval(() => setRot((r) => (r + 1) % page.deliveryStrip.length), 4000); return () => clearInterval(t); }, [page.deliveryStrip.length]);
   const Icon = DEPT_ICON[department];
@@ -197,13 +240,23 @@ export function DepartmentView({ department }: { department: Department }) {
   };
   const sortParam = sp.get("sort") ?? "featured";
 
+  const contextualForOptions = useMemo(() => {
+    return all.filter((p) => {
+      if (selCat && topCategoryOf(p)?.id !== selCat) return false;
+      const g = sp.get("gender");
+      if (g && p.attrs.department === "fashion" && p.attrs.gender !== g) return false;
+      return true;
+    });
+  }, [all, selCat, sp]);
+
   const filterGroups = useMemo(() => {
+    const ps = contextualForOptions.length > 0 ? contextualForOptions : all;
     return defs.map((f) => ({
       key: f.key,
       label: f.label,
-      options: f.options(all),
+      options: f.options(ps),
     }));
-  }, [defs, all]);
+  }, [defs, all, contextualForOptions]);
 
   const activeFiltersMap = useMemo(() => {
     const map: Record<string, string> = {};
@@ -278,9 +331,105 @@ export function DepartmentView({ department }: { department: Department }) {
             <div className="relative z-10 max-w-xl space-y-3">
               <h1 className="text-3xl font-extrabold leading-tight sm:text-5xl">{page.title}</h1>
               <p className="text-sm text-ink/75 sm:text-base">{page.subtitle.replace("{city}", city.name)}</p>
-              <form className="flex gap-2" onSubmit={(e) => { e.preventDefault(); router.push(`/search?q=${encodeURIComponent(q)}&department=${department}`); }}>
-                <label className="relative flex-1"><span className="sr-only">{page.searchPlaceholder}</span><Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
-                  <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={page.searchPlaceholder} className="h-12 w-full rounded-2xl bg-white pl-11 pr-3 text-sm shadow-sm outline-none focus:ring-2 focus:ring-primary/25" /></label>
+              <form className="relative flex gap-2" onSubmit={(e) => { e.preventDefault(); router.push(`/search?q=${encodeURIComponent(q)}&department=${department}`); }}>
+                <div className="relative flex-1">
+                  <span className="sr-only">{page.searchPlaceholder}</span>
+                  <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+                  <input
+                    value={q}
+                    onFocus={() => setIsSearchFocused(true)}
+                    onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
+                    onChange={(e) => setQ(e.target.value)}
+                    placeholder={page.searchPlaceholder}
+                    className="h-12 w-full rounded-2xl bg-white pl-11 pr-9 text-sm shadow-sm outline-none focus:ring-2 focus:ring-primary/25"
+                  />
+                  {q && (
+                    <button
+                      type="button"
+                      onClick={() => setQ("")}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 grid h-5 w-5 place-items-center rounded-full hover:bg-neutral-100 text-muted cursor-pointer"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+
+                  {/* Fashion Suggestions Popup */}
+                  {department === "fashion" && isSearchFocused && (
+                    <div className="absolute left-0 right-0 top-full z-30 mt-1.5 overflow-hidden rounded-2xl border border-line/80 bg-white p-2 shadow-xl animate-in fade-in slide-in-from-top-1 duration-150">
+                      <span className="block px-2.5 py-1 text-[10px] font-bold text-muted uppercase tracking-wider">
+                        Popular Fashion Searches
+                      </span>
+                      <div className="flex flex-col">
+                        {[
+                          "Men's cotton kurta",
+                          "Kanchipuram silk saree",
+                          "Wedding rental outfits",
+                          "Levi's 511 slim jeans",
+                          "Allen Solly formal shirt",
+                          "Biba cotton kurta set",
+                          "Puma running shoes",
+                        ]
+                          .filter((term) => !q || term.toLowerCase().includes(q.toLowerCase()))
+                          .slice(0, 5)
+                          .map((term) => (
+                            <button
+                              key={term}
+                              type="button"
+                              onMouseDown={() => {
+                                setQ(term);
+                                router.push(`/search?q=${encodeURIComponent(term)}&department=fashion`);
+                              }}
+                              className="flex items-center justify-between rounded-xl px-2.5 py-2 text-xs font-semibold text-ink hover:bg-neutral-50 text-left cursor-pointer"
+                            >
+                              <span className="flex items-center gap-2">
+                                <Search className="h-3 w-3 text-muted" />
+                                <span>{term}</span>
+                              </span>
+                              <ChevronRight className="h-3 w-3 text-muted" />
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Electronics Suggestions Popup */}
+                  {department === "electronics" && isSearchFocused && (
+                    <div className="absolute left-0 right-0 top-full z-30 mt-1.5 overflow-hidden rounded-2xl border border-[#DCEDD2] bg-white p-2 shadow-xl animate-in fade-in slide-in-from-top-1 duration-150">
+                      <span className="block px-2.5 py-1 text-[10px] font-bold text-[#085A2E] uppercase tracking-wider">
+                        Popular Electronics Searches
+                      </span>
+                      <div className="flex flex-col">
+                        {[
+                          "43 inch 4K Smart TV",
+                          "HP 14 laptop 16GB RAM",
+                          "Double door frost-free refrigerator",
+                          "5G smartphone with AMOLED display",
+                          "boAt noise cancelling earbuds",
+                          "Certified refurbished smartphones",
+                        ]
+                          .filter((term) => !q || term.toLowerCase().includes(q.toLowerCase()))
+                          .slice(0, 5)
+                          .map((term) => (
+                            <button
+                              key={term}
+                              type="button"
+                              onMouseDown={() => {
+                                setQ(term);
+                                router.push(`/search?q=${encodeURIComponent(term)}&department=electronics`);
+                              }}
+                              className="flex items-center justify-between rounded-xl px-2.5 py-2 text-xs font-semibold text-ink hover:bg-[#F0F8EC] text-left cursor-pointer"
+                            >
+                              <span className="flex items-center gap-2">
+                                <Search className="h-3 w-3 text-[#085A2E]" />
+                                <span>{term}</span>
+                              </span>
+                              <ChevronRight className="h-3 w-3 text-muted" />
+                            </button>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <button className={btn("primary", "lg")}>Search</button>
               </form>
             </div>
@@ -299,20 +448,86 @@ export function DepartmentView({ department }: { department: Department }) {
         </div>
         <p className="flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 text-sm font-semibold shadow-card sm:hidden">{(() => { const s = page.deliveryStrip[rot]; const I = DI(s.icon); return <><I className="h-4 w-4 text-primary" />{s.text}</>; })()}</p>
         <div className="no-scrollbar flex gap-3 overflow-x-auto sm:grid sm:auto-cols-fr sm:grid-flow-col">
-          {cats.map((c) => { const I = DI(c.icon ?? "Tag"); const on = selCat === c.id; const sample = all.find((p) => topCategoryOf(p)?.id === c.id); return (
-            <button key={c.id} onClick={() => { setParam("c", on ? null : c.id); if (!on) setTimeout(() => document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }), 50); }}
-              className={cn("flex w-[104px] shrink-0 flex-col items-center gap-2 rounded-2xl bg-white p-3 text-center shadow-card transition hover:-translate-y-0.5 sm:w-auto", on ? `ring-2 ring-${department}` : "ring-1 ring-line/60")}>
-              {sample ? <ProductArt product={sample} className="hidden h-[clamp(40px,8svh,72px)] w-[clamp(40px,8svh,72px)] rounded-xl sm:block" /> : null}
-              <I className={cn(`h-7 w-7 text-${department}`, sample && "sm:hidden")} />
-              <span className="text-xs font-bold leading-tight sm:text-sm">{c.name}</span>
-            </button>); })}
+          {cats.map((c) => {
+            const I = DI(c.icon ?? "Tag");
+            const on = selCat === c.id;
+            const sample = all.find((p) => topCategoryOf(p)?.id === c.id);
+            const count = all.filter((p) => topCategoryOf(p)?.id === c.id).length;
+            return (
+              <button
+                key={c.id}
+                onClick={() => {
+                  setParam("c", on ? null : c.id);
+                  if (!on) setTimeout(() => document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }), 50);
+                }}
+                className={cn(
+                  "flex w-[108px] shrink-0 flex-col items-center gap-1.5 rounded-2xl bg-white p-3 text-center shadow-card transition hover:-translate-y-0.5 sm:w-auto cursor-pointer",
+                  on ? `ring-2 ring-${department} shadow-md` : "ring-1 ring-line/60"
+                )}
+              >
+                {sample ? <ProductArt product={sample} className="hidden h-[clamp(40px,8svh,72px)] w-[clamp(40px,8svh,72px)] rounded-xl sm:block" /> : null}
+                <I className={cn(`h-7 w-7 text-${department}`, sample && "sm:hidden")} />
+                <span className="text-xs font-bold leading-tight sm:text-sm">{c.name}</span>
+                {count > 0 && <span className="text-[10px] text-muted font-medium">{count} items</span>}
+              </button>
+            );
+          })}
         </div>
         <div className="no-scrollbar flex gap-2 overflow-x-auto lg:grid lg:grid-cols-5 lg:gap-0 lg:divide-x lg:divide-line lg:rounded-2xl lg:bg-white lg:py-3 lg:shadow-card">
-          {page.promiseStrip.map((s) => { const I = DI(s.icon); return (
-            <div key={s.title} className="flex shrink-0 items-center gap-2 rounded-full bg-white px-3 py-2 shadow-card lg:rounded-none lg:bg-transparent lg:px-4 lg:py-0 lg:shadow-none">
-              <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-${department}-tint text-${department}`}><I className="h-4 w-4" /></span>
-              <span className="leading-tight"><span className="block whitespace-nowrap text-xs font-bold sm:text-sm">{s.title}</span><span className="hidden text-xs text-muted lg:block">{s.text}</span></span>
-            </div>); })}
+          {page.promiseStrip.map((s) => {
+            const I = DI(s.icon);
+            const isClickable = department === "fashion" || department === "electronics";
+            const handleClick = () => {
+              if (department === "fashion") {
+                if (s.title === "Rent for occasions") {
+                  setParam("rentable", "1");
+                  setTimeout(() => document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }), 50);
+                } else if (s.title === "Check your fit") {
+                  setFashionModal("fit");
+                } else if (s.title === "Fabric and feel") {
+                  setFashionModal("fabric");
+                } else if (s.title === "True colour photos") {
+                  setFashionModal("color");
+                } else if (s.title === "Size alerts") {
+                  setFashionModal("alerts");
+                }
+              } else if (department === "electronics") {
+                const rep = all[0] || getProductById("p-elec-001");
+                setSelectedProductForModal(rep || null);
+                if (s.title === "Right device for you") {
+                  setElecModal("suitability");
+                } else if (s.title === "Compatibility check") {
+                  setElecModal("compatibility");
+                } else if (s.title === "Will it fit?") {
+                  setElecModal("homeFit");
+                } else if (s.title === "Digital warranty") {
+                  setElecModal("warranty");
+                } else if (s.title === "Repair and refurbished") {
+                  setElecModal("repair");
+                }
+              }
+            };
+
+            return (
+              <button
+                key={s.title}
+                type="button"
+                onClick={handleClick}
+                className={cn(
+                  "flex shrink-0 items-center gap-2 rounded-full bg-white px-3 py-2 shadow-card lg:rounded-none lg:bg-transparent lg:px-4 lg:py-0 lg:shadow-none text-left transition",
+                  isClickable && "hover:bg-primary/5 active:scale-98 cursor-pointer"
+                )}
+              >
+                <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full bg-${department}-tint text-${department}`}>
+                  <I className="h-4 w-4" />
+                </span>
+                <span className="leading-tight">
+                  <span className="block whitespace-nowrap text-xs font-bold sm:text-sm text-ink">{s.title}</span>
+                  <span className="hidden text-xs text-muted lg:block">{s.text}</span>
+                </span>
+              </button>
+            );
+          })}
         </div>
       </SnapSection>
 
@@ -482,17 +697,64 @@ export function DepartmentView({ department }: { department: Department }) {
                   <select value={sp.get(f.key) ?? ""} onChange={(e) => setParam(f.key, e.target.value || null)}
                     className={cn("h-10 appearance-none rounded-full pl-4 pr-9 text-sm font-semibold outline-none transition", sp.get(f.key) ? "bg-primary text-white" : "bg-white ring-1 ring-line hover:ring-primary/50")}>
                     <option value="">{f.label}</option>
-                    {f.options(all).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
+                    {f.options(contextualForOptions.length > 0 ? contextualForOptions : all).map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>
                   <Icons.ChevronDown className={cn("pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2", sp.get(f.key) ? "text-white" : "text-muted")} />
                 </label>
               ))}
               {(active.length > 0 || selCat || sortParam !== "featured") && (
-                <button onClick={() => router.replace(path, { scroll: false })} className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-primary">
+                <button onClick={() => router.replace(path, { scroll: false })} className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-primary hover:underline cursor-pointer">
                   <X className="h-4 w-4" />Clear all
                 </button>
               )}
             </div>
+
+            {/* Desktop Active Removable Filter Pills */}
+            {(active.length > 0 || selCat) && (
+              <div className="flex flex-wrap items-center gap-2 py-1">
+                <span className="text-xs font-bold text-muted">Active filters:</span>
+                {selCat && (
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+                    Category: {cats.find((c) => c.id === selCat)?.name}
+                    <button
+                      type="button"
+                      onClick={() => setParam("c", null)}
+                      aria-label="Remove category filter"
+                      className="grid h-4 w-4 place-items-center rounded-full hover:bg-primary/20 cursor-pointer"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </span>
+                )}
+                {active.map((f) => {
+                  const val = sp.get(f.key);
+                  const opt = f.options(contextualForOptions.length > 0 ? contextualForOptions : all).find((o) => o.value === val);
+                  return (
+                    <span
+                      key={f.key}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary"
+                    >
+                      {f.label}: {opt?.label ?? val}
+                      <button
+                        type="button"
+                        onClick={() => setParam(f.key, null)}
+                        aria-label={`Remove ${f.label} filter`}
+                        className="grid h-4 w-4 place-items-center rounded-full hover:bg-primary/20 cursor-pointer"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </span>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={() => router.replace(path, { scroll: false })}
+                  className="text-xs font-bold text-danger hover:underline whitespace-nowrap pl-2 cursor-pointer"
+                >
+                  Clear all ({active.length + (selCat ? 1 : 0)})
+                </button>
+              </div>
+            )}
             {list.length === 0 ? (
               <EmptyState icon={<Icons.SearchX className="h-7 w-7" />} title={`No products match these filters in ${city.name}`} action={<button className={btn("secondary")} onClick={() => router.replace(path, { scroll: false })}>Clear filters</button>} />
             ) : department === "food" ? (
@@ -539,7 +801,93 @@ export function DepartmentView({ department }: { department: Department }) {
           onSelectSort={(val) => setParam("sort", val === "featured" ? null : val)}
         />
       </SnapSection>
-      <FooterSection />
+
+      {/* Feature Modals for Fashion */}
+      {department === "fashion" && (
+        <FashionFeatureModal
+          type={fashionModal}
+          onClose={() => setFashionModal(null)}
+          onSelectRentable={() => {
+            setFashionModal(null);
+            setParam("rentable", "1");
+            setTimeout(() => document.getElementById("shop")?.scrollIntoView({ behavior: "smooth" }), 50);
+          }}
+        />
+      )}
+
+      {/* Feature Modals for Electronics */}
+      {department === "electronics" && (selectedProductForModal || all[0]) && (
+        <>
+          <SuitabilityModal
+            open={elecModal === "suitability"}
+            onClose={() => setElecModal(null)}
+            product={selectedProductForModal || all[0]}
+            onOpenCompare={() => setElecModal("compare")}
+          />
+
+          <CompatibilityModal
+            open={elecModal === "compatibility"}
+            onClose={() => setElecModal(null)}
+            product={selectedProductForModal || all[0]}
+            selection={{}}
+            onSave={() => setElecModal(null)}
+          />
+
+          <HomeFitModal
+            open={elecModal === "homeFit"}
+            onClose={() => setElecModal(null)}
+            product={selectedProductForModal || all[0]}
+            selection={{}}
+            onSave={() => setElecModal(null)}
+          />
+
+          <WarrantyModal
+            open={elecModal === "warranty"}
+            onClose={() => setElecModal(null)}
+            product={selectedProductForModal || all[0]}
+          />
+
+          <RepairAndExchangeModal
+            open={elecModal === "repair"}
+            onClose={() => setElecModal(null)}
+            product={selectedProductForModal || all[0]}
+            selection={{}}
+            cityName={city.name}
+            pincode={warehouseId || "560001"}
+            onOpenExchangePrep={() => setElecModal("exchangePrep")}
+          />
+
+          <DeviceExchangePrepModal
+            open={elecModal === "exchangePrep"}
+            onClose={() => setElecModal(null)}
+            product={selectedProductForModal || all[0]}
+            onBackToExchange={() => setElecModal("repair")}
+          />
+
+          <CompareDevicesModal
+            open={elecModal === "compare"}
+            onClose={() => setElecModal(null)}
+            product={selectedProductForModal || all[0]}
+          />
+        </>
+      )}
+
+      {/* Floating Compare Devices Action for Electronics */}
+      {department === "electronics" && all.length > 1 && (
+        <div className="fixed bottom-6 right-6 z-30 hidden sm:block">
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedProductForModal(all[0]);
+              setElecModal("compare");
+            }}
+            className="flex items-center gap-2 rounded-full bg-[#085A2E] text-white px-4 py-2.5 font-extrabold text-xs shadow-lg hover:bg-[#064825] transition active:scale-95 cursor-pointer border border-[#DCEDD2]"
+          >
+            <Icons.Sliders className="h-4 w-4 text-[#B8F34A]" />
+            <span>Compare Devices ({all.length})</span>
+          </button>
+        </div>
+      )}
     </SnapPage>
   );
 }

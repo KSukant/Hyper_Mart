@@ -24,7 +24,7 @@ export function EditSizeModal({
   currentColour = "Blue",
   onConfirm,
 }: EditSizeModalProps) {
-  const [selectedSize, setSelectedSize] = useState<string>("XL");
+  const [selectedSize, setSelectedSize] = useState<string>(currentSize || "L");
 
   if (!open) return null;
 
@@ -94,8 +94,8 @@ export function EditSizeModal({
                   className={cn(
                     "min-w-12 rounded-xl px-4 py-2 text-xs font-extrabold border transition",
                     selectedSize === s
-                      ? "bg-black text-white border-black"
-                      : "bg-white text-ink border-line hover:border-black"
+                      ? "bg-[#085A2E] text-white border-[#085A2E] shadow-xs"
+                      : "bg-white text-ink border-line hover:border-[#085A2E]"
                   )}
                 >
                   {s}
@@ -149,7 +149,7 @@ export function EditSizeModal({
             <button
               type="button"
               onClick={handleConfirm}
-              className="w-full rounded-2xl bg-[#17201B] hover:bg-black py-3.5 text-xs font-extrabold text-white shadow-md transition"
+              className="w-full rounded-2xl bg-[#085A2E] hover:bg-[#064825] py-3.5 text-xs font-extrabold text-white shadow-md transition"
             >
               Confirm change
             </button>

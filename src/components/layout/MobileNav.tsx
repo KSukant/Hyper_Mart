@@ -27,9 +27,9 @@ export function MobileNav({
   const tabs = [
     {
       label: "Home",
-      href: "/",
+      href: "/shop",
       icon: Home,
-      isActive: pathname === "/",
+      isActive: pathname === "/" || pathname === "/shop",
     },
     {
       label: "Categories",

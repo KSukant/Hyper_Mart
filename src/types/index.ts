@@ -347,6 +347,14 @@ export interface CartItem {
   ripeness?: "raw" | "ready_to_eat" | "very_ripe";
   subscription?: { frequency: "daily" | "alternate_days" | "weekly"; days?: string[]; startDate: ISODate };
   gift?: { recipientName: string; message: string; hidePrice: boolean };
+  rental?: {
+    startDate: ISODate;
+    returnDate: ISODate;
+    durationDays: number;
+    perDayPrice: number;
+    deposit: number;
+    totalRentalFee: number;
+  };
 }
 
 export type OrderStatus = "placed" | "confirmed" | "picking" | "packed" | "out_for_delivery" | "delivered" | "cancelled" | "partially_delivered";

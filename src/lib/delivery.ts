@@ -70,10 +70,10 @@ export function getCartCharges(
     const p = getProductById(it.productId); if (!p) continue;
     const pr = getPrice(p, cityId, isMember, now, it.grade);
     const nm = getPrice(p, cityId, false, now, it.grade);
-    const linePrice = Math.round(pr.finalPrice * it.qty);
+    const linePrice = it.rental ? Math.round(it.rental.totalRentalFee * it.qty) : Math.round(pr.finalPrice * it.qty);
     itemsTotal += linePrice;
-    nonMemberTotal += Math.round(nm.finalPrice * it.qty);
-    mrpTotal += Math.round(pr.mrp * it.qty);
+    nonMemberTotal += it.rental ? linePrice : Math.round(nm.finalPrice * it.qty);
+    mrpTotal += it.rental ? linePrice : Math.round(pr.mrp * it.qty);
     const gstRate = p.gstRatePct ?? 0;
     if (gstRate > 0) {
       taxInclusive += Math.round(linePrice * (gstRate / (100 + gstRate)));

@@ -65,14 +65,18 @@ export function PrimaryNavbar({
   const wishCount = useWish((s) => s.ids.length);
   const activeId = useActiveSection((s) => s.activeId);
 
-  const isDealsActive = (pathname === "/" && activeId === "deals") || pathname.startsWith("/deals") || pathname.startsWith("/offers");
+  const isHomePage = pathname === "/" || pathname === "/shop";
+  const isDealsActive = (isHomePage && activeId === "deals") || pathname.startsWith("/deals") || pathname.startsWith("/offers");
 
   const handleDealsClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
-    if (pathname === "/") {
+    if (isHomePage) {
       const el = document.getElementById("deals");
       if (el) {
         e.preventDefault();
-        el.scrollIntoView({ behavior: "smooth" });
+        const headerOffset = 72;
+        const elementPosition = el.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = Math.max(0, elementPosition - headerOffset);
+        window.scrollTo({ top: offsetPosition, behavior: "smooth" });
         history.replaceState(null, "", "#deals");
       }
     }

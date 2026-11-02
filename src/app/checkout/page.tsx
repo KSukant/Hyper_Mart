@@ -10,6 +10,7 @@ import {
   Check,
   ChevronLeft,
   Wrench,
+  Tv,
   Gift,
   Loader2,
   AlertTriangle,
@@ -36,9 +37,10 @@ import {
   codNeedsConfirmation,
   getDeliveryPromise,
 } from "@/lib/delivery";
-import { getPincodeArea, getCity, getReturnPolicy } from "@/lib/catalog";
+import { getPincodeArea, getCity, getReturnPolicy, brandName } from "@/lib/catalog";
 import { formatDay, formatINR, addDays, isoDay } from "@/lib/format";
 import { cn } from "@/lib/cn";
+import { getProducePieceCount } from "@/lib/groceryDescriptions";
 
 const STEPS = [
   { k: "address", l: "Address", stepNum: 1 },
@@ -114,6 +116,11 @@ export default function Checkout() {
   }
 
   const items = v.valid.map((l) => l.it);
+  const hasFood = v.valid.some((l) => l.p.attrs.department === "food");
+  const hasFashion = v.valid.some((l) => l.p.attrs.department === "fashion");
+  const hasElectronics = v.valid.some((l) => l.p.attrs.department === "electronics");
+  const isFashionOnly = hasFashion && !hasFood && !hasElectronics;
+  const isElectronicsOnly = hasElectronics && !hasFood && !hasFashion;
   const needsAccess = v.valid.some((l) =>
     l.p.handling.some((h) => h === "heavy" || h === "two_person")
   );
@@ -245,6 +252,8 @@ export default function Checkout() {
   };
 
   const groceryItems = v.valid.filter((l) => l.p.department === "food");
+  const fashionItems = v.valid.filter((l) => l.p.department === "fashion");
+  const electronicsItems = v.valid.filter((l) => l.p.department === "electronics");
   const otherItems = v.valid.filter((l) => l.p.department !== "food");
 
   return (
@@ -550,15 +559,26 @@ export default function Checkout() {
                       Tomorrow, 10:00 AM – 12:00 PM
                     </strong>
                     <span className="mt-0.5 block text-[11px] text-muted">
-                      Cold-chain delivery (keeps it fresh)
+                      {isFashionOnly
+                        ? "Wardrobe-safe protective courier delivery"
+                        : "Cold-chain delivery (keeps it fresh)"}
                     </span>
                   </div>
 
                   <div>
-                    <span className="block font-medium text-muted">Delivered fresh</span>
+                    <span className="block font-medium text-muted">{isFashionOnly ? "Packaging standard" : "Delivered fresh"}</span>
                     <strong className="mt-1 block font-bold text-ink flex items-center gap-1">
-                      <Snowflake className="h-3.5 w-3.5 text-sky-600" />
-                      <span>in 4–6 days of shelf life</span>
+                      {isFashionOnly ? (
+                        <>
+                          <Sparkles className="h-3.5 w-3.5 text-amber-600" />
+                          <span>Wardrobe dust bag protective fold</span>
+                        </>
+                      ) : (
+                        <>
+                          <Snowflake className="h-3.5 w-3.5 text-sky-600" />
+                          <span>in 4–6 days of shelf life</span>
+                        </>
+                      )}
                     </strong>
                   </div>
                 </div>
@@ -654,6 +674,177 @@ export default function Checkout() {
                 </div>
               )}
 
+              {/* Card 2b: Fashion items */}
+              {fashionItems.length > 0 && (
+                <div className="rounded-3xl border border-line/80 bg-white p-5 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-4 w-4 text-[#085A2E]" />
+                      <h2 className="text-sm font-extrabold text-ink sm:text-base">
+                        Fashion &amp; Apparel items ({fashionItems.length})
+                      </h2>
+                    </div>
+                    <Link href="/cart" className="text-xs font-bold text-muted hover:text-ink">
+                      Edit &rsaquo;
+                    </Link>
+                  </div>
+
+                  <div className="divide-y divide-line/60">
+                    {fashionItems.map((l) => {
+                      const sz = l.it.variantKey ? l.it.variantKey.split("|")[0] : undefined;
+                      const col = l.it.variantKey ? l.it.variantKey.split("|")[1] : undefined;
+                      const isRental = !!l.it.rental;
+                      return (
+                        <div
+                          key={l.key}
+                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3 first:pt-0"
+                        >
+                          <div className="flex items-start gap-3.5">
+                            <ProductArt product={l.p} className="h-16 w-16 rounded-2xl shrink-0" />
+                            <div className="space-y-1.5">
+                              <h3 className="font-extrabold text-sm text-ink">{l.p.name}</h3>
+                              <p className="text-xs text-muted">
+                                {l.p.highlights?.[0] ?? "Handcrafted authentic apparel."}
+                              </p>
+
+                              {/* Fashion Attribute Pills */}
+                              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                                {col && (
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-line bg-white px-2.5 py-0.5 text-[11px] font-semibold text-ink">
+                                    <span>Colour: {col}</span>
+                                  </span>
+                                )}
+
+                                {sz && (
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-line bg-white px-2.5 py-0.5 text-[11px] font-semibold text-ink">
+                                    <span>Size: {sz}</span>
+                                  </span>
+                                )}
+
+                                {isRental ? (
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-[#085A2E]/30 bg-[#F0F8EC] px-2.5 py-0.5 text-[11px] font-bold text-[#085A2E]">
+                                    <Sparkles className="h-3 w-3 text-[#085A2E]" />
+                                    <span>{l.it.rental?.durationDays}-Day Occasion Rental</span>
+                                  </span>
+                                ) : (
+                                  <>
+                                    <span className="inline-flex items-center gap-1 rounded-full border border-line bg-white px-2.5 py-0.5 text-[11px] font-semibold text-ink">
+                                      <Sparkles className="h-3 w-3 text-amber-600" />
+                                      <span>Wardrobe packaging</span>
+                                    </span>
+
+                                    <span className="inline-flex items-center gap-1 rounded-full border border-line bg-white px-2.5 py-0.5 text-[11px] font-semibold text-ink">
+                                      <RotateCcw className="h-3 w-3 text-ink" />
+                                      <span>7-day exchange</span>
+                                    </span>
+                                  </>
+                                )}
+                              </div>
+
+                              {l.it.rental && (
+                                <div className="mt-1.5 rounded-xl bg-[#F0F8EC] border border-[#DCEDD2] p-2 text-xs text-[#14532D]">
+                                  <span>Pickup on return date: <b>{l.it.rental.returnDate}</b> · Deposit ₹{l.it.rental.deposit} refunded in 24h</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Price on Right */}
+                          <div className="text-left sm:text-right shrink-0 text-xs">
+                            <p className="font-display text-lg font-extrabold text-ink tabular">
+                              ₹ {l.it.rental ? (l.it.rental.totalRentalFee + l.it.rental.deposit) * l.it.qty : l.price.finalPrice * l.it.qty}
+                            </p>
+                            <p className="text-muted tabular">
+                              {l.it.rental ? "Rental + Deposit" : `Qty: ${l.it.qty}`}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Card 2c: Electronics items */}
+              {electronicsItems.length > 0 && (
+                <div className="rounded-3xl border border-[#DCEDD2] bg-white p-5 shadow-2xs space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Tv className="h-4 w-4 text-[#085A2E]" />
+                      <h2 className="text-sm font-extrabold text-ink sm:text-base">
+                        Electronics &amp; Appliances items ({electronicsItems.length})
+                      </h2>
+                    </div>
+                    <Link href="/cart" className="text-xs font-bold text-[#085A2E] hover:underline">
+                      Edit &rsaquo;
+                    </Link>
+                  </div>
+
+                  <div className="divide-y divide-[#DCEDD2]/60">
+                    {electronicsItems.map((l) => {
+                      const a = l.p.attrs;
+                      const isHeavy = l.p.handling.includes("heavy") || l.p.handling.includes("two_person");
+                      const warrantyMonths = a.department === "electronics" ? a.warranty?.months ?? 12 : 12;
+                      const warrantyYrs = Math.round(warrantyMonths / 12);
+                      const requiresInstall = l.p.categoryId === "elec-tv" || l.p.categoryId === "elec-appliances";
+
+                      return (
+                        <div
+                          key={l.key}
+                          className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-3 first:pt-0"
+                        >
+                          <div className="flex items-start gap-3.5">
+                            <ProductArt product={l.p} className="h-16 w-16 rounded-2xl shrink-0" />
+                            <div className="space-y-1.5">
+                              <span className="text-[10px] font-black uppercase text-[#085A2E] block">
+                                {brandName(l.p)} &bull; {l.p.categoryId || "Electronics"}
+                              </span>
+                              <h3 className="font-extrabold text-sm text-ink">{l.p.name}</h3>
+
+                              {/* Electronics Attribute Pills */}
+                              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                                {l.p.attrs?.department === "electronics" && l.p.attrs.model && (
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-line bg-white px-2.5 py-0.5 text-[11px] font-semibold text-ink">
+                                    <span>Model: {String(l.p.attrs.model)}</span>
+                                  </span>
+                                )}
+
+                                <span className="inline-flex items-center gap-1 rounded-full border border-[#DCEDD2] bg-[#F0F8EC] px-2.5 py-0.5 text-[11px] font-bold text-[#085A2E]">
+                                  <ShieldCheck className="h-3 w-3 text-[#085A2E]" />
+                                  <span>{warrantyYrs}Y Brand Warranty</span>
+                                </span>
+
+                                <span className="inline-flex items-center gap-1 rounded-full border border-line bg-white px-2.5 py-0.5 text-[11px] font-semibold text-ink">
+                                  <Wrench className="h-3 w-3 text-[#085A2E]" />
+                                  <span>{requiresInstall ? "Certified Installation Included" : "Plug & Play Setup"}</span>
+                                </span>
+
+                                {isHeavy && (
+                                  <span className="inline-flex items-center gap-1 rounded-full border border-line bg-white px-2.5 py-0.5 text-[11px] font-semibold text-ink">
+                                    <Truck className="h-3 w-3 text-muted" />
+                                    <span>2-Person Heavy Crew</span>
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Price on Right */}
+                          <div className="text-left sm:text-right shrink-0 text-xs">
+                            <p className="font-display text-lg font-extrabold text-[#085A2E] tabular">
+                              ₹ {l.price.finalPrice * l.it.qty}
+                            </p>
+                            <p className="text-muted tabular">
+                              Qty: {l.it.qty}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {/* Card 3: Policies & Information Matching Screen 8 */}
               <div className="rounded-3xl border border-line/80 bg-white p-5 shadow-sm space-y-4">
                 <div className="flex items-center justify-between">
@@ -673,45 +864,133 @@ export default function Checkout() {
                 </div>
 
                 <div className="grid gap-4 text-xs sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-line/60">
-                  <div className="pt-2 sm:pt-0 sm:pr-3 space-y-1">
-                    <div className="flex items-center gap-1.5 font-bold text-ink">
-                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-700" />
-                      <span>Quality guarantee</span>
-                    </div>
-                    <p className="text-[11px] text-muted leading-relaxed">
-                      Carefully selected Grade A produce.
-                    </p>
-                  </div>
+                  {isElectronicsOnly ? (
+                    <>
+                      <div className="pt-2 sm:pt-0 sm:pr-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-[#085A2E]">
+                          <ShieldCheck className="h-3.5 w-3.5 text-[#085A2E]" />
+                          <span>100% Genuine Brand Sourced</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          Official manufacturer warranty with GST invoice on file.
+                        </p>
+                      </div>
 
-                  <div className="pt-2 sm:pt-0 sm:px-3 space-y-1">
-                    <div className="flex items-center gap-1.5 font-bold text-ink">
-                      <Snowflake className="h-3.5 w-3.5 text-sky-600" />
-                      <span>Freshness promise</span>
-                    </div>
-                    <p className="text-[11px] text-muted leading-relaxed">
-                      Cold-chain delivery to keep it fresh.
-                    </p>
-                  </div>
+                      <div className="pt-2 sm:pt-0 sm:px-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-[#085A2E]">
+                          <Wrench className="h-3.5 w-3.5 text-[#085A2E]" />
+                          <span>Certified Installation</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          Trained technicians handle unboxing, demo and wall mounting.
+                        </p>
+                      </div>
 
-                  <div className="pt-2 sm:pt-0 sm:px-3 space-y-1">
-                    <div className="flex items-center gap-1.5 font-bold text-ink">
-                      <RotateCcw className="h-3.5 w-3.5 text-ink" />
-                      <span>Substitution preference</span>
-                    </div>
-                    <p className="text-[11px] text-muted leading-relaxed">
-                      We&apos;ll confirm before any substitution.
-                    </p>
-                  </div>
+                      <div className="pt-2 sm:pt-0 sm:px-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-ink">
+                          <RotateCcw className="h-3.5 w-3.5 text-[#085A2E]" />
+                          <span>10-Day Technical Replacement</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          Doorstep replacement for any manufacturing defect.
+                        </p>
+                      </div>
 
-                  <div className="pt-2 sm:pt-0 sm:pl-3 space-y-1">
-                    <div className="flex items-center gap-1.5 font-bold text-ink">
-                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700" />
-                      <span>Returns &amp; refunds</span>
-                    </div>
-                    <p className="text-[11px] text-muted leading-relaxed">
-                      Items can be refunded if they don&apos;t meet quality standards.
-                    </p>
-                  </div>
+                      <div className="pt-2 sm:pt-0 sm:pl-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-ink">
+                          <Truck className="h-3.5 w-3.5 text-[#085A2E]" />
+                          <span>Damage-Free Transit</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          Heavy-cushion packaging with unboxing check at delivery.
+                        </p>
+                      </div>
+                    </>
+                  ) : isFashionOnly ? (
+                    <>
+                      <div className="pt-2 sm:pt-0 sm:pr-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-ink">
+                          <ShieldCheck className="h-3.5 w-3.5 text-emerald-700" />
+                          <span>Genuine Brand Guarantee</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          100% authentic merchandise sourced direct from brands.
+                        </p>
+                      </div>
+
+                      <div className="pt-2 sm:pt-0 sm:px-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-ink">
+                          <Sparkles className="h-3.5 w-3.5 text-amber-600" />
+                          <span>Wardrobe Care Packaging</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          Garment-grade dust bag &amp; crease-free protective fold.
+                        </p>
+                      </div>
+
+                      <div className="pt-2 sm:pt-0 sm:px-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-ink">
+                          <RotateCcw className="h-3.5 w-3.5 text-ink" />
+                          <span>7-Day Easy Exchange</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          Hassle-free doorstep size and colour replacement.
+                        </p>
+                      </div>
+
+                      <div className="pt-2 sm:pt-0 sm:pl-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-ink">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700" />
+                          <span>Try &amp; Check at Door</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          Verify fit, colour and fabric right when delivered.
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="pt-2 sm:pt-0 sm:pr-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-ink">
+                          <ShieldCheck className="h-3.5 w-3.5 text-emerald-700" />
+                          <span>Quality guarantee</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          Carefully selected Grade A produce.
+                        </p>
+                      </div>
+
+                      <div className="pt-2 sm:pt-0 sm:px-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-sky-600">
+                          <Snowflake className="h-3.5 w-3.5 text-sky-600" />
+                          <span>Freshness promise</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          Cold-chain delivery to keep it fresh.
+                        </p>
+                      </div>
+
+                      <div className="pt-2 sm:pt-0 sm:px-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-ink">
+                          <RotateCcw className="h-3.5 w-3.5 text-ink" />
+                          <span>Substitution preference</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          We&apos;ll confirm before any substitution.
+                        </p>
+                      </div>
+
+                      <div className="pt-2 sm:pt-0 sm:pl-3 space-y-1">
+                        <div className="flex items-center gap-1.5 font-bold text-ink">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-emerald-700" />
+                          <span>Returns &amp; refunds</span>
+                        </div>
+                        <p className="text-[11px] text-muted leading-relaxed">
+                          Items can be refunded if they don&apos;t meet quality standards.
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

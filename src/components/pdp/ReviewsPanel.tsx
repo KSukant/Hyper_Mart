@@ -56,31 +56,37 @@ export function ReviewsPanel({
 
         {/* 5-Star Breakdown Bars */}
         <div className="flex-1 space-y-1.5 text-xs">
-          {[5, 4, 3, 2, 1].map((star) => {
-            const pct = Math.max(
-              4,
-              Math.round(100 * Math.exp(-Math.abs(star - rating) * 1.3))
-            );
+          {(() => {
+            // Compute normalized percentages that strictly sum to 100%
+            const stars = [5, 4, 3, 2, 1];
+            const rawWeights = stars.map((s) => Math.exp(-Math.pow(s - rating, 2) / 1.8));
+            const totalWeight = rawWeights.reduce((a, b) => a + b, 0);
+            const pcts = rawWeights.map((w) => Math.round((w / totalWeight) * 100));
+            const diff = 100 - pcts.reduce((a, b) => a + b, 0);
+            pcts[0] += diff; // Adjust highest star so sum is exactly 100%
 
-            return (
-              <div key={star} className="flex items-center gap-2.5">
-                <span className="flex items-center justify-end gap-0.5 w-6 font-bold text-muted tabular">
-                  {star}
-                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-                </span>
-                <div className="h-2 flex-1 overflow-hidden rounded-full bg-bg">
-                  <div
-                    className="h-full rounded-full transition-all duration-300"
-                    style={{
-                      width: `${pct}%`,
-                      backgroundColor: theme.primary,
-                    }}
-                  />
+            return stars.map((star, idx) => {
+              const pct = pcts[idx];
+              return (
+                <div key={star} className="flex items-center gap-2.5">
+                  <span className="flex items-center justify-end gap-0.5 w-6 font-bold text-muted tabular">
+                    {star}
+                    <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                  </span>
+                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-bg">
+                    <div
+                      className="h-full rounded-full transition-all duration-300"
+                      style={{
+                        width: `${pct}%`,
+                        backgroundColor: theme.primary,
+                      }}
+                    />
+                  </div>
+                  <span className="w-8 text-right font-mono text-[11px] text-muted">{pct}%</span>
                 </div>
-                <span className="w-8 text-right font-mono text-[11px] text-muted">{pct}%</span>
-              </div>
-            );
-          })}
+              );
+            });
+          })()}
         </div>
       </div>
 

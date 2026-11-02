@@ -1,15 +1,13 @@
 "use client";
 import Link from "next/link";
-import { ArrowRight, Truck, ShieldCheck, PackageSearch, RotateCcw } from "lucide-react";
-import { SnapPage, SnapSection, FooterSection, Reveal } from "@/components/sections/Snap";
+import { ArrowRight, Truck } from "lucide-react";
+import { SnapPage, SnapSection, Reveal } from "@/components/sections/Snap";
 import { SectionHeading, Pill } from "@/components/ui/primitives";
 import { ProductArt } from "@/components/product/ProductArt";
 import { DEPT_ICON } from "@/components/layout/Header";
-import { departments, trustStrip } from "@/mocks";
+import { departments } from "@/mocks";
 import { productsInCity, topCategories } from "@/lib/catalog";
 import { useShopper } from "@/lib/hooks";
-
-const TRUST = { ShieldCheck, PackageSearch, RotateCcw } as Record<string, typeof Truck>;
 
 export default function CategoryHub() {
   const { warehouseId, city } = useShopper();
@@ -45,12 +43,7 @@ export default function CategoryHub() {
             );
           })}
         </div>
-        <div className="hidden grid-cols-3 gap-2 rounded-3xl bg-primary-tint p-3 sm:grid sm:p-4">
-          {trustStrip.map((t) => { const I = TRUST[t.icon] ?? ShieldCheck; return (
-            <div key={t.title} className="flex items-center justify-center gap-2 text-center text-xs font-bold sm:text-sm"><span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent text-accent-text"><I className="h-4 w-4" /></span>{t.title}</div>); })}
-        </div>
       </SnapSection>
-      <FooterSection />
     </SnapPage>
   );
 }

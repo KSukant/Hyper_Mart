@@ -41,6 +41,19 @@
   --brand-500: #147A4E;
   --brand-100: #E4F3DC;
   --brand-50: #F4F7EF;
+
+  /* HyperMart Fresh Journey tokens */
+  --fresh-primary: #075B36;
+  --fresh-primary-hover: #06472C;
+  --fresh-emerald: #07834B;
+  --fresh-mint: #EAF5E5;
+  --fresh-cream: #FFF9EB;
+  --fresh-lime: #C5EA42;
+  --fresh-golden: #F4C52E;
+  --fresh-white: #FFFFFF;
+  --fresh-text: #17251D;
+  --fresh-text-muted: #64756A;
+  --fresh-border: #DFE9DC;
 }
 
 /* ──────────────── PDP Responsive Layout (1180px and up) ──────────────── */
@@ -82,12 +95,13 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-padding-top: var(--header-h);
+  scroll-behavior: smooth;
 }
 body { @apply bg-bg text-ink font-sans antialiased; }
 h1, h2, h3, .font-display { font-family: "Plus Jakarta Sans", "Inter Variable", sans-serif; letter-spacing: -0.02em; }
 .tabular { font-variant-numeric: tabular-nums; }
 
-/* Snap sections: min-height: var(--section-h) ONLY on desktop (>= 1024px) */
+/* Section layout: min-height: var(--section-h) on desktop (>= 1024px) */
 .snap-section {
   display: flex;
   flex-direction: column;
@@ -99,35 +113,35 @@ h1, h2, h3, .font-display { font-family: "Plus Jakarta Sans", "Inter Variable", 
   .snap-section {
     min-height: auto;
     padding-block: 16px;
-    scroll-snap-align: none;
-    scroll-margin-top: 0;
+    scroll-margin-top: var(--header-h);
   }
 }
 
 @media (min-width: 1024px) {
-  .snap-section {
+  html:has(#home) {
+    scroll-snap-type: y proximity;
+  }
+  html:has(#home) .snap-section {
     scroll-margin-top: var(--header-h);
     min-height: var(--section-h);
     padding-block: clamp(16px, 3vh, 40px);
     scroll-snap-align: start;
-    scroll-snap-stop: always;
+    scroll-snap-stop: normal;
+  }
+  html:has(#home) .snap-section-end {
+    scroll-margin-top: var(--header-h);
+    scroll-snap-align: end;
+    scroll-snap-stop: normal;
+  }
+  .snap-section {
+    scroll-margin-top: var(--header-h);
+    min-height: auto;
+    padding-block: 24px;
   }
 }
 
 .snap-section-end {
   scroll-margin-top: var(--header-h);
-  scroll-snap-align: start;
-}
-
-/* Snapping enabled ONLY when (min-width:1024px) and (min-height:680px) and (prefers-reduced-motion: no-preference) */
-@media (min-width: 1024px) and (min-height: 680px) and (prefers-reduced-motion: no-preference) {
-  html {
-    scroll-snap-type: y mandatory;
-    scroll-behavior: smooth;
-  }
-  .snap-section {
-    scroll-margin-top: 0;
-  }
 }
 
 /* Form inputs: 16px font-size on mobile so iOS Safari does not auto-zoom */

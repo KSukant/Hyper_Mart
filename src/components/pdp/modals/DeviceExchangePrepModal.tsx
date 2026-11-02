@@ -1,61 +1,104 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
+import Link from "next/link";
 import {
   X,
   ArrowLeft,
+  ShieldCheck,
   Check,
   AlertTriangle,
-  Cloud,
-  Laptop,
   Smartphone,
+  Laptop,
+  Tv,
+  Refrigerator,
   ChevronDown,
   ChevronUp,
-  FileText,
-  ShieldCheck,
-  CheckCircle2,
+  Cloud,
   ChevronRight,
+  FileText,
 } from "lucide-react";
-import { toast } from "@/components/ui/primitives";
+import type { Product } from "@/types";
 import { cn } from "@/lib/cn";
+import { toast } from "@/components/ui/primitives";
+import { getCategoryHandoverSteps, type HandoverStep } from "@/lib/electronicsData";
 
 interface DeviceExchangePrepModalProps {
   open: boolean;
   onClose: () => void;
   onBackToExchange: () => void;
+  product?: Product;
 }
 
 export function DeviceExchangePrepModal({
   open,
   onClose,
   onBackToExchange,
+  product: p,
 }: DeviceExchangePrepModalProps) {
+  const steps: HandoverStep[] = p
+    ? getCategoryHandoverSteps(p)
+    : [
+        {
+          step: 1,
+          title: "Backup all data",
+          description: "Save important personal files and photos to cloud storage.",
+          required: true,
+          isIrreversible: true,
+        },
+        {
+          step: 2,
+          title: "Sign out of all cloud accounts",
+          description: "Sign out of Apple ID, Google Account, or Microsoft accounts.",
+          required: true,
+        },
+        {
+          step: 3,
+          title: "Remove SIM / storage cards",
+          description: "Eject physical SIM card and memory card from slots.",
+          required: true,
+        },
+        {
+          step: 4,
+          title: "Perform factory reset",
+          description: "Restore default factory settings and ensure device powers on.",
+          required: true,
+          isIrreversible: true,
+        },
+        {
+          step: 5,
+          title: "Keep original charger ready",
+          description: "Have power adapter and cable bundled for technician pickup.",
+          required: true,
+        },
+      ];
+
   const [backedUp, setBackedUp] = useState(false);
   const [completedSteps, setCompletedSteps] = useState<number[]>([1]);
   const [openAccordion, setOpenAccordion] = useState<number | null>(null);
 
   if (!open) return null;
 
-  const STEPS = [
-    { num: 1, title: "Backup data", desc: "Save your important files, photos, contacts and other data to the cloud or another device." },
-    { num: 2, title: "Remove accounts", desc: "Sign out of all accounts (email, cloud, app stores, etc.)." },
-    { num: 3, title: "Remove SIM", desc: "Take out your physical or eSIM profile from the device." },
-    { num: 4, title: "Remove memory card", desc: "Remove any memory card (e.g. microSD or external storage)." },
-    { num: 5, title: "Factory reset", desc: "Reset the device to original factory settings." },
-    { num: 6, title: "Confirm handover", desc: "Review and confirm that your device is ready for exchange." },
-  ];
-
-  const toggleStep = (num: number) => {
-    if (completedSteps.includes(num)) {
-      setCompletedSteps(completedSteps.filter((s) => s !== num));
+  const toggleStep = (stepNum: number) => {
+    if (completedSteps.includes(stepNum)) {
+      setCompletedSteps(completedSteps.filter((s) => s !== stepNum));
     } else {
-      setCompletedSteps([...completedSteps, num]);
+      setCompletedSteps([...completedSteps, stepNum]);
     }
   };
 
   const handleConfirm = () => {
-    toast("Handover preparation confirmed. Privacy receipt generated!");
+    toast("Handover preparation confirmed. Digital privacy clearance receipt generated!");
     onClose();
+  };
+
+  const getDeviceIcon = () => {
+    if (p?.categoryId === "elec-tv") return <Tv className="h-8 w-8 text-[#085A2E]" />;
+    if (p?.categoryId === "elec-appliances")
+      return <Refrigerator className="h-8 w-8 text-[#085A2E]" />;
+    if (p?.categoryId === "elec-mobiles" || p?.categoryId === "elec-refurbished")
+      return <Smartphone className="h-8 w-8 text-[#085A2E]" />;
+    return <Laptop className="h-8 w-8 text-[#085A2E]" />;
   };
 
   return (
@@ -66,51 +109,64 @@ export function DeviceExchangePrepModal({
           <button
             type="button"
             onClick={onBackToExchange}
-            className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-ink sm:text-sm"
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-muted hover:text-ink sm:text-sm cursor-pointer"
           >
-            <ArrowLeft className="h-4 w-4" /> Back to exchange
+            <ArrowLeft className="h-4 w-4 text-[#085A2E]" /> Back to exchange options
           </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="grid h-8 w-8 place-items-center rounded-full hover:bg-bg text-muted hover:text-ink"
-            aria-label="Close dialog"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <span className="hidden sm:inline-flex rounded-full bg-[#F0F8EC] border border-[#DCEDD2] px-2.5 py-0.5 text-xs font-bold text-[#085A2E]">
+              Doorstep Handover Checklist
+            </span>
+            <button
+              type="button"
+              onClick={onClose}
+              className="grid h-8 w-8 place-items-center rounded-full hover:bg-neutral-100 text-muted hover:text-ink cursor-pointer"
+              aria-label="Close dialog"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
         </div>
 
         {/* Modal Body */}
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-6">
           <div>
-            <h1 className="text-2xl font-extrabold text-ink sm:text-3xl">
+            <div className="flex items-center gap-2">
+              <span className="rounded-md bg-[#085A2E] text-white text-[10px] font-black uppercase tracking-wider px-2 py-0.5">
+                Privacy &amp; Safety
+              </span>
+              <span className="text-xs font-bold text-muted">
+                {p?.categoryId || "Electronics"} Handover
+              </span>
+            </div>
+            <h1 className="text-2xl font-extrabold text-ink sm:text-3xl mt-1">
               Prepare your device for exchange
             </h1>
             <p className="mt-1 text-xs text-muted sm:text-sm">
-              Follow these steps to protect your privacy and get your device ready.
+              Complete these category-specific verification steps so your exchange discount is instantly validated at delivery.
             </p>
           </div>
 
-          {/* Stepper Header (1 to 6) */}
+          {/* Stepper Header */}
           <div className="no-scrollbar flex items-center justify-between gap-2 overflow-x-auto border-b border-line/60 pb-4 text-xs font-bold">
-            {STEPS.map((step, idx) => {
-              const isDone = completedSteps.includes(step.num);
+            {steps.map((s, idx) => {
+              const isDone = completedSteps.includes(s.step);
               return (
-                <div key={step.num} className="flex items-center gap-2 shrink-0">
+                <div key={s.step} className="flex items-center gap-2 shrink-0">
                   <span
                     className={cn(
                       "grid h-6 w-6 place-items-center rounded-full text-xs font-black transition",
                       isDone
-                        ? "bg-[#17201B] text-white"
+                        ? "bg-[#085A2E] text-white"
                         : "bg-bg text-muted border border-line"
                     )}
                   >
-                    {isDone ? <Check className="h-3.5 w-3.5 stroke-[3]" /> : step.num}
+                    {isDone ? <Check className="h-3.5 w-3.5 stroke-[3]" /> : s.step}
                   </span>
                   <span className={cn(isDone ? "text-ink font-bold" : "text-muted")}>
-                    {step.title}
+                    {s.title}
                   </span>
-                  {idx < STEPS.length - 1 && <span className="text-line mx-1">&mdash;</span>}
+                  {idx < steps.length - 1 && <span className="text-line mx-1">&mdash;</span>}
                 </div>
               );
             })}
@@ -120,37 +176,39 @@ export function DeviceExchangePrepModal({
           <div className="grid gap-6 lg:grid-cols-12 lg:items-start">
             {/* Left Flow */}
             <div className="space-y-4 lg:col-span-7">
-              {/* Step 1: Backup Data Box Matching Screen 7 */}
-              <div className="rounded-2xl border-2 border-line/80 bg-white p-5 space-y-4 shadow-xs">
+              {/* Step 1: Active Focus Card */}
+              <div className="rounded-2xl border-2 border-[#DCEDD2] bg-white p-5 space-y-4 shadow-xs">
                 <div className="flex items-center gap-2">
-                  <span className="grid h-7 w-7 place-items-center rounded-full bg-[#17201B] text-white text-xs font-black">
+                  <span className="grid h-7 w-7 place-items-center rounded-full bg-[#085A2E] text-white text-xs font-black">
                     1
                   </span>
-                  <h3 className="text-base font-extrabold text-ink">Backup data</h3>
+                  <h3 className="text-base font-extrabold text-ink">{steps[0].title}</h3>
                 </div>
                 <p className="text-xs text-muted leading-relaxed">
-                  Save your important files, photos, contacts and other data to the cloud or another device.
+                  {steps[0].description}
                 </p>
 
                 {/* Cloud & Device Graphic */}
-                <div className="rounded-xl border border-line/60 bg-[#F8FAF7] p-4 flex items-center justify-center gap-4 text-[#1D4E89]">
-                  <Laptop className="h-10 w-10 text-muted" />
-                  <span className="text-xs font-bold text-muted">&bull; &bull; &bull; &rarr;</span>
-                  <Cloud className="h-10 w-10 text-[#1D4E89]" />
-                  <span className="text-xs font-bold text-muted">&bull; &bull; &bull; &rarr;</span>
-                  <Smartphone className="h-8 w-8 text-muted" />
+                <div className="rounded-xl border border-[#DCEDD2] bg-[#F0F8EC]/50 p-4 flex items-center justify-center gap-4 text-[#085A2E]">
+                  {getDeviceIcon()}
+                  <span className="text-xs font-bold text-[#085A2E]">&bull; &bull; &bull; &rarr;</span>
+                  <Cloud className="h-10 w-10 text-[#085A2E]" />
+                  <span className="text-xs font-bold text-[#085A2E]">&bull; &bull; &bull; &rarr;</span>
+                  <ShieldCheck className="h-8 w-8 text-[#085A2E]" />
                 </div>
 
-                {/* Good to know Callout */}
-                <div className="rounded-xl border border-line bg-bg p-3.5 flex items-start gap-2.5 text-xs">
-                  <AlertTriangle className="h-4 w-4 text-[#D97706] shrink-0 mt-0.5" />
-                  <div>
-                    <strong className="block text-ink font-bold">Good to know</strong>
-                    <p className="text-[11px] text-muted mt-0.5 leading-relaxed">
-                      After the factory reset, all data on this device will be permanently erased and cannot be recovered.
-                    </p>
+                {/* Warning Callout */}
+                {steps[0].isIrreversible && (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 p-3.5 flex items-start gap-2.5 text-xs">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
+                    <div>
+                      <strong className="block text-amber-900 font-bold">Important Notice</strong>
+                      <p className="text-[11px] text-amber-800 mt-0.5 leading-relaxed">
+                        Irreversible data erasure will occur during reset. Back up your photos, contacts, and personal data beforehand.
+                      </p>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Checkbox & Mark complete */}
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pt-2">
@@ -159,9 +217,9 @@ export function DeviceExchangePrepModal({
                       type="checkbox"
                       checked={backedUp}
                       onChange={(e) => setBackedUp(e.target.checked)}
-                      className="h-4 w-4 rounded-md border-line text-[#1D4E89] focus:ring-[#1D4E89]"
+                      className="h-4 w-4 rounded-md border-line text-[#085A2E] focus:ring-[#085A2E] accent-[#085A2E]"
                     />
-                    <span>I have backed up my data</span>
+                    <span>I have completed this step</span>
                   </label>
 
                   <button
@@ -171,44 +229,44 @@ export function DeviceExchangePrepModal({
                       toggleStep(1);
                       toast("Step 1 marked as complete");
                     }}
-                    className="rounded-xl bg-[#17201B] hover:bg-black text-white px-4 py-2 text-xs font-bold transition shadow-xs"
+                    className="rounded-xl bg-[#085A2E] hover:bg-[#064825] text-white px-4 py-2 text-xs font-bold transition shadow-xs cursor-pointer"
                   >
                     Mark as complete
                   </button>
                 </div>
               </div>
 
-              {/* Steps 2 to 6 Collapsed Accordions */}
+              {/* Remaining Steps Collapsed Accordions */}
               <div className="space-y-2">
-                {STEPS.slice(1).map((s) => {
-                  const isOpen = openAccordion === s.num;
-                  const isDone = completedSteps.includes(s.num);
+                {steps.slice(1).map((s) => {
+                  const isOpen = openAccordion === s.step;
+                  const isDone = completedSteps.includes(s.step);
                   return (
                     <div
-                      key={s.num}
+                      key={s.step}
                       className="rounded-2xl border border-line bg-white p-3.5 transition"
                     >
                       <button
                         type="button"
-                        onClick={() => setOpenAccordion(isOpen ? null : s.num)}
-                        className="flex w-full items-center justify-between text-left"
+                        onClick={() => setOpenAccordion(isOpen ? null : s.step)}
+                        className="flex w-full items-center justify-between text-left cursor-pointer"
                       >
                         <div className="flex items-center gap-3">
                           <span
                             className={cn(
                               "grid h-6 w-6 place-items-center rounded-full text-xs font-bold",
                               isDone
-                                ? "bg-[#17201B] text-white"
+                                ? "bg-[#085A2E] text-white"
                                 : "bg-bg text-muted border border-line"
                             )}
                           >
-                            {isDone ? <Check className="h-3 w-3" /> : s.num}
+                            {isDone ? <Check className="h-3 w-3" /> : s.step}
                           </span>
                           <div>
                             <strong className="block text-xs font-bold text-ink">
-                              {s.num}. {s.title}
+                              {s.step}. {s.title}
                             </strong>
-                            <span className="text-[11px] text-muted">{s.desc}</span>
+                            <span className="text-[11px] text-muted">{s.description}</span>
                           </div>
                         </div>
                         {isOpen ? (
@@ -220,13 +278,18 @@ export function DeviceExchangePrepModal({
 
                       {isOpen && (
                         <div className="mt-3 border-t border-line/60 pt-3 text-xs space-y-2">
+                          {s.isIrreversible && (
+                            <p className="text-[11px] text-amber-700 bg-amber-50 p-2 rounded-lg border border-amber-200">
+                              Warning: This action permanently removes stored files. Verify backup before proceeding.
+                            </p>
+                          )}
                           <p className="text-muted text-[11px]">
-                            Make sure this step is completed before delivery pickup.
+                            Required for delivery agent verification.
                           </p>
                           <button
                             type="button"
-                            onClick={() => toggleStep(s.num)}
-                            className="rounded-lg bg-bg px-3 py-1.5 font-bold text-ink hover:bg-line/40 text-[11px]"
+                            onClick={() => toggleStep(s.step)}
+                            className="rounded-lg bg-[#F0F8EC] border border-[#DCEDD2] px-3 py-1.5 font-bold text-[#085A2E] hover:bg-[#DCEDD2] text-[11px] cursor-pointer"
                           >
                             {isDone ? "Mark as incomplete" : "Mark as complete"}
                           </button>
@@ -241,36 +304,36 @@ export function DeviceExchangePrepModal({
             {/* Right Column: Privacy notice & Checklist Summary */}
             <div className="space-y-4 lg:col-span-5">
               {/* Privacy Warning Box */}
-              <div className="rounded-2xl border border-[#FDE68A] bg-[#FFFBEB] p-4 space-y-1.5 text-xs text-[#92400E]">
+              <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 space-y-1.5 text-xs text-amber-900">
                 <div className="flex items-center gap-2 font-bold">
-                  <AlertTriangle className="h-4 w-4 text-[#D97706]" />
-                  <span>Your privacy matters</span>
+                  <AlertTriangle className="h-4 w-4 text-amber-600" />
+                  <span>Privacy Protection Guarantee</span>
                 </div>
-                <p className="text-[11px] text-[#78350F] leading-relaxed">
-                  Make sure you remove all personal data, accounts and cards before handing over your device. A factory reset helps prevent unauthorized access to your information.
+                <p className="text-[11px] text-amber-800 leading-relaxed">
+                  Our delivery specialist will verify factory reset in front of you. HyperMart does not accept devices with active passwords, biometric locks, or linked cloud accounts.
                 </p>
               </div>
 
               {/* Preparation Checklist Summary */}
-              <div className="rounded-2xl border border-line/80 bg-white p-4 space-y-3">
+              <div className="rounded-2xl border border-line/80 bg-white p-4 space-y-3 shadow-2xs">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-extrabold text-ink">Preparation checklist</h4>
-                  <span className="rounded-md bg-bg px-2 py-0.5 text-[10px] font-bold text-muted">
-                    {completedSteps.length} of 6 completed
+                  <h4 className="text-xs font-extrabold text-ink">Preparation Checklist</h4>
+                  <span className="rounded-md bg-[#F0F8EC] text-[#085A2E] font-extrabold px-2 py-0.5 text-[10px]">
+                    {completedSteps.length} of {steps.length} completed
                   </span>
                 </div>
 
                 <div className="divide-y divide-line/60 text-xs">
-                  {STEPS.map((s) => {
-                    const isDone = completedSteps.includes(s.num);
+                  {steps.map((s) => {
+                    const isDone = completedSteps.includes(s.step);
                     return (
                       <div
-                        key={s.num}
-                        onClick={() => toggleStep(s.num)}
-                        className="flex items-center justify-between py-2 cursor-pointer hover:text-[#1D4E89]"
+                        key={s.step}
+                        onClick={() => toggleStep(s.step)}
+                        className="flex items-center justify-between py-2 cursor-pointer hover:text-[#085A2E]"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="text-muted font-bold">{s.num}</span>
+                          <span className="text-muted font-bold">{s.step}</span>
                           <span className={cn(isDone ? "font-bold text-ink" : "text-muted")}>
                             {s.title}
                           </span>
@@ -278,16 +341,16 @@ export function DeviceExchangePrepModal({
                         <span
                           className={cn(
                             "inline-flex items-center gap-1 text-[10px] font-bold",
-                            isDone ? "text-success" : "text-muted"
+                            isDone ? "text-[#085A2E]" : "text-muted"
                           )}
                         >
                           {isDone ? (
                             <>
-                              Completed <Check className="h-3 w-3 text-success inline" />
+                              Completed <Check className="h-3 w-3 text-[#085A2E] inline" />
                             </>
                           ) : (
                             <>
-                              Not started <ChevronRight className="h-3 w-3 text-muted inline" />
+                              Pending <ChevronRight className="h-3 w-3 text-muted inline" />
                             </>
                           )}
                         </span>
@@ -298,39 +361,45 @@ export function DeviceExchangePrepModal({
               </div>
 
               {/* Handover Receipt Preview */}
-              <div className="rounded-2xl border border-line/80 bg-white p-4 space-y-2">
+              <div className="rounded-2xl border border-[#DCEDD2] bg-[#F0F8EC]/40 p-4 space-y-2">
                 <div className="flex items-start gap-3">
-                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-bg text-muted border border-line">
+                  <div className="grid h-9 w-9 place-items-center rounded-xl bg-white border border-[#DCEDD2] text-[#085A2E] shrink-0">
                     <FileText className="h-5 w-5" />
-                  </span>
+                  </div>
                   <div>
-                    <strong className="block text-xs font-bold text-ink">
-                      Privacy handover receipt (preview)
-                    </strong>
-                    <p className="text-[10px] text-muted mt-0.5 leading-snug">
-                      This receipt confirms that you have completed the privacy preparation steps for this device.
+                    <h5 className="text-xs font-extrabold text-ink">
+                      Digital Handover Certificate
+                    </h5>
+                    <p className="text-[11px] text-muted">
+                      Technician will sign off digitally on doorstep verification to finalize your instant exchange credit.
                     </p>
-                    <span className="inline-block mt-1 text-[10px] font-bold text-[#1D4E89]">
-                      Status: {completedSteps.length === 6 ? "Ready to generate" : "Will be generated after completion"}
-                    </span>
                   </div>
                 </div>
               </div>
-
-              {/* Confirm Handover CTA */}
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={handleConfirm}
-                  className="w-full rounded-2xl bg-[#17201B] hover:bg-black text-white py-3 text-xs font-black transition shadow-sm"
-                >
-                  Confirm handover preparation
-                </button>
-                <p className="mt-2 text-center text-[10px] text-muted leading-relaxed">
-                  By confirming, you declare that you have completed all the steps and the device is ready for exchange, free of your personal data.
-                </p>
-              </div>
             </div>
+          </div>
+        </div>
+
+        {/* Modal Footer */}
+        <div className="flex flex-col gap-2 border-t border-line bg-bg px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <p className="text-[11px] text-muted">
+            All checklist items are verified on-site during courier handover.
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-xl border border-line bg-white px-4 py-2 text-xs font-bold text-ink hover:bg-neutral-50 transition cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleConfirm}
+              className="rounded-xl bg-[#085A2E] hover:bg-[#064825] text-white px-5 py-2 text-xs font-extrabold transition shadow-sm cursor-pointer"
+            >
+              I&apos;m ready for handover &rarr;
+            </button>
           </div>
         </div>
       </div>

@@ -68,10 +68,10 @@ export function TrustRibbon({
       className={cn(
         "relative w-full overflow-hidden transition-all duration-300",
         variant === "banner" &&
-          "border-y border-line bg-gradient-to-r from-[#EFF6FF] via-[#FFFFFF] to-[#E0F7FA]",
+          "border-y border-line bg-gradient-to-r from-[#F0F8EC] via-[#FFFFFF] to-[#FFF9EB]",
         variant === "floating" &&
-          "rounded-3xl border border-line bg-gradient-to-r from-[#EFF6FF] via-[#FFFFFF] to-[#E0F7FA] shadow-sm",
-        variant === "compact" && "border-b border-line bg-[#F8FAFC] py-2",
+          "rounded-3xl border border-line bg-gradient-to-r from-[#F0F8EC] via-[#FFFFFF] to-[#FFF9EB] shadow-sm",
+        variant === "compact" && "border-b border-line bg-[#FAFDF8] py-2",
         className
       )}
     >
@@ -89,9 +89,9 @@ export function TrustRibbon({
           />
           <defs>
             <linearGradient id="trust-flow-grad" x1="0" y1="0" x2="1440" y2="96" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#06B6D4" stopOpacity="0.25" />
-              <stop offset="0.5" stopColor="#2563EB" stopOpacity="0.08" />
-              <stop offset="1" stopColor="#EFF6FF" stopOpacity="0.35" />
+              <stop stopColor="#085A2E" stopOpacity="0.12" />
+              <stop offset="0.5" stopColor="#07834B" stopOpacity="0.06" />
+              <stop offset="1" stopColor="#F0F8EC" stopOpacity="0.3" />
             </linearGradient>
           </defs>
         </svg>

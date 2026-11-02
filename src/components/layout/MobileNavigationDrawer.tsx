@@ -188,7 +188,7 @@ export function MobileNavigationDrawer({ open, onClose, onOpenLocation }: Mobile
                     food: { bg: "bg-[#2E7032]", text: "text-[#2E7032]", tint: "bg-[#E7F3DF]" },
                     fashion: { bg: "bg-[#0F766E]", text: "text-[#0F766E]", tint: "bg-[#E6FFFA]" },
                     beauty: { bg: "bg-[#7C205F]", text: "text-[#7C205F]", tint: "bg-[#FCE4EC]" },
-                    electronics: { bg: "bg-[#1E3A8A]", text: "text-[#1E3A8A]", tint: "bg-[#EAF0FE]" },
+                    electronics: { bg: "bg-[#085A2E]", text: "text-[#085A2E]", tint: "bg-[#F0F8EC]" },
                   };
                   const colors = deptColors[dom.id] || { bg: "bg-primary", text: "text-primary", tint: "bg-primary-tint" };
 

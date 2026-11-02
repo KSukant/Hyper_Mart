@@ -6,7 +6,11 @@ import {
   Heart,
   Minus,
   Plus,
+  Tv,
+  Refrigerator,
   Laptop,
+  Smartphone,
+  Headphones,
   Settings,
   Home,
   ShieldCheck,
@@ -46,6 +50,18 @@ export function ElectronicsCartItem({
   const isElec = a.department === "electronics";
   const brand = brandName(p);
 
+  // Dynamic Category Icon
+  const getDeviceIcon = () => {
+    if (p.categoryId === "elec-tv") return <Tv className="h-4 w-4 text-[#085A2E] shrink-0" />;
+    if (p.categoryId === "elec-appliances")
+      return <Refrigerator className="h-4 w-4 text-[#085A2E] shrink-0" />;
+    if (p.categoryId === "elec-mobiles" || p.categoryId === "elec-refurbished")
+      return <Smartphone className="h-4 w-4 text-[#085A2E] shrink-0" />;
+    if (p.categoryId === "elec-audio")
+      return <Headphones className="h-4 w-4 text-[#085A2E] shrink-0" />;
+    return <Laptop className="h-4 w-4 text-[#085A2E] shrink-0" />;
+  };
+
   // Variant/Config
   const configText =
     item.variantKey && item.variantKey !== "default"
@@ -64,28 +80,28 @@ export function ElectronicsCartItem({
   const installRequired = isElec && a.installation?.required;
   const installFee = isElec && a.installation ? a.installation.fee : 499;
   const installText = installRequired
-    ? `Required standard installation (₹${installFee})`
+    ? `Certified technician installation (Free / Included)`
     : isHeavy
-    ? `Optional doorstep installation available (₹${installFee})`
-    : "No assembly needed · Ready to plug and play";
+    ? `Doorstep room-of-choice placement included`
+    : "Plug & play setup (Self-assembly under 2 mins)";
 
   const isRefurb = isElec && a.refurbished;
   const refurbText = isRefurb
-    ? `Refurbished ${a.refurbished?.grade} · 32-point inspection passed`
+    ? `Refurbished ${a.refurbished?.grade} · 45-point inspection certified`
     : null;
 
   const lineTotal = price.finalPrice * item.qty;
 
   return (
     <div className="space-y-3">
-      {/* Main Item Card (Exact Match to Screenshot) */}
-      <div className="rounded-3xl border border-line/80 bg-white p-5 sm:p-6 shadow-xs">
+      {/* Main Item Card */}
+      <div className="rounded-3xl border border-[#DCEDD2] bg-white p-5 sm:p-6 shadow-2xs">
         <div className="grid gap-5 sm:grid-cols-12 sm:items-start">
           {/* Left Product Image */}
           <div className="sm:col-span-4">
             <Link
               href={`/product/${p.slug}`}
-              className="block relative aspect-square min-h-[220px] w-full overflow-hidden rounded-2xl bg-[#FAFAFA] border border-line/60 p-4 transition hover:opacity-95"
+              className="block relative aspect-square min-h-[200px] w-full overflow-hidden rounded-2xl bg-[#FAFAFA] border border-line/60 p-4 transition hover:opacity-95"
             >
               <ProductArt product={p} className="h-full w-full object-contain" />
             </Link>
@@ -96,12 +112,12 @@ export function ElectronicsCartItem({
             {/* Header: Title, Brand, Delete */}
             <div className="flex items-start justify-between gap-3">
               <div>
-                <span className="text-xs font-bold text-muted uppercase tracking-wider">
-                  {brand}
+                <span className="text-[11px] font-black uppercase tracking-wider text-[#085A2E]">
+                  {brand} &bull; {p.categoryId || "Electronics"}
                 </span>
                 <Link
                   href={`/product/${p.slug}`}
-                  className="block text-xl font-extrabold text-ink hover:text-primary transition sm:text-2xl leading-tight"
+                  className="block text-xl font-extrabold text-ink hover:text-[#085A2E] transition sm:text-2xl leading-tight mt-0.5"
                 >
                   {p.name}
                 </Link>
@@ -112,7 +128,7 @@ export function ElectronicsCartItem({
               <button
                 type="button"
                 onClick={onRemove}
-                className="grid h-8 w-8 place-items-center rounded-full text-muted hover:bg-bg hover:text-danger transition shrink-0"
+                className="grid h-8 w-8 place-items-center rounded-full text-muted hover:bg-neutral-100 hover:text-danger transition shrink-0 cursor-pointer"
                 aria-label="Remove item"
               >
                 <Trash2 className="h-4 w-4" />
@@ -121,7 +137,7 @@ export function ElectronicsCartItem({
 
             {/* Price Row */}
             <div className="flex flex-wrap items-baseline gap-2.5">
-              <span className="font-display text-2xl font-extrabold text-ink">
+              <span className="font-display text-2xl font-extrabold text-[#085A2E]">
                 ₹ {price.finalPrice.toLocaleString("en-IN")}
               </span>
               {p.mrp > price.finalPrice && (
@@ -130,32 +146,36 @@ export function ElectronicsCartItem({
                 </span>
               )}
               {price.discountPct > 0 && (
-                <span className="rounded-md bg-[#EAF0FE] border border-[#DCE4F0] px-2 py-0.5 text-[11px] font-black text-[#1E3A8A]">
+                <span className="rounded-md bg-[#F0F8EC] border border-[#DCEDD2] px-2 py-0.5 text-[11px] font-black text-[#085A2E]">
                   {price.discountPct}% OFF
                 </span>
               )}
               {price.memberPrice && (
-                <span className="rounded-md bg-accent/20 px-2 py-0.5 text-[10px] font-bold text-ink">
+                <span className="rounded-md bg-[#FFD84A]/30 border border-[#FFD84A] px-2 py-0.5 text-[10px] font-bold text-ink">
                   Member ₹{price.memberPrice}
                 </span>
               )}
             </div>
 
-            {/* Electronics Attribute Rows (Reference Screenshot Style) */}
-            <div className="divide-y divide-[#DCE4F0]/60 rounded-2xl border border-[#DCE4F0] bg-[#F1F5F9] px-3.5 py-1 text-xs sm:text-sm">
+            {/* Electronics Attribute Rows */}
+            <div className="divide-y divide-[#DCEDD2]/70 rounded-2xl border border-[#DCEDD2] bg-[#F0F8EC]/35 px-3.5 py-1 text-xs sm:text-sm">
               {/* 1. Configuration */}
               <div className="flex items-center justify-between py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <Laptop className="h-4 w-4 text-[#1E3A8A] shrink-0" />
+                  {getDeviceIcon()}
                   <div>
-                    <span className="block text-[11px] text-muted">Configuration</span>
-                    <strong className="block text-ink font-bold line-clamp-1">{configText}</strong>
+                    <span className="block text-[10px] text-muted uppercase font-bold">
+                      Hardware Spec / Model
+                    </span>
+                    <strong className="block text-ink font-bold line-clamp-1 text-xs sm:text-sm">
+                      {configText}
+                    </strong>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => onEdit("config")}
-                  className="text-xs font-bold text-muted hover:text-[#1E3A8A] hover:underline"
+                  className="text-xs font-bold text-[#085A2E] hover:underline cursor-pointer"
                 >
                   Edit &rsaquo;
                 </button>
@@ -164,92 +184,104 @@ export function ElectronicsCartItem({
               {/* 2. Compatibility */}
               <div className="flex items-center justify-between py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <Settings className="h-4 w-4 text-[#1E3A8A] shrink-0" />
+                  <Settings className="h-4 w-4 text-[#085A2E] shrink-0" />
                   <div>
-                    <span className="block text-[11px] text-muted">Device compatibility</span>
-                    <strong className="block text-ink font-bold">
-                      Compatible · Android, iOS, Windows &amp; macOS supported
+                    <span className="block text-[10px] text-muted uppercase font-bold">
+                      Device compatibility
+                    </span>
+                    <strong className="block text-ink font-bold text-xs sm:text-sm">
+                      Verified hardware compatibility confirmed
                     </strong>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => onEdit("compatibility")}
-                  className="text-xs font-bold text-muted hover:text-[#1E3A8A] hover:underline"
+                  className="text-xs font-bold text-[#085A2E] hover:underline cursor-pointer"
                 >
-                  Edit &rsaquo;
+                  Check &rsaquo;
                 </button>
               </div>
 
               {/* 3. Home Fit */}
               <div className="flex items-center justify-between py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <Home className="h-4 w-4 text-[#1E3A8A] shrink-0" />
+                  <Home className="h-4 w-4 text-[#085A2E] shrink-0" />
                   <div>
-                    <span className="block text-[11px] text-muted">Home fit &amp; space</span>
-                    <strong className="block text-ink font-bold">
-                      Standard clearance (Doorway min. 65 cm verified)
+                    <span className="block text-[10px] text-muted uppercase font-bold">
+                      Home fit &amp; space
+                    </span>
+                    <strong className="block text-ink font-bold text-xs sm:text-sm">
+                      Authorised dimensions checked for entry clearance
                     </strong>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => onEdit("homeFit")}
-                  className="text-xs font-bold text-muted hover:text-[#1E3A8A] hover:underline"
+                  className="text-xs font-bold text-[#085A2E] hover:underline cursor-pointer"
                 >
-                  Edit &rsaquo;
+                  Fit details &rsaquo;
                 </button>
               </div>
 
               {/* 4. Warranty & Support */}
               <div className="flex items-center justify-between py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <ShieldCheck className="h-4 w-4 text-[#1E3A8A] shrink-0" />
+                  <ShieldCheck className="h-4 w-4 text-[#085A2E] shrink-0" />
                   <div>
-                    <span className="block text-[11px] text-muted">Warranty duration</span>
-                    <strong className="block text-ink font-bold">{warrantyText}</strong>
+                    <span className="block text-[10px] text-muted uppercase font-bold">
+                      Digital warranty
+                    </span>
+                    <strong className="block text-ink font-bold text-xs sm:text-sm">
+                      {warrantyText}
+                    </strong>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => onEdit("warranty")}
-                  className="text-xs font-bold text-muted hover:text-[#1E3A8A] hover:underline"
+                  className="text-xs font-bold text-[#085A2E] hover:underline cursor-pointer"
                 >
-                  Edit &rsaquo;
+                  Certificate &rsaquo;
                 </button>
               </div>
 
               {/* 5. Installation */}
               <div className="flex items-center justify-between py-2.5">
                 <div className="flex items-center gap-2.5">
-                  <Wrench className="h-4 w-4 text-[#1E3A8A] shrink-0" />
+                  <Wrench className="h-4 w-4 text-[#085A2E] shrink-0" />
                   <div>
-                    <span className="block text-[11px] text-muted">Installation &amp; setup</span>
-                    <strong className="block text-ink font-bold line-clamp-1">{installText}</strong>
+                    <span className="block text-[10px] text-muted uppercase font-bold">
+                      Installation &amp; setup
+                    </span>
+                    <strong className="block text-ink font-bold line-clamp-1 text-xs sm:text-sm">
+                      {installText}
+                    </strong>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => onEdit("installation")}
-                  className="text-xs font-bold text-muted hover:text-[#1E3A8A] hover:underline"
+                  className="text-xs font-bold text-[#085A2E] hover:underline cursor-pointer"
                 >
-                  Edit &rsaquo;
+                  Schedule &rsaquo;
                 </button>
               </div>
             </div>
 
-            {/* Electronics Specific Disclosures */}
+            {/* Heavy Delivery Notice */}
             {isHeavy && (
-              <div className="flex items-center gap-2 rounded-xl bg-[#EAF0FE]/70 border border-[#DCE4F0] p-2.5 text-xs text-[#172033]">
-                <Truck className="h-3.5 w-3.5 shrink-0 text-[#1E3A8A]" />
+              <div className="flex items-center gap-2 rounded-xl bg-[#F0F8EC] border border-[#DCEDD2] p-2.5 text-xs text-[#14532D]">
+                <Truck className="h-3.5 w-3.5 shrink-0 text-[#085A2E]" />
                 <span>
-                  Heavy / large appliance: Handled by dedicated 2-person delivery team with doorstep drop.
+                  Heavy / large appliance: Handled by dedicated 2-person delivery crew with room-of-choice drop.
                 </span>
               </div>
             )}
 
             {isRefurb && (
-              <div className="flex items-center gap-2 rounded-xl bg-amber-50/70 border border-amber-200/60 p-2.5 text-xs text-amber-900">
+              <div className="flex items-center gap-2 rounded-xl bg-amber-50 border border-amber-200 p-2.5 text-xs text-amber-900">
                 <RotateCw className="h-3.5 w-3.5 shrink-0 text-amber-700" />
                 <span>{refurbText} · 6-month HyperMart Renewed warranty included.</span>
               </div>
@@ -285,7 +317,7 @@ export function ElectronicsCartItem({
               </div>
 
               <div className="text-right">
-                <span className="font-display text-xl sm:text-2xl font-extrabold text-ink tabular">
+                <span className="font-display text-xl sm:text-2xl font-extrabold text-[#085A2E] tabular">
                   ₹ {Math.round(lineTotal).toLocaleString("en-IN")}
                 </span>
               </div>
@@ -298,7 +330,7 @@ export function ElectronicsCartItem({
       <button
         type="button"
         onClick={onSaveForLater}
-        className="flex w-full items-center justify-between rounded-2xl border border-line/80 bg-white px-5 py-3.5 text-sm font-bold text-ink transition hover:bg-bg/40 shadow-xs cursor-pointer"
+        className="flex w-full items-center justify-between rounded-2xl border border-line/80 bg-white px-5 py-3 text-sm font-bold text-ink transition hover:bg-neutral-50 shadow-2xs cursor-pointer"
       >
         <span className="flex items-center gap-2">
           <Heart className="h-4 w-4 text-muted" />

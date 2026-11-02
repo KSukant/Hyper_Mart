@@ -27,6 +27,7 @@ import type { Product, CartItem } from "@/types";
 import { useNow, useShopper } from "@/lib/hooks";
 import { useCart } from "@/store";
 import { getProductDomain, DOMAIN_THEMES, type PdpSelection } from "./types";
+import { getProducePieceCount } from "@/lib/groceryDescriptions";
 import { ProductMediaGallery } from "./ProductMediaGallery";
 import { DomainPanel } from "./DomainPanel";
 import { MobilePurchaseBar } from "./MobilePurchaseBar";
@@ -345,7 +346,8 @@ export function ProductPageShell({ product }: ProductPageShellProps) {
                       Estimated Total: ₹ {Math.round(priceInfo.finalPrice * (selection.kg ?? 1) * qty).toLocaleString("en-IN")}
                     </span>
                     <span className="font-semibold text-emerald-800 text-[11px]">
-                      for {(selection.kg ?? 1) * qty < 1 ? `${(selection.kg ?? 1) * qty * 1000} g` : `${(selection.kg ?? 1) * qty} kg`}
+                      for {(selection.kg ?? 1) * qty < 1 ? `${(selection.kg ?? 1) * qty * 1000} g` : `${(selection.kg ?? 1) * qty} kg`}{" "}
+                      ({getProducePieceCount(product, selection.kg ?? 1, qty)})
                     </span>
                   </div>
                   <p className="text-[10px] text-emerald-700 leading-tight">
@@ -444,14 +446,16 @@ export function ProductPageShell({ product }: ProductPageShellProps) {
                         <span className="text-muted font-medium">
                           Total weight: ~{" "}
                           <strong className="text-ink">
-                            {(selection.kg ?? 1) * 1000 * qty} g
-                          </strong>
+                            {(selection.kg ?? 1) * qty >= 1 ? `${(selection.kg ?? 1) * qty} kg` : `${(selection.kg ?? 1) * 1000 * qty} g`}
+                          </strong>{" "}
+                          ({getProducePieceCount(product, selection.kg ?? 1, qty)})
                         </span>
                       </div>
                       <div className="flex flex-wrap gap-2">
                         {(a.weightOptionsKg ?? [0.25, 0.5, 1, 2]).map((w) => {
                           const active = (selection.kg ?? 1) === w;
                           const label = w < 1 ? `${w * 1000} g` : `${w} kg`;
+                          const count = getProducePieceCount(product, w, 1);
                           return (
                             <button
                               key={w}
@@ -464,7 +468,7 @@ export function ProductPageShell({ product }: ProductPageShellProps) {
                                   : "bg-white text-ink border-neutral-200 hover:border-neutral-400"
                               )}
                             >
-                              {label}
+                              {label} <span className={cn("text-[11px] font-normal", active ? "text-white/85" : "text-muted")}>({count})</span>
                             </button>
                           );
                         })}
@@ -646,6 +650,9 @@ export function ProductPageShell({ product }: ProductPageShellProps) {
                             if (chartRow.length) measurements.push(`Length: ${chartRow.length} cm`);
                             if (chartRow.shoulder) measurements.push(`Shoulder: ${chartRow.shoulder} cm`);
                             if (chartRow.footLengthCm) measurements.push(`Foot length: ${chartRow.footLengthCm} cm`);
+                            if (chartRow.sareeLengthM) measurements.push(`Saree length: ${chartRow.sareeLengthM} m`);
+                            if (chartRow.blousePieceM) measurements.push(`Blouse fabric: ${chartRow.blousePieceM} m`);
+                            if (chartRow.widthM) measurements.push(`Saree width: ${chartRow.widthM} m`);
                             return measurements.length > 0 ? (
                               <p className="text-[11px] text-ink font-medium">
                                 Measurements for size {selection.size}: {measurements.join(" · ")}
@@ -1134,7 +1141,7 @@ export function ProductPageShell({ product }: ProductPageShellProps) {
             : domainKey === "fashion"
             ? "#6B2E5F"
             : domainKey === "electronics"
-            ? "#1D4E89"
+            ? "#085A2E"
             : "#9C2F55"
         }
         selection={selection}
@@ -1292,6 +1299,7 @@ export function ProductPageShell({ product }: ProductPageShellProps) {
       <DeviceExchangePrepModal
         open={exchangePrepOpen}
         onClose={() => setExchangePrepOpen(false)}
+        product={product}
         onBackToExchange={() => {
           setExchangePrepOpen(false);
           setRepairOpen(true);
